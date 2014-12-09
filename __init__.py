@@ -23,7 +23,7 @@
 # ##### END MIT LICENSE BLOCK #####
 
 bl_info = {
-	"name": "Shape Tools",
+	"name": "Commotion",
 	"author": "Mikhail Rachinskiy +MikhailRachinskiyByDesign",
 	"version": (1,0),
 	"blender": (2, 7, 2),
@@ -55,12 +55,12 @@ else:
 	from . import ui
 
 
-class sp(PropertyGroup):
+class ShapeKeysPropreties(PropertyGroup):
 	selected = BoolProperty(name="selected")
 	index = IntProperty(name="index")
 	name = StringProperty(name="name")
 
-class ShapeToolsProperties(PropertyGroup):
+class CommotionProperties(PropertyGroup):
 
 	shapekeys = BoolProperty(name="Shape Keys", default=True)
 	shape_value = FloatProperty(name="Value", min=0.0, max=1.0, update=helpers.update_sp)
@@ -146,8 +146,8 @@ classes = [
 	operators.OT_OB_NLA_STRIPS_MULTI_OFFSET,
 	operators.OT_SLOW_PARENT_OFFSET,
 	
-	sp,
-	ShapeToolsProperties,
+	ShapeKeysPropreties,
+	CommotionProperties,
 ]
 
 
@@ -155,15 +155,15 @@ def register():
 	for cls in classes:
 		bpy.utils.register_class(cls)
 	
-	bpy.types.Scene.spl = CollectionProperty(type=sp)
-	bpy.types.Scene.stProps = PointerProperty(type=ShapeToolsProperties)
+	bpy.types.Scene.spl = CollectionProperty(type=ShapeKeysPropreties)
+	bpy.types.Scene.como = PointerProperty(type=CommotionProperties)
 
 def unregister():
 	for cls in classes:
 		bpy.utils.unregister_class(cls)
 	
 	del bpy.types.Scene.spl
-	del bpy.types.Scene.stProps
+	del bpy.types.Scene.como
 
 if __name__ == "__main__":
 	register()

@@ -112,9 +112,9 @@ class OT_SK_FCURVES_OFFSET(Operator):
 	bl_label = "Offset Animation"
 
 	def execute(self, context):
-		stProps = context.scene.stProps
-		offset = stProps.sk_fcurves_offset
-		threshold = stProps.sk_fcurves_threshold
+		como = context.scene.como
+		offset = como.sk_fcurves_offset
+		threshold = como.sk_fcurves_threshold
 		mode = ['FCURVES', 'SHAPE_KEYS']
 
 		helpers.offset(offset, threshold, mode)
@@ -129,15 +129,15 @@ class OT_SK_FCURVES_MULTI_OFFSET(Operator):
 
 	@classmethod
 	def poll(cls, context):
-		stProps = context.scene.stProps
-		return (stProps.sk_fcurves_group_objects and stProps.sk_fcurves_group_targets)
+		como = context.scene.como
+		return (como.sk_fcurves_group_objects and como.sk_fcurves_group_targets)
 
 	def execute(self, context):
-		stProps = context.scene.stProps
-		objects = bpy.data.groups[stProps.sk_fcurves_group_objects].objects
-		targets = bpy.data.groups[stProps.sk_fcurves_group_targets].objects
-		offset = stProps.sk_fcurves_offset
-		threshold = stProps.sk_fcurves_threshold
+		como = context.scene.como
+		objects = bpy.data.groups[como.sk_fcurves_group_objects].objects
+		targets = bpy.data.groups[como.sk_fcurves_group_targets].objects
+		offset = como.sk_fcurves_offset
+		threshold = como.sk_fcurves_threshold
 		mode = ['FCURVES', 'SHAPE_KEYS']
 
 		helpers.multi_offset(objects, targets, offset, threshold, mode)
@@ -216,9 +216,9 @@ class OT_SK_NLA_STRIPS_OFFSET(Operator):
 	bl_label = "Offset Strips"
 
 	def execute(self, context):
-		stProps = context.scene.stProps
-		offset = stProps.sk_nla_offset
-		threshold = stProps.sk_nla_threshold
+		como = context.scene.como
+		offset = como.sk_nla_offset
+		threshold = como.sk_nla_threshold
 		mode = ['NLA', 'SHAPE_KEYS']
 
 		helpers.offset(offset, threshold, mode)
@@ -233,15 +233,15 @@ class OT_SK_NLA_STRIPS_MULTI_OFFSET(Operator):
 
 	@classmethod
 	def poll(cls, context):
-		stProps = context.scene.stProps
-		return (stProps.sk_nla_group_objects and stProps.sk_nla_group_targets)
+		como = context.scene.como
+		return (como.sk_nla_group_objects and como.sk_nla_group_targets)
 
 	def execute(self, context):
-		stProps = context.scene.stProps
-		objects = bpy.data.groups[stProps.sk_nla_group_objects].objects
-		targets = bpy.data.groups[stProps.sk_nla_group_targets].objects
-		offset = stProps.sk_nla_offset
-		threshold = stProps.sk_nla_threshold
+		como = context.scene.como
+		objects = bpy.data.groups[como.sk_nla_group_objects].objects
+		targets = bpy.data.groups[como.sk_nla_group_targets].objects
+		offset = como.sk_nla_offset
+		threshold = como.sk_nla_threshold
 		mode = ['NLA', 'SHAPE_KEYS']
 
 		helpers.multi_offset(objects, targets, offset, threshold, mode)
@@ -401,8 +401,8 @@ class OT_SK_EXPRESSION_FUNC_SET(Operator):
 	bl_label = "Set Function Expression"
 
 	def execute(self, context):
-		stProps = context.scene.stProps
-		expr = stProps.sk_drivers_expression_func
+		como = context.scene.como
+		expr = como.sk_drivers_expression_func
 		obs = context.selected_objects
 
 		for ob in obs:
@@ -457,9 +457,9 @@ class OT_OB_FCURVES_OFFSET(Operator):
 	bl_label = "Offset Animation"
 
 	def execute(self, context):
-		stProps = context.scene.stProps
-		offset = stProps.ob_fcurves_offset
-		threshold = stProps.ob_fcurves_threshold
+		como = context.scene.como
+		offset = como.ob_fcurves_offset
+		threshold = como.ob_fcurves_threshold
 		mode = ['FCURVES', 'OBJECT']
 
 		helpers.offset(offset, threshold, mode)
@@ -474,15 +474,15 @@ class OT_OB_FCURVES_MULTI_OFFSET(Operator):
 
 	@classmethod
 	def poll(cls, context):
-		stProps = context.scene.stProps
-		return (stProps.ob_fcurves_group_objects and stProps.ob_fcurves_group_targets)
+		como = context.scene.como
+		return (como.ob_fcurves_group_objects and como.ob_fcurves_group_targets)
 
 	def execute(self, context):
-		stProps = context.scene.stProps
-		objects = bpy.data.groups[stProps.ob_fcurves_group_objects].objects
-		targets = bpy.data.groups[stProps.ob_fcurves_group_targets].objects
-		offset = stProps.ob_fcurves_offset
-		threshold = stProps.ob_fcurves_threshold
+		como = context.scene.como
+		objects = bpy.data.groups[como.ob_fcurves_group_objects].objects
+		targets = bpy.data.groups[como.ob_fcurves_group_targets].objects
+		offset = como.ob_fcurves_offset
+		threshold = como.ob_fcurves_threshold
 		mode = ['FCURVES', 'OBJECT']
 
 		helpers.multi_offset(objects, targets, offset, threshold, mode)
@@ -553,9 +553,9 @@ class OT_OB_NLA_STRIPS_OFFSET(Operator):
 	bl_label = "Offset Strips"
 
 	def execute(self, context):
-		stProps = context.scene.stProps
-		offset =  stProps.ob_nla_offset
-		threshold =  stProps.ob_nla_threshold
+		como = context.scene.como
+		offset =  como.ob_nla_offset
+		threshold =  como.ob_nla_threshold
 		mode = ['NLA', 'OBJECT']
 
 		helpers.offset(offset, threshold, mode)
@@ -570,15 +570,15 @@ class OT_OB_NLA_STRIPS_MULTI_OFFSET(Operator):
 
 	@classmethod
 	def poll(cls, context):
-		stProps = context.scene.stProps
-		return (stProps.ob_nla_group_objects and stProps.ob_nla_group_targets)
+		como = context.scene.como
+		return (como.ob_nla_group_objects and como.ob_nla_group_targets)
 
 	def execute(self, context):
-		stProps = context.scene.stProps
-		objects = bpy.data.groups[stProps.ob_nla_group_objects].objects
-		targets = bpy.data.groups[stProps.ob_nla_group_targets].objects
-		offset = stProps.ob_nla_offset
-		threshold = stProps.ob_nla_threshold
+		como = context.scene.como
+		objects = bpy.data.groups[como.ob_nla_group_objects].objects
+		targets = bpy.data.groups[como.ob_nla_group_targets].objects
+		offset = como.ob_nla_offset
+		threshold = como.ob_nla_threshold
 		mode = ['NLA', 'OBJECT']
 
 		helpers.multi_offset(objects, targets, offset, threshold, mode)
@@ -596,7 +596,7 @@ class OT_SLOW_PARENT_OFFSET(Operator):
 	bl_label = "Offset Slow Parent"
 
 	def execute(self, context):
-		offset = context.scene.stProps.slow_parent_offset
+		offset = context.scene.como.slow_parent_offset
 		threshold = 1
 		mode = ['PARENT']
 

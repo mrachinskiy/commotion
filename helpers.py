@@ -28,19 +28,19 @@ import bpy
 def update_sp(self, context):
 	sce = context.scene
 	spl = sce.spl
-	stProps = sce.stProps
+	como = sce.como
 	key = context.active_object.data.shape_keys
 	obs = context.selected_objects
 	
 	if key.use_relative:
 		for sps in spl:
 			if sps.selected:
-				key.key_blocks[sps.index].value = stProps.shape_value
+				key.key_blocks[sps.index].value = como.shape_value
 	else:
 		for ob in obs:
 			for sps in spl:
 				if sps.selected:
-					ob.data.shape_keys.key_blocks[sps.index].interpolation = stProps.shape_interpolation
+					ob.data.shape_keys.key_blocks[sps.index].interpolation = como.shape_interpolation
 
 
 

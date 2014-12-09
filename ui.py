@@ -35,7 +35,7 @@ class ShapeKeyTools(Panel):
 	bl_space_type = 'VIEW_3D'
 	bl_region_type = 'TOOLS'
 	bl_context = "objectmode"
-	bl_category = "Shape Tools"
+	bl_category = "Commotion"
 
 	@classmethod
 	def poll(cls, context):
@@ -44,7 +44,7 @@ class ShapeKeyTools(Panel):
 	def draw(self, context):
 		sce = context.scene
 		spl = sce.spl
-		stProps = sce.stProps
+		como = sce.como
 		obj = context.active_object
 		
 		layout = self.layout
@@ -54,8 +54,8 @@ class ShapeKeyTools(Panel):
 
 
 
-		col.prop(stProps, "shapekeys", icon="SHAPEKEY_DATA")
-		if stProps.shapekeys:
+		col.prop(como, "shapekeys", icon="SHAPEKEY_DATA")
+		if como.shapekeys:
 			box = layout.box()
 			col = box.column(align=True)
 			
@@ -85,10 +85,10 @@ class ShapeKeyTools(Panel):
 
 					if key.use_relative:
 						col = box.column(align=True)
-						col.prop(stProps, "shape_value", slider=True)
+						col.prop(como, "shape_value", slider=True)
 					else:
 						row = box.row()
-						row.prop(stProps, "shape_interpolation", expand=True)
+						row.prop(como, "shape_interpolation", expand=True)
 				
 				if not key.use_relative:
 					col = box.column(align=True)
@@ -104,8 +104,8 @@ class ShapeKeyTools(Panel):
 
 
 
-		col.prop(stProps, "sk_fcurves", icon="IPO")
-		if stProps.sk_fcurves:
+		col.prop(como, "sk_fcurves", icon="IPO")
+		if como.sk_fcurves:
 			box = layout.box()
 			col = box.column(align=True)
 			
@@ -115,12 +115,12 @@ class ShapeKeyTools(Panel):
 				col.operator("scene.sk_fcurves_link", icon="LINKED")
 				col.operator("scene.sk_fcurves_copy", icon="COPYDOWN")
 				col.separator()
-				col.prop(stProps, "sk_fcurves_offset")
-				col.prop(stProps, "sk_fcurves_threshold")
+				col.prop(como, "sk_fcurves_offset")
+				col.prop(como, "sk_fcurves_threshold")
 				col.operator("scene.sk_fcurves_offset", icon="FORCE_HARMONIC")
 				col = box.column()
-				col.prop_search(stProps, "sk_fcurves_group_objects", bpy.data, "groups")
-				col.prop_search(stProps, "sk_fcurves_group_targets", bpy.data, "groups")
+				col.prop_search(como, "sk_fcurves_group_objects", bpy.data, "groups")
+				col.prop_search(como, "sk_fcurves_group_targets", bpy.data, "groups")
 				col.operator("scene.sk_fcurves_multi_offset", icon="FORCE_HARMONIC")
 			else:
 				col.label("No animation on Shape Keys")
@@ -132,8 +132,8 @@ class ShapeKeyTools(Panel):
 
 
 
-		col.prop(stProps, "sk_nla", icon="NLA")
-		if stProps.sk_nla:
+		col.prop(como, "sk_nla", icon="NLA")
+		if como.sk_nla:
 			box = layout.box()
 			col = box.column(align=True)
 
@@ -148,12 +148,12 @@ class ShapeKeyTools(Panel):
 					col.operator("scene.sk_nla_sync_length", icon="TIME")
 					col.operator("scene.sk_nla_link_to_active", icon="LINKED")
 					col.separator()
-					col.prop(stProps, "sk_nla_offset")
-					col.prop(stProps, "sk_nla_threshold")
+					col.prop(como, "sk_nla_offset")
+					col.prop(como, "sk_nla_threshold")
 					col.operator("scene.sk_nla_strips_offset", icon="FORCE_HARMONIC")
 					col = box.column()
-					col.prop_search(stProps, "sk_nla_group_objects", bpy.data, "groups")
-					col.prop_search(stProps, "sk_nla_group_targets", bpy.data, "groups")
+					col.prop_search(como, "sk_nla_group_objects", bpy.data, "groups")
+					col.prop_search(como, "sk_nla_group_targets", bpy.data, "groups")
 					col.operator("scene.sk_nla_strips_multi_offset", icon="FORCE_HARMONIC")
 			else:
 				col.label("No animation on Shape Keys")
@@ -165,8 +165,8 @@ class ShapeKeyTools(Panel):
 
 
 
-		col.prop(stProps, "sk_drivers", icon="DRIVER")
-		if stProps.sk_drivers:
+		col.prop(como, "sk_drivers", icon="DRIVER")
+		if como.sk_drivers:
 			box = layout.box()
 			col = box.column(align=True)
 			col.operator("scene.sk_driver_set")
@@ -185,13 +185,13 @@ class ShapeKeyTools(Panel):
 				col.separator()
 				col.separator()
 
-				col.prop(stProps, "sk_drivers_dist_trigger", icon="AUTOMERGE_ON")
-				if stProps.sk_drivers_dist_trigger:
+				col.prop(como, "sk_drivers_dist_trigger", icon="AUTOMERGE_ON")
+				if como.sk_drivers_dist_trigger:
 					col.separator()
 					col.operator("scene.sk_driver_func_reg", icon="COPY_ID")
 					col.operator("scene.sk_eval_time_reset", icon="FILE_REFRESH")
 					col.separator()
-					col.prop(stProps, "sk_drivers_expression_func", text="")
+					col.prop(como, "sk_drivers_expression_func", text="")
 					col.operator("scene.sk_expression_func_set", icon="COPYDOWN")
 
 
@@ -209,7 +209,7 @@ class ObjectTools(Panel):
 	bl_space_type = 'VIEW_3D'
 	bl_region_type = 'TOOLS'
 	bl_context = "objectmode"
-	bl_category = "Shape Tools"
+	bl_category = "Commotion"
 
 	@classmethod
 	def poll(cls, context):
@@ -217,15 +217,15 @@ class ObjectTools(Panel):
 
 	def draw(self, context):
 		sce = context.scene
-		stProps = sce.stProps
+		como = sce.como
 		obj = context.active_object
 		
 		layout = self.layout
 		col = layout.column(align=True)
 
 
-		col.prop(stProps, "ob_fcurves", icon="IPO")
-		if stProps.ob_fcurves:
+		col.prop(como, "ob_fcurves", icon="IPO")
+		if como.ob_fcurves:
 			box = layout.box()
 			col = box.column(align=True)
 			
@@ -233,12 +233,12 @@ class ObjectTools(Panel):
 				col.operator("scene.ob_fcurves_link", icon="LINKED")
 				col.operator("scene.ob_fcurves_copy", icon="COPYDOWN")
 				col.separator()
-				col.prop(stProps, "ob_fcurves_offset")
-				col.prop(stProps, "ob_fcurves_threshold")
+				col.prop(como, "ob_fcurves_offset")
+				col.prop(como, "ob_fcurves_threshold")
 				col.operator("scene.ob_fcurves_offset", icon="FORCE_HARMONIC")
 				col = box.column()
-				col.prop_search(stProps, "ob_fcurves_group_objects", bpy.data, "groups")
-				col.prop_search(stProps, "ob_fcurves_group_targets", bpy.data, "groups")
+				col.prop_search(como, "ob_fcurves_group_objects", bpy.data, "groups")
+				col.prop_search(como, "ob_fcurves_group_targets", bpy.data, "groups")
 				col.operator("scene.ob_fcurves_multi_offset", icon="FORCE_HARMONIC")
 			else:
 				col.label("No Animation on object")
@@ -251,8 +251,8 @@ class ObjectTools(Panel):
 
 
 
-		col.prop(stProps, "ob_nla", icon="NLA")
-		if stProps.ob_nla:
+		col.prop(como, "ob_nla", icon="NLA")
+		if como.ob_nla:
 			box = layout.box()
 			col = box.column(align=True)
 		
@@ -266,12 +266,12 @@ class ObjectTools(Panel):
 					col.operator("scene.ob_nla_sync_length", icon="TIME")
 					col.operator("scene.ob_nla_link_to_active", icon="LINKED")
 					col.separator()
-					col.prop(stProps, "ob_nla_offset")
-					col.prop(stProps, "ob_nla_threshold")
+					col.prop(como, "ob_nla_offset")
+					col.prop(como, "ob_nla_threshold")
 					col.operator("scene.ob_nla_strips_offset", icon="FORCE_HARMONIC")
 					col = box.column()
-					col.prop_search(stProps, "ob_nla_group_objects", bpy.data, "groups")
-					col.prop_search(stProps, "ob_nla_group_targets", bpy.data, "groups")
+					col.prop_search(como, "ob_nla_group_objects", bpy.data, "groups")
+					col.prop_search(como, "ob_nla_group_targets", bpy.data, "groups")
 					col.operator("scene.ob_nla_strips_multi_offset", icon="FORCE_HARMONIC")
 			else:
 				col.label("No animation on object")
@@ -284,8 +284,8 @@ class ObjectTools(Panel):
 
 
 
-		col.prop(stProps, "transforms", icon="MANIPUL")
-		if stProps.transforms:
+		col.prop(como, "transforms", icon="MANIPUL")
+		if como.transforms:
 
 			box = layout.box()
 			col = box.column(align=True)
@@ -293,5 +293,5 @@ class ObjectTools(Panel):
 			col.operator("object.anim_transforms_to_deltas", icon="ACTION", text="Transforms to Deltas")
 			
 			col.label("Slow Parent:")
-			col.prop(stProps, "slow_parent_offset")
+			col.prop(como, "slow_parent_offset")
 			col.operator("scene.slow_parent_offset", icon="FORCE_DRAG")

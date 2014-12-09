@@ -32,7 +32,7 @@ bl_info = {
 	"warning": "",
 	"wiki_url": "https://plus.google.com/+MikhailRachinskiyByDesign",
 	"tracker_url": "https://plus.google.com/+MikhailRachinskiyByDesign",
-	"category": "3D View"}
+	"category": "Animation"}
 
 if "bpy" in locals():
 	import imp
@@ -65,10 +65,11 @@ class CommotionProperties(PropertyGroup):
 	shapekeys = BoolProperty(name="Shape Keys", default=True)
 	shape_value = FloatProperty(name="Value", min=0.0, max=1.0, update=helpers.update_sp)
 	shape_interpolation = EnumProperty(
-		items=(('KEY_LINEAR',      'Linear',      ''),
-		       ('KEY_CARDINAL',    'Cardinal',    ''),
-		       ('KEY_CATMULL_ROM', 'Catmull-Rom', ''),
-		       ('KEY_BSPLINE',     'BSpline',     '')
+		items=(
+			('KEY_LINEAR',      'Linear',      ''),
+			('KEY_CARDINAL',    'Cardinal',    ''),
+			('KEY_CATMULL_ROM', 'Catmull-Rom', ''),
+			('KEY_BSPLINE',     'BSpline',     ''),
 		),
 		name="Interpolation",
 		default="KEY_LINEAR",

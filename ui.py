@@ -139,8 +139,9 @@ class ShapeKeyTools(Panel):
 
 			if (obj.data and obj.data.shape_keys and
 			                 obj.data.shape_keys.animation_data):
-				col.operator("scene.sk_nla_strips_create", icon="NLA_PUSHDOWN")
 				anim = obj.data.shape_keys.animation_data
+				if anim.action:
+					col.operator("scene.sk_nla_strips_create", icon="NLA_PUSHDOWN")
 				
 				if (anim.nla_tracks and anim.nla_tracks[0].strips):
 					col.operator("scene.sk_nla_strips_to_fcurves", icon="IPO_BEZIER")
@@ -256,8 +257,9 @@ class ObjectTools(Panel):
 			col = box.column(align=True)
 		
 			if obj.animation_data:
-				col.operator("scene.ob_nla_strips_create", icon="NLA_PUSHDOWN")
 				anim = obj.animation_data
+				if anim.action:
+					col.operator("scene.ob_nla_strips_create", icon="NLA_PUSHDOWN")
 				
 				if (anim.nla_tracks and anim.nla_tracks[0].strips):
 					col.operator("scene.ob_nla_strips_to_fcurves", icon="IPO_BEZIER")

@@ -55,7 +55,7 @@ else:
 	from . import ui
 
 
-class ShapeKeysPropreties(PropertyGroup):
+class ShapeKeyPropreties(PropertyGroup):
 	selected = BoolProperty(name="selected")
 	index = IntProperty(name="index")
 	name = StringProperty(name="name")
@@ -147,7 +147,7 @@ classes = [
 	operators.OT_OB_NLA_STRIPS_MULTI_OFFSET,
 	operators.OT_SLOW_PARENT_OFFSET,
 	
-	ShapeKeysPropreties,
+	ShapeKeyPropreties,
 	CommotionProperties,
 ]
 
@@ -156,7 +156,7 @@ def register():
 	for cls in classes:
 		bpy.utils.register_class(cls)
 	
-	bpy.types.Scene.spl = CollectionProperty(type=ShapeKeysPropreties)
+	bpy.types.Scene.spl = CollectionProperty(type=ShapeKeyPropreties)
 	bpy.types.Scene.como = PointerProperty(type=CommotionProperties)
 
 def unregister():

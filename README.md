@@ -1,4 +1,4 @@
-blender-addon-shapetools
+Commotion Blender Addon
 ========================
 
-Blender addon for motion graphics
+Commotion is a Blender addon created specifically for motion graphics.

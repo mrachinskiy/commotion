@@ -78,12 +78,30 @@ class CommotionProperties(PropertyGroup):
 	sk_fcurves = BoolProperty(name="F-Curves")
 	sk_fcurves_offset = FloatProperty(name="Frame Offset", default=1, min=1, step=100, precision=0)
 	sk_fcurves_threshold = FloatProperty(name="Threshold", default=1, min=1, step=100, precision=0)
+	sk_fcurves_sort_options = EnumProperty(
+		items=(
+			('CURSOR',      'Cursor',       ''),
+			('MULTITARGET', 'Multi-target', ''),
+			('NAME', 'Name', ''),
+		),
+		name="Sort Options",
+		default="CURSOR")
+	sk_fcurves_reverse = BoolProperty(name="Reverse")
 	sk_fcurves_group_objects = StringProperty(name="Objects")
 	sk_fcurves_group_targets = StringProperty(name="Targets")
 
 	sk_nla = BoolProperty(name="NLA")
 	sk_nla_offset = FloatProperty(name="Frame Offset", default=1, min=1, step=100, precision=0)
 	sk_nla_threshold = FloatProperty(name="Threshold", default=1, min=1, step=100, precision=0)
+	sk_nla_sort_options = EnumProperty(
+		items=(
+			('CURSOR',      'Cursor',       ''),
+			('MULTITARGET', 'Multi-target', ''),
+			('NAME', 'Name', ''),
+		),
+		name="Sort Options",
+		default="CURSOR")
+	sk_nla_reverse = BoolProperty(name="Reverse")
 	sk_nla_group_objects = StringProperty(name="Objects")
 	sk_nla_group_targets = StringProperty(name="Targets")
 	
@@ -94,12 +112,30 @@ class CommotionProperties(PropertyGroup):
 	ob_fcurves = BoolProperty(name="F-Curves")
 	ob_fcurves_offset = FloatProperty(name="Frame Offset", default=1, min=1, step=100, precision=0)
 	ob_fcurves_threshold = FloatProperty(name="Threshold", default=1, min=1, step=100, precision=0)
+	ob_fcurves_sort_options = EnumProperty(
+		items=(
+			('CURSOR',      'Cursor',       ''),
+			('MULTITARGET', 'Multi-target', ''),
+			('NAME', 'Name', ''),
+		),
+		name="Sort Options",
+		default="CURSOR")
+	ob_fcurves_reverse = BoolProperty(name="Reverse")
 	ob_fcurves_group_objects = StringProperty(name="Objects")
 	ob_fcurves_group_targets = StringProperty(name="Targets")
 
 	ob_nla = BoolProperty(name="NLA")
 	ob_nla_offset = FloatProperty(name="Frame Offset", default=1, min=1, step=100, precision=0)
 	ob_nla_threshold = FloatProperty(name="Threshold", default=1, min=1, step=100, precision=0)
+	ob_nla_sort_options = EnumProperty(
+		items=(
+			('CURSOR',      'Cursor',       ''),
+			('MULTITARGET', 'Multi-target', ''),
+			('NAME', 'Name', ''),
+		),
+		name="Sort Options",
+		default="CURSOR")
+	ob_nla_reverse = BoolProperty(name="Reverse")
 	ob_nla_group_objects = StringProperty(name="Objects")
 	ob_nla_group_targets = StringProperty(name="Targets")
 
@@ -118,13 +154,15 @@ classes = [
 	operators.OT_SK_FCURVES_COPY,
 	operators.OT_SK_FCURVES_OFFSET,
 	operators.OT_SK_FCURVES_MULTI_OFFSET,
+	operators.OT_SK_FCURVES_NAME_OFFSET,
 
-	operators.OT_SK_NLA_STRIPS_CREATE,
-	operators.OT_SK_NLA_STRIPS_TO_FCURVES,
+	operators.OT_SK_NLA_CREATE,
+	operators.OT_SK_NLA_TO_FCURVES,
 	operators.OT_SK_NLA_SYNC_LENGTH,
 	operators.OT_SK_NLA_LINK_TO_ACTIVE,
-	operators.OT_SK_NLA_STRIPS_OFFSET,
-	operators.OT_SK_NLA_STRIPS_MULTI_OFFSET,
+	operators.OT_SK_NLA_OFFSET,
+	operators.OT_SK_NLA_MULTI_OFFSET,
+	operators.OT_SK_NLA_NAME_OFFSET,
 	
 	operators.OT_SK_DRIVER_SET,
 	operators.OT_SK_TARGETS_REMAP,
@@ -138,13 +176,16 @@ classes = [
 	operators.OT_OB_FCURVES_COPY,
 	operators.OT_OB_FCURVES_OFFSET,
 	operators.OT_OB_FCURVES_MULTI_OFFSET,
-	operators.OT_OB_NLA_STRIPS_CREATE,
+	operators.OT_OB_FCURVES_NAME_OFFSET,
 
-	operators.OT_OB_NLA_STRIPS_TO_FCURVES,
+	operators.OT_OB_NLA_CREATE,
+	operators.OT_OB_NLA_TO_FCURVES,
 	operators.OT_OB_NLA_SYNC_LENGTH,
 	operators.OT_OB_NLA_LINK_TO_ACTIVE,
-	operators.OT_OB_NLA_STRIPS_OFFSET,
-	operators.OT_OB_NLA_STRIPS_MULTI_OFFSET,
+	operators.OT_OB_NLA_OFFSET,
+	operators.OT_OB_NLA_MULTI_OFFSET,
+	operators.OT_OB_NLA_NAME_OFFSET,
+	
 	operators.OT_SLOW_PARENT_OFFSET,
 	
 	ShapeKeyPropreties,

@@ -50,7 +50,10 @@ def update_sp(self, context):
 
 
 
-def keyframes_offset(fcus, frame, i):
+def keyframes_offset(fcus, i):
+	sce = bpy.context.scene
+	frame = sce.frame_current
+	
 	for fcu in fcus:
 		fcu_range = fcu.range()[0]
 		for kp in fcu.keyframe_points:
@@ -59,18 +62,40 @@ def keyframes_offset(fcus, frame, i):
 			kp.handle_right[0] = kp.handle_right[0] + frame + i - fcu_range
 
 
-def strips_offset(strip, frame, i):
+def strips_offset(strip, i):
+	sce = bpy.context.scene
+	frame = sce.frame_current
+	
 	strip.frame_end = frame - 1 + i + strip.frame_end
 	strip.frame_start = frame + i
 	strip.scale = 1
 
 
+def data_access(mode, ob, i):
+	if mode[0] == 'FCURVES':
+		if mode[1] == 'SHAPE_KEYS':
+			fcus = ob.data.shape_keys.animation_data.action.fcurves
+		elif mode[1] == 'OBJECT':
+			fcus = ob.animation_data.action.fcurves
+		keyframes_offset(fcus, i)
+	
+	elif mode[0] == 'NLA':
+		if mode[1] == 'SHAPE_KEYS':
+			strip = ob.data.shape_keys.animation_data.nla_tracks[0].strips[0]
+		elif mode[1] == 'OBJECT':
+			strip = ob.animation_data.nla_tracks[0].strips[0]
+		strips_offset(strip, i)
+	
+	elif mode[0] == 'PARENT':
+		ob.use_slow_parent = True
+		ob.slow_parent_offset = i
+
+
 def offset(offset, threshold, mode):
 	sce = bpy.context.scene
 	cursor = sce.cursor_location
-	frame = sce.frame_current
 	obs = bpy.context.selected_objects
-	
+
 	dist = {}
 	for ob in obs:
 		if (mode[0] == 'FCURVES' or mode[0] == 'NLA'):
@@ -87,29 +112,33 @@ def offset(offset, threshold, mode):
 
 	i2 = threshold
 	for ob in dist:
-
-		if mode[0] == 'FCURVES':
-			
-			if mode[1] == 'SHAPE_KEYS':
-				fcus = ob.data.shape_keys.animation_data.action.fcurves
-			elif mode[1] == 'OBJECT':
-				fcus = ob.animation_data.action.fcurves
-			
-			keyframes_offset(fcus, frame, i)
 		
-		elif mode[0] == 'NLA':
-			
-			if mode[1] == 'SHAPE_KEYS':
-				strip = ob.data.shape_keys.animation_data.nla_tracks[0].strips[0]
-			elif mode[1] == 'OBJECT':
-				strip = ob.animation_data.nla_tracks[0].strips[0]
-			
-			strips_offset(strip, frame, i)
+		data_access(mode, ob, i)
+		
+		if i2 > 1:
+			if i2 <= (dist.index(ob) + 1):
+				i2 += threshold
+				i += offset
+		else:
+			i += offset
 
-		elif mode[0] == 'PARENT':
 
-			ob.use_slow_parent = True
-			ob.slow_parent_offset = i
+def name_offset(offset, threshold, mode):
+	obs = bpy.context.selected_objects
+
+	dist = {}
+	for ob in obs:
+		dist[ob] = ob.name
+	if mode[2]:
+		dist = sorted(dist, key=dist.get, reverse=True)
+	else:
+		dist = sorted(dist, key=dist.get)
+
+	i = 0
+	i2 = threshold
+	for ob in dist:
+		
+		data_access(mode, ob, i)
 		
 		if i2 > 1:
 			if i2 <= (dist.index(ob) + 1):
@@ -121,8 +150,6 @@ def offset(offset, threshold, mode):
 
 
 def multi_offset(objects, targets, offset, threshold, mode):
-	frame = bpy.context.scene.frame_current
-
 	obs = {}
 	for ob in objects:
 		targs = {}
@@ -138,24 +165,8 @@ def multi_offset(objects, targets, offset, threshold, mode):
 		i2 = threshold
 		for ob in sorted(obs, key=obs.get):
 			if obs[ob][1] == t:
-
-				if mode[0] == 'FCURVES':
-					
-					if mode[1] == 'SHAPE_KEYS':
-						fcus = ob.data.shape_keys.animation_data.action.fcurves
-					elif mode[1] == 'OBJECT':
-						fcus = ob.animation_data.action.fcurves
-					
-					keyframes_offset(fcus, frame, i)
 				
-				elif mode[0] == 'NLA':
-					
-					if mode[1] == 'SHAPE_KEYS':
-						strip = ob.data.shape_keys.animation_data.nla_tracks[0].strips[0]
-					elif mode[1] == 'OBJECT':
-						strip = ob.animation_data.nla_tracks[0].strips[0]
-					
-					strips_offset(strip, frame, i)
+				data_access(mode, ob, i)
 				
 				if i2 > 1:
 					obs_th.append(ob)

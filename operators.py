@@ -125,7 +125,7 @@ class OT_SK_FCURVES_OFFSET(Operator):
 class OT_SK_FCURVES_MULTI_OFFSET(Operator):
 	"""Animation offset from multiple targets"""
 	bl_idname = "scene.sk_fcurves_multi_offset"
-	bl_label = "Multi Offset Animation"
+	bl_label = "Offset Animation"
 
 	@classmethod
 	def poll(cls, context):
@@ -145,6 +145,21 @@ class OT_SK_FCURVES_MULTI_OFFSET(Operator):
 		return {'FINISHED'}
 
 
+class OT_SK_FCURVES_NAME_OFFSET(Operator):
+	"""Animation offset by Name"""
+	bl_idname = "scene.sk_fcurves_name_offset"
+	bl_label = "Offset Animation"
+
+	def execute(self, context):
+		como = context.scene.como
+		offset = como.sk_fcurves_offset
+		threshold = como.sk_fcurves_threshold
+		reverse = como.sk_fcurves_reverse
+		mode = ['FCURVES', 'SHAPE_KEYS', reverse]
+
+		helpers.name_offset(offset, threshold, mode)
+
+		return {'FINISHED'}
 
 
 
@@ -158,9 +173,11 @@ class OT_SK_FCURVES_MULTI_OFFSET(Operator):
 
 
 
-class OT_SK_NLA_STRIPS_CREATE(Operator):
+
+
+class OT_SK_NLA_CREATE(Operator):
 	"""Create NLA strips from object animation"""
-	bl_idname = "scene.sk_nla_strips_create"
+	bl_idname = "scene.sk_nla_create"
 	bl_label = "Create NLA Strips"
 
 	def execute(self, context):
@@ -171,9 +188,9 @@ class OT_SK_NLA_STRIPS_CREATE(Operator):
 		return {'FINISHED'}
 
 
-class OT_SK_NLA_STRIPS_TO_FCURVES(Operator):
+class OT_SK_NLA_TO_FCURVES(Operator):
 	"""Convert NLA strips to F-Curves"""
-	bl_idname = "scene.sk_nla_strips_to_fcurves"
+	bl_idname = "scene.sk_nla_to_fcurves"
 	bl_label = "Strips to F-Curves"
 
 	def execute(self, context):
@@ -210,9 +227,9 @@ class OT_SK_NLA_LINK_TO_ACTIVE(Operator):
 		return {'FINISHED'}
 
 
-class OT_SK_NLA_STRIPS_OFFSET(Operator):
+class OT_SK_NLA_OFFSET(Operator):
 	"""Automatic offset of NLA strips from cursor"""
-	bl_idname = "scene.sk_nla_strips_offset"
+	bl_idname = "scene.sk_nla_offset"
 	bl_label = "Offset Strips"
 
 	def execute(self, context):
@@ -226,10 +243,10 @@ class OT_SK_NLA_STRIPS_OFFSET(Operator):
 		return {'FINISHED'}
 
 
-class OT_SK_NLA_STRIPS_MULTI_OFFSET(Operator):
+class OT_SK_NLA_MULTI_OFFSET(Operator):
 	"""Automatic multi offset of NLA strips"""
-	bl_idname = "scene.sk_nla_strips_multi_offset"
-	bl_label = "Multi Offset Strips"
+	bl_idname = "scene.sk_nla_multi_offset"
+	bl_label = "Offset Strips"
 
 	@classmethod
 	def poll(cls, context):
@@ -245,6 +262,23 @@ class OT_SK_NLA_STRIPS_MULTI_OFFSET(Operator):
 		mode = ['NLA', 'SHAPE_KEYS']
 
 		helpers.multi_offset(objects, targets, offset, threshold, mode)
+
+		return {'FINISHED'}
+
+
+class OT_SK_NLA_NAME_OFFSET(Operator):
+	"""Animation offset by Name"""
+	bl_idname = "scene.sk_nla_name_offset"
+	bl_label = "Offset Strips"
+
+	def execute(self, context):
+		como = context.scene.como
+		offset = como.sk_nla_offset
+		threshold = como.sk_nla_threshold
+		reverse = como.sk_nla_reverse
+		mode = ['NLA', 'SHAPE_KEYS', reverse]
+
+		helpers.name_offset(offset, threshold, mode)
 
 		return {'FINISHED'}
 
@@ -470,7 +504,7 @@ class OT_OB_FCURVES_OFFSET(Operator):
 class OT_OB_FCURVES_MULTI_OFFSET(Operator):
 	"""Animation offset from multiple targets"""
 	bl_idname = "scene.ob_fcurves_multi_offset"
-	bl_label = "Multi Offset Animation"
+	bl_label = "Offset Animation"
 
 	@classmethod
 	def poll(cls, context):
@@ -490,14 +524,31 @@ class OT_OB_FCURVES_MULTI_OFFSET(Operator):
 		return {'FINISHED'}
 
 
+class OT_OB_FCURVES_NAME_OFFSET(Operator):
+	"""Animation offset by Name"""
+	bl_idname = "scene.ob_fcurves_name_offset"
+	bl_label = "Offset Animation"
+
+	def execute(self, context):
+		como = context.scene.como
+		offset = como.ob_fcurves_offset
+		threshold = como.ob_fcurves_threshold
+		reverse = como.ob_fcurves_reverse
+		mode = ['FCURVES', 'OBJECT', reverse]
+
+		helpers.name_offset(offset, threshold, mode)
+
+		return {'FINISHED'}
 
 
 
 
 
-class OT_OB_NLA_STRIPS_CREATE(Operator):
+
+
+class OT_OB_NLA_CREATE(Operator):
 	"""Create NLA strips from object animation"""
-	bl_idname = "scene.ob_nla_strips_create"
+	bl_idname = "scene.ob_nla_create"
 	bl_label = "Create NLA Strips"
 
 	def execute(self, context):
@@ -508,9 +559,9 @@ class OT_OB_NLA_STRIPS_CREATE(Operator):
 		return {'FINISHED'}
 
 
-class OT_OB_NLA_STRIPS_TO_FCURVES(Operator):
+class OT_OB_NLA_TO_FCURVES(Operator):
 	"""Convert NLA strips to F-Curves"""
-	bl_idname = "scene.ob_nla_strips_to_fcurves"
+	bl_idname = "scene.ob_nla_to_fcurves"
 	bl_label = "Strips to F-Curves"
 
 	def execute(self, context):
@@ -547,9 +598,9 @@ class OT_OB_NLA_LINK_TO_ACTIVE(Operator):
 		return {'FINISHED'}
 
 
-class OT_OB_NLA_STRIPS_OFFSET(Operator):
+class OT_OB_NLA_OFFSET(Operator):
 	"""Automatic offset of NLA strips from cursor"""
-	bl_idname = "scene.ob_nla_strips_offset"
+	bl_idname = "scene.ob_nla_offset"
 	bl_label = "Offset Strips"
 
 	def execute(self, context):
@@ -563,10 +614,10 @@ class OT_OB_NLA_STRIPS_OFFSET(Operator):
 		return {'FINISHED'}
 
 
-class OT_OB_NLA_STRIPS_MULTI_OFFSET(Operator):
+class OT_OB_NLA_MULTI_OFFSET(Operator):
 	"""Automatic multi offset of NLA strips"""
-	bl_idname = "scene.ob_nla_strips_multi_offset"
-	bl_label = "Multi Offset Strips"
+	bl_idname = "scene.ob_nla_multi_offset"
+	bl_label = "Offset Strips"
 
 	@classmethod
 	def poll(cls, context):
@@ -584,6 +635,25 @@ class OT_OB_NLA_STRIPS_MULTI_OFFSET(Operator):
 		helpers.multi_offset(objects, targets, offset, threshold, mode)
 
 		return {'FINISHED'}
+
+
+class OT_OB_NLA_NAME_OFFSET(Operator):
+	"""Animation offset by Name"""
+	bl_idname = "scene.ob_nla_name_offset"
+	bl_label = "Offset Strips"
+
+	def execute(self, context):
+		como = context.scene.como
+		offset = como.ob_nla_offset
+		threshold = como.ob_nla_threshold
+		reverse = como.ob_nla_reverse
+		mode = ['NLA', 'OBJECT', reverse]
+
+		helpers.name_offset(offset, threshold, mode)
+
+		return {'FINISHED'}
+
+
 
 
 

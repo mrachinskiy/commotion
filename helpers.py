@@ -72,21 +72,21 @@ def strips_offset(strip, i):
 
 
 def data_access(mode, ob, i):
-	if mode[0] == 'FCURVES':
-		if mode[1] == 'SHAPE_KEYS':
+	if mode['anim_data'] == 'FCURVES':
+		if mode['scope'] == 'SHAPE_KEYS':
 			fcus = ob.data.shape_keys.animation_data.action.fcurves
-		elif mode[1] == 'OBJECT':
+		elif mode['scope'] == 'OBJECT':
 			fcus = ob.animation_data.action.fcurves
 		keyframes_offset(fcus, i)
 	
-	elif mode[0] == 'NLA':
-		if mode[1] == 'SHAPE_KEYS':
+	elif mode['anim_data'] == 'NLA':
+		if mode['scope'] == 'SHAPE_KEYS':
 			strip = ob.data.shape_keys.animation_data.nla_tracks[0].strips[0]
-		elif mode[1] == 'OBJECT':
+		elif mode['scope'] == 'OBJECT':
 			strip = ob.animation_data.nla_tracks[0].strips[0]
 		strips_offset(strip, i)
 	
-	elif mode[0] == 'PARENT':
+	elif mode['parent']:
 		ob.use_slow_parent = True
 		ob.slow_parent_offset = i
 
@@ -122,7 +122,7 @@ def offset_name(offset, threshold, mode):
 	dist = {}
 	for ob in obs:
 		dist[ob] = ob.name
-	if mode[2]:
+	if mode['reverse']:
 		dist = sorted(dist, key=dist.get, reverse=True)
 	else:
 		dist = sorted(dist, key=dist.get)
@@ -142,7 +142,7 @@ def offset_name(offset, threshold, mode):
 
 
 def offset_parent(offset):
-	mode = ['PARENT']
+	mode = {'parent': True}
 	obs = bpy.context.selected_objects
 
 	dist = {}
@@ -155,7 +155,6 @@ def offset_parent(offset):
 	for ob in dist:
 		data_access(mode, ob, i)
 		i += offset
-			
 
 
 def offset_multitarget(objects, targets, offset, threshold, mode):
@@ -217,13 +216,13 @@ def link_to_active(mode):
 	obj = bpy.context.active_object
 	obs = bpy.context.selected_objects
 
-	if mode[0] == 'NLA':
+	if mode['anim_data'] == 'NLA':
 		for ob in obs:
 			
-			if mode[1] == 'SHAPE_KEYS':
+			if mode['scope'] == 'SHAPE_KEYS':
 				obj_strip = obj.data.shape_keys.animation_data.nla_tracks[0].strips[0]
 				ob_strip = ob.data.shape_keys.animation_data.nla_tracks[0].strips[0]
-			elif mode[1] == 'OBJECT':
+			elif mode['scope'] == 'OBJECT':
 				obj_strip = obj.animation_data.nla_tracks[0].strips[0]
 				ob_strip = ob.animation_data.nla_tracks[0].strips[0]
 			
@@ -235,10 +234,10 @@ def link_to_active(mode):
 			ob_strip.action_frame_start = obj_a_s
 			ob_strip.action_frame_end = obj_a_e
 
-	elif mode[0] == 'FCURVES':
+	elif mode['anim_data'] == 'FCURVES':
 		for ob in obs:
 			
-			if mode[1] == 'SHAPE_KEYS':
+			if mode['scope'] == 'SHAPE_KEYS':
 				action = obj.data.shape_keys.animation_data.action
 				if ob.data.shape_keys.animation_data:
 					ob.data.shape_keys.animation_data.action = action
@@ -246,7 +245,7 @@ def link_to_active(mode):
 					ob.data.shape_keys.animation_data_create()
 					ob.data.shape_keys.animation_data.action = action
 			
-			elif mode[1] == 'OBJECT':
+			elif mode['scope'] == 'OBJECT':
 				action = obj.animation_data.action
 				if ob.animation_data:
 					ob.animation_data.action = action

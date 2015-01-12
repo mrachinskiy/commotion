@@ -152,17 +152,17 @@ classes = [
 	
 	operators.OT_SK_FCURVES_LINK,
 	operators.OT_SK_FCURVES_COPY,
-	operators.OT_SK_FCURVES_OFFSET,
-	operators.OT_SK_FCURVES_MULTI_OFFSET,
-	operators.OT_SK_FCURVES_NAME_OFFSET,
+	operators.OT_SK_FCURVES_OFFSET_CURSOR,
+	operators.OT_SK_FCURVES_OFFSET_MULTITARGET,
+	operators.OT_SK_FCURVES_OFFSET_NAME,
 
 	operators.OT_SK_NLA_CREATE,
 	operators.OT_SK_NLA_TO_FCURVES,
 	operators.OT_SK_NLA_SYNC_LENGTH,
 	operators.OT_SK_NLA_LINK_TO_ACTIVE,
-	operators.OT_SK_NLA_OFFSET,
-	operators.OT_SK_NLA_MULTI_OFFSET,
-	operators.OT_SK_NLA_NAME_OFFSET,
+	operators.OT_SK_NLA_OFFSET_CURSOR,
+	operators.OT_SK_NLA_OFFSET_MULTITARGET,
+	operators.OT_SK_NLA_OFFSET_NAME,
 	
 	operators.OT_SK_DRIVER_SET,
 	operators.OT_SK_TARGETS_REMAP,
@@ -174,17 +174,17 @@ classes = [
 
 	operators.OT_OB_FCURVES_LINK,
 	operators.OT_OB_FCURVES_COPY,
-	operators.OT_OB_FCURVES_OFFSET,
-	operators.OT_OB_FCURVES_MULTI_OFFSET,
-	operators.OT_OB_FCURVES_NAME_OFFSET,
+	operators.OT_OB_FCURVES_OFFSET_CURSOR,
+	operators.OT_OB_FCURVES_OFFSET_MULTITARGET,
+	operators.OT_OB_FCURVES_OFFSET_NAME,
 
 	operators.OT_OB_NLA_CREATE,
 	operators.OT_OB_NLA_TO_FCURVES,
 	operators.OT_OB_NLA_SYNC_LENGTH,
 	operators.OT_OB_NLA_LINK_TO_ACTIVE,
-	operators.OT_OB_NLA_OFFSET,
-	operators.OT_OB_NLA_MULTI_OFFSET,
-	operators.OT_OB_NLA_NAME_OFFSET,
+	operators.OT_OB_NLA_OFFSET_CURSOR,
+	operators.OT_OB_NLA_OFFSET_MULTITARGET,
+	operators.OT_OB_NLA_OFFSET_NAME,
 	
 	operators.OT_SLOW_PARENT_OFFSET,
 	

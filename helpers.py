@@ -91,25 +91,18 @@ def data_access(mode, ob, i):
 		ob.slow_parent_offset = i
 
 
-def offset(offset, threshold, mode):
+def offset_cursor(offset, threshold, mode):
 	sce = bpy.context.scene
 	cursor = sce.cursor_location
 	obs = bpy.context.selected_objects
 
 	dist = {}
 	for ob in obs:
-		if (mode[0] == 'FCURVES' or mode[0] == 'NLA'):
-			distance = (cursor - (ob.location + ob.delta_location)).length
-		elif mode[0] == 'PARENT':
-			distance = (ob.parent.location - (ob.location + ob.delta_location + ob.parent.location)).length
+		distance = (cursor - (ob.location + ob.delta_location)).length
 		dist[ob] = distance
 	dist = sorted(dist, key=dist.get)
 
-	if mode[0] == 'PARENT':
-		i = 0 + offset
-	else:
-		i = 0
-
+	i = 0
 	i2 = threshold
 	for ob in dist:
 		
@@ -123,7 +116,7 @@ def offset(offset, threshold, mode):
 			i += offset
 
 
-def name_offset(offset, threshold, mode):
+def offset_name(offset, threshold, mode):
 	obs = bpy.context.selected_objects
 
 	dist = {}
@@ -146,10 +139,26 @@ def name_offset(offset, threshold, mode):
 				i += offset
 		else:
 			i += offset
+
+
+def offset_parent(offset):
+	mode = ['PARENT']
+	obs = bpy.context.selected_objects
+
+	dist = {}
+	for ob in obs:
+		distance = (ob.parent.location - (ob.location + ob.delta_location + ob.parent.location)).length
+		dist[ob] = distance
+	dist = sorted(dist, key=dist.get)
+
+	i = 0 + offset
+	for ob in dist:
+		data_access(mode, ob, i)
+		i += offset
 			
 
 
-def multi_offset(objects, targets, offset, threshold, mode):
+def offset_multitarget(objects, targets, offset, threshold, mode):
 	obs = {}
 	for ob in objects:
 		targs = {}
@@ -175,6 +184,7 @@ def multi_offset(objects, targets, offset, threshold, mode):
 						i2 += threshold
 				else:
 					i += offset
+
 
 
 

@@ -117,7 +117,7 @@ class OT_SK_FCURVES_OFFSET(Operator):
 		threshold = como.sk_fcurves_threshold
 		mode = ['FCURVES', 'SHAPE_KEYS']
 
-		helpers.offset(offset, threshold, mode)
+		helpers.offset_cursor(offset, threshold, mode)
 
 		return {'FINISHED'}
 
@@ -140,7 +140,7 @@ class OT_SK_FCURVES_MULTI_OFFSET(Operator):
 		threshold = como.sk_fcurves_threshold
 		mode = ['FCURVES', 'SHAPE_KEYS']
 
-		helpers.multi_offset(objects, targets, offset, threshold, mode)
+		helpers.offset_multitarget(objects, targets, offset, threshold, mode)
 
 		return {'FINISHED'}
 
@@ -157,7 +157,7 @@ class OT_SK_FCURVES_NAME_OFFSET(Operator):
 		reverse = como.sk_fcurves_reverse
 		mode = ['FCURVES', 'SHAPE_KEYS', reverse]
 
-		helpers.name_offset(offset, threshold, mode)
+		helpers.offset_name(offset, threshold, mode)
 
 		return {'FINISHED'}
 
@@ -238,7 +238,7 @@ class OT_SK_NLA_OFFSET(Operator):
 		threshold = como.sk_nla_threshold
 		mode = ['NLA', 'SHAPE_KEYS']
 
-		helpers.offset(offset, threshold, mode)
+		helpers.offset_cursor(offset, threshold, mode)
 
 		return {'FINISHED'}
 
@@ -261,7 +261,7 @@ class OT_SK_NLA_MULTI_OFFSET(Operator):
 		threshold = como.sk_nla_threshold
 		mode = ['NLA', 'SHAPE_KEYS']
 
-		helpers.multi_offset(objects, targets, offset, threshold, mode)
+		helpers.offset_multitarget(objects, targets, offset, threshold, mode)
 
 		return {'FINISHED'}
 
@@ -278,7 +278,7 @@ class OT_SK_NLA_NAME_OFFSET(Operator):
 		reverse = como.sk_nla_reverse
 		mode = ['NLA', 'SHAPE_KEYS', reverse]
 
-		helpers.name_offset(offset, threshold, mode)
+		helpers.offset_name(offset, threshold, mode)
 
 		return {'FINISHED'}
 
@@ -496,7 +496,7 @@ class OT_OB_FCURVES_OFFSET(Operator):
 		threshold = como.ob_fcurves_threshold
 		mode = ['FCURVES', 'OBJECT']
 
-		helpers.offset(offset, threshold, mode)
+		helpers.offset_cursor(offset, threshold, mode)
 
 		return {'FINISHED'}
 
@@ -519,7 +519,7 @@ class OT_OB_FCURVES_MULTI_OFFSET(Operator):
 		threshold = como.ob_fcurves_threshold
 		mode = ['FCURVES', 'OBJECT']
 
-		helpers.multi_offset(objects, targets, offset, threshold, mode)
+		helpers.offset_multitarget(objects, targets, offset, threshold, mode)
 
 		return {'FINISHED'}
 
@@ -536,7 +536,7 @@ class OT_OB_FCURVES_NAME_OFFSET(Operator):
 		reverse = como.ob_fcurves_reverse
 		mode = ['FCURVES', 'OBJECT', reverse]
 
-		helpers.name_offset(offset, threshold, mode)
+		helpers.offset_name(offset, threshold, mode)
 
 		return {'FINISHED'}
 
@@ -609,7 +609,7 @@ class OT_OB_NLA_OFFSET(Operator):
 		threshold =  como.ob_nla_threshold
 		mode = ['NLA', 'OBJECT']
 
-		helpers.offset(offset, threshold, mode)
+		helpers.offset_cursor(offset, threshold, mode)
 
 		return {'FINISHED'}
 
@@ -632,7 +632,7 @@ class OT_OB_NLA_MULTI_OFFSET(Operator):
 		threshold = como.ob_nla_threshold
 		mode = ['NLA', 'OBJECT']
 
-		helpers.multi_offset(objects, targets, offset, threshold, mode)
+		helpers.offset_multitarget(objects, targets, offset, threshold, mode)
 
 		return {'FINISHED'}
 
@@ -649,7 +649,7 @@ class OT_OB_NLA_NAME_OFFSET(Operator):
 		reverse = como.ob_nla_reverse
 		mode = ['NLA', 'OBJECT', reverse]
 
-		helpers.name_offset(offset, threshold, mode)
+		helpers.offset_name(offset, threshold, mode)
 
 		return {'FINISHED'}
 
@@ -667,9 +667,7 @@ class OT_SLOW_PARENT_OFFSET(Operator):
 
 	def execute(self, context):
 		offset = context.scene.como.slow_parent_offset
-		threshold = 1
-		mode = ['PARENT']
 
-		helpers.offset(offset, threshold, mode)
+		helpers.offset_parent(offset)
 
 		return {'FINISHED'}

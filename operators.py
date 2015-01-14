@@ -70,6 +70,18 @@ class OT_AUTO_KEYFRAMES(Operator):
 		return {'FINISHED'}
 
 
+class OT_SK_COPY(Operator):
+	"""Copy shape keys to selected objects"""
+	bl_idname = "scene.sk_copy"
+	bl_label = "Copy to Selected"
+
+	def execute(self, context):
+
+		helpers.sk_copy_to_selected()
+
+		return {'FINISHED'}
+
+
 
 
 

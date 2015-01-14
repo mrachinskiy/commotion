@@ -70,6 +70,8 @@ def update_sp(self, context):
 
 
 
+
+
 def keyframes_offset(fcus, i):
 	sce = bpy.context.scene
 	frame = sce.frame_current
@@ -179,6 +181,7 @@ def offset_parent(offset):
 
 
 def offset_multitarget(objects, targets, offset, threshold, mode):
+
 	obs = {}
 	for ob in objects:
 		targs = {}
@@ -212,31 +215,51 @@ def offset_multitarget(objects, targets, offset, threshold, mode):
 
 
 
+def create_nla_tracks(anim):
+	frst_frame = anim.action.frame_range[0]
+	
+	if not anim.nla_tracks:
+		anim.nla_tracks.new()
+	
+	anim.nla_tracks[0].strips.new('name', frst_frame, anim.action)
+	anim.action = None
 
 
 def create_strips(mode):
 	obs = bpy.context.selected_objects
 
-	for ob in obs:
-		
-		if 'SHAPE_KEYS' in mode:
+	if 'SHAPE_KEYS' in mode:
+		for ob in obs:
 			if ob.data.shape_keys:
 				anim = ob.data.shape_keys.animation_data
 			else:
 				return showErrorMessage('Selected objects have no Shape Keys')
-		elif 'OBJECT' in mode:
+			create_nla_tracks(anim)
+
+	elif 'OBJECT' in mode:
+		for ob in obs:
 			if ob.animation_data:
 				anim = ob.animation_data
 			else:
 				return showErrorMessage('Selected objects have no Animation')
+			create_nla_tracks(anim)
 
-		frst_frame = anim.action.frame_range[0]
-		
-		if not anim.nla_tracks:
-			anim.nla_tracks.new()
-		
-		anim.nla_tracks[0].strips.new('name', frst_frame, anim.action)
-		anim.action = None
+
+
+
+
+
+
+
+
+def link_strips(obj_strip, ob_strip):
+	obj_a_s = obj_strip.action_frame_start
+	obj_a_e = obj_strip.action_frame_end
+	
+	ob_strip.action = obj_strip.action
+	
+	ob_strip.action_frame_start = obj_a_s
+	ob_strip.action_frame_end = obj_a_e
 
 
 def link_to_active(mode):
@@ -244,36 +267,29 @@ def link_to_active(mode):
 	obs = bpy.context.selected_objects
 
 	if 'NLA' in mode:
-		for ob in obs:
-			
-			if 'SHAPE_KEYS' in mode:
-				obj_strip = obj.data.shape_keys.animation_data.nla_tracks[0].strips[0]
+		if 'SHAPE_KEYS' in mode:
+			obj_strip = obj.data.shape_keys.animation_data.nla_tracks[0].strips[0]
+			for ob in obs:
 				ob_strip = ob.data.shape_keys.animation_data.nla_tracks[0].strips[0]
-			elif 'OBJECT' in mode:
-				obj_strip = obj.animation_data.nla_tracks[0].strips[0]
+				link_strips(obj_strip, ob_strip)
+		elif 'OBJECT' in mode:
+			obj_strip = obj.animation_data.nla_tracks[0].strips[0]
+			for ob in obs:
 				ob_strip = ob.animation_data.nla_tracks[0].strips[0]
-			
-			obj_a_s = obj_strip.action_frame_start
-			obj_a_e = obj_strip.action_frame_end
-			
-			ob_strip.action = obj_strip.action
-			
-			ob_strip.action_frame_start = obj_a_s
-			ob_strip.action_frame_end = obj_a_e
+				link_strips(obj_strip, ob_strip)
 
 	elif 'FCURVES' in mode:
-		for ob in obs:
-			
-			if 'SHAPE_KEYS' in mode:
-				action = obj.data.shape_keys.animation_data.action
+		if 'SHAPE_KEYS' in mode:
+			action = obj.data.shape_keys.animation_data.action
+			for ob in obs:
 				if ob.data.shape_keys.animation_data:
 					ob.data.shape_keys.animation_data.action = action
 				else:
 					ob.data.shape_keys.animation_data_create()
 					ob.data.shape_keys.animation_data.action = action
-			
-			elif 'OBJECT' in mode:
-				action = obj.animation_data.action
+		elif 'OBJECT' in mode:
+			action = obj.animation_data.action
+			for ob in obs:
 				if ob.animation_data:
 					ob.animation_data.action = action
 				else:
@@ -281,15 +297,22 @@ def link_to_active(mode):
 					ob.animation_data.action = action
 
 
+
+
+
+
+
+
+
+
 def copy_to_selected(mode):
 	obj = bpy.context.active_object
 	obs = bpy.context.selected_objects
 
-	for ob in obs:
-		
-		if 'SHAPE_KEYS' in mode:
+	if 'SHAPE_KEYS' in mode:
+		action = obj.data.shape_keys.animation_data.action
+		for ob in obs:
 			if ob.data.shape_keys:
-				action = obj.data.shape_keys.animation_data.action
 				if ob.data.shape_keys.animation_data:
 					ob.data.shape_keys.animation_data.action = action.copy()
 				else:
@@ -297,9 +320,10 @@ def copy_to_selected(mode):
 					ob.data.shape_keys.animation_data.action = action.copy()
 			else:
 				return showErrorMessage('Selected objects have no Shape Keys')
-		
-		elif 'OBJECT' in mode:
-			action = obj.animation_data.action
+	
+	elif 'OBJECT' in mode:
+		action = obj.animation_data.action
+		for ob in obs:
 			if ob.animation_data:
 				ob.animation_data.action = action.copy()
 			else:
@@ -307,30 +331,48 @@ def copy_to_selected(mode):
 				ob.animation_data.action = action.copy()
 
 
+
+
+
+
+
+
+def remove_nla_track(anim):
+	trks = anim.nla_tracks
+	anim.action = trks[0].strips[0].action
+	trks.remove(trks[0])
+
+
 def strips_to_fcurves(mode):
 	obs = bpy.context.selected_objects
 
-	for ob in obs:
-		if 'SHAPE_KEYS' in mode:
+	if 'SHAPE_KEYS' in mode:
+		for ob in obs:
 			anim = ob.data.shape_keys.animation_data
-		elif 'OBJECT' in mode:
+			remove_nla_track(anim)
+	elif 'OBJECT' in mode:
+		for ob in obs:
 			anim = ob.animation_data
-		
-		trks = anim.nla_tracks
-		anim.action = trks[0].strips[0].action
-		trks.remove(trks[0])
+			remove_nla_track(anim)
+
+
+
+
+
+
 
 
 def sync_len(mode):
 	obs = bpy.context.selected_objects
 	
-	for ob in obs:
-		if 'SHAPE_KEYS' in mode:
+	if 'SHAPE_KEYS' in mode:
+		for ob in obs:
 			strip = ob.data.shape_keys.animation_data.nla_tracks[0].strips[0]
-		elif 'OBJECT' in mode:
+			strip.action_frame_end = (strip.action_frame_start + strip.action.frame_range[1] - 1)
+	elif 'OBJECT' in mode:
+		for ob in obs:
 			strip = ob.animation_data.nla_tracks[0].strips[0]
-		
-		strip.action_frame_end = (strip.action_frame_start + strip.action.frame_range[1] - 1)
+			strip.action_frame_end = (strip.action_frame_start + strip.action.frame_range[1] - 1)
 
 
 

@@ -86,10 +86,7 @@ class OT_SK_FCURVES_LINK(Operator):
 	bl_label = "Link Animation"
 
 	def execute(self, context):
-		mode = {
-			'scope': 'SHAPE_KEYS',
-			'anim_data': 'FCURVES',
-		}
+		mode = ['SHAPE_KEYS', 'FCURVES']
 
 		helpers.link_to_active(mode)
 
@@ -102,7 +99,7 @@ class OT_SK_FCURVES_COPY(Operator):
 	bl_label = "Copy Animation"
 
 	def execute(self, context):
-		mode = 'SHAPE_KEYS'
+		mode = ['SHAPE_KEYS']
 		
 		helpers.copy_to_selected(mode)
 
@@ -111,17 +108,14 @@ class OT_SK_FCURVES_COPY(Operator):
 
 class OT_SK_FCURVES_OFFSET_CURSOR(Operator):
 	"""Animation offset from Cursor"""
-	bl_idname = "scene.sk_fcurves_offset"
+	bl_idname = "scene.sk_fcurves_offset_cursor"
 	bl_label = "Offset Animation"
 
 	def execute(self, context):
 		como = context.scene.como
 		offset = como.sk_fcurves_offset
 		threshold = como.sk_fcurves_threshold
-		mode = {
-			'scope': 'SHAPE_KEYS',
-			'anim_data': 'FCURVES',
-		}
+		mode = ['SHAPE_KEYS', 'FCURVES']
 
 		helpers.offset_cursor(offset, threshold, mode)
 
@@ -130,7 +124,7 @@ class OT_SK_FCURVES_OFFSET_CURSOR(Operator):
 
 class OT_SK_FCURVES_OFFSET_MULTITARGET(Operator):
 	"""Animation offset from multiple targets"""
-	bl_idname = "scene.sk_fcurves_multi_offset"
+	bl_idname = "scene.sk_fcurves_offset_multitarget"
 	bl_label = "Offset Animation"
 
 	@classmethod
@@ -144,10 +138,7 @@ class OT_SK_FCURVES_OFFSET_MULTITARGET(Operator):
 		targets = bpy.data.groups[como.sk_fcurves_group_targets].objects
 		offset = como.sk_fcurves_offset
 		threshold = como.sk_fcurves_threshold
-		mode = {
-			'scope': 'SHAPE_KEYS',
-			'anim_data': 'FCURVES',
-		}
+		mode = ['SHAPE_KEYS', 'FCURVES']
 
 		helpers.offset_multitarget(objects, targets, offset, threshold, mode)
 
@@ -156,7 +147,7 @@ class OT_SK_FCURVES_OFFSET_MULTITARGET(Operator):
 
 class OT_SK_FCURVES_OFFSET_NAME(Operator):
 	"""Animation offset by Name"""
-	bl_idname = "scene.sk_fcurves_name_offset"
+	bl_idname = "scene.sk_fcurves_offset_name"
 	bl_label = "Offset Animation"
 
 	def execute(self, context):
@@ -164,11 +155,9 @@ class OT_SK_FCURVES_OFFSET_NAME(Operator):
 		offset = como.sk_fcurves_offset
 		threshold = como.sk_fcurves_threshold
 		reverse = como.sk_fcurves_reverse
-		mode = {
-			'scope': 'SHAPE_KEYS',
-			'anim_data': 'FCURVES',
-			'reverse': reverse,
-		}
+		mode = ['SHAPE_KEYS', 'FCURVES']
+		if reverse:
+			mode += ['REVERSE']
 
 		helpers.offset_name(offset, threshold, mode)
 
@@ -194,7 +183,7 @@ class OT_SK_NLA_CREATE(Operator):
 	bl_label = "Create NLA Strips"
 
 	def execute(self, context):
-		mode = 'SHAPE_KEYS'
+		mode = ['SHAPE_KEYS']
 
 		helpers.create_strips(mode)
 
@@ -207,7 +196,7 @@ class OT_SK_NLA_TO_FCURVES(Operator):
 	bl_label = "Strips to F-Curves"
 
 	def execute(self, context):
-		mode = 'SHAPE_KEYS'
+		mode = ['SHAPE_KEYS']
 
 		helpers.strips_to_fcurves(mode)
 
@@ -220,7 +209,7 @@ class OT_SK_NLA_SYNC_LENGTH(Operator):
 	bl_label = "Sync Length"
 
 	def execute(self, context):
-		mode = 'SHAPE_KEYS'
+		mode = ['SHAPE_KEYS']
 
 		helpers.sync_len(mode)
 
@@ -233,10 +222,7 @@ class OT_SK_NLA_LINK_TO_ACTIVE(Operator):
 	bl_label = "Link Strips"
 
 	def execute(self, context):
-		mode = {
-			'scope': 'SHAPE_KEYS',
-			'anim_data': 'NLA',
-		}
+		mode = ['SHAPE_KEYS', 'NLA']
 
 		helpers.link_to_active(mode)
 
@@ -245,17 +231,14 @@ class OT_SK_NLA_LINK_TO_ACTIVE(Operator):
 
 class OT_SK_NLA_OFFSET_CURSOR(Operator):
 	"""Automatic offset of NLA strips from cursor"""
-	bl_idname = "scene.sk_nla_offset"
+	bl_idname = "scene.sk_nla_offset_cursor"
 	bl_label = "Offset Strips"
 
 	def execute(self, context):
 		como = context.scene.como
 		offset = como.sk_nla_offset
 		threshold = como.sk_nla_threshold
-		mode = {
-			'scope': 'SHAPE_KEYS',
-			'anim_data': 'NLA',
-		}
+		mode = ['SHAPE_KEYS', 'NLA']
 
 		helpers.offset_cursor(offset, threshold, mode)
 
@@ -264,7 +247,7 @@ class OT_SK_NLA_OFFSET_CURSOR(Operator):
 
 class OT_SK_NLA_OFFSET_MULTITARGET(Operator):
 	"""Automatic multi offset of NLA strips"""
-	bl_idname = "scene.sk_nla_multi_offset"
+	bl_idname = "scene.sk_nla_offset_multitarget"
 	bl_label = "Offset Strips"
 
 	@classmethod
@@ -278,10 +261,7 @@ class OT_SK_NLA_OFFSET_MULTITARGET(Operator):
 		targets = bpy.data.groups[como.sk_nla_group_targets].objects
 		offset = como.sk_nla_offset
 		threshold = como.sk_nla_threshold
-		mode = {
-			'scope': 'SHAPE_KEYS',
-			'anim_data': 'NLA',
-		}
+		mode = ['SHAPE_KEYS', 'NLA']
 
 		helpers.offset_multitarget(objects, targets, offset, threshold, mode)
 
@@ -290,7 +270,7 @@ class OT_SK_NLA_OFFSET_MULTITARGET(Operator):
 
 class OT_SK_NLA_OFFSET_NAME(Operator):
 	"""Animation offset by Name"""
-	bl_idname = "scene.sk_nla_name_offset"
+	bl_idname = "scene.sk_nla_offset_name"
 	bl_label = "Offset Strips"
 
 	def execute(self, context):
@@ -298,11 +278,9 @@ class OT_SK_NLA_OFFSET_NAME(Operator):
 		offset = como.sk_nla_offset
 		threshold = como.sk_nla_threshold
 		reverse = como.sk_nla_reverse
-		mode = {
-			'scope': 'SHAPE_KEYS',
-			'anim_data': 'NLA',
-			'reverse': reverse,
-		}
+		mode = ['SHAPE_KEYS', 'NLA']
+		if reverse:
+			mode += ['REVERSE']
 
 		helpers.offset_name(offset, threshold, mode)
 
@@ -491,10 +469,7 @@ class OT_OB_FCURVES_LINK(Operator):
 	bl_label = "Link Animation"
 
 	def execute(self, context):
-		mode = {
-			'scope': 'OBJECT',
-			'anim_data': 'FCURVES',
-		}
+		mode = ['OBJECT', 'FCURVES']
 
 		helpers.link_to_active(mode)
 
@@ -507,7 +482,7 @@ class OT_OB_FCURVES_COPY(Operator):
 	bl_label = "Copy Animation"
 
 	def execute(self, context):
-		mode = 'OBJECT'
+		mode = ['OBJECT']
 		
 		helpers.copy_to_selected(mode)
 			
@@ -516,17 +491,14 @@ class OT_OB_FCURVES_COPY(Operator):
 
 class OT_OB_FCURVES_OFFSET_CURSOR(Operator):
 	"""Animation offset from Cursor"""
-	bl_idname = "scene.ob_fcurves_offset"
+	bl_idname = "scene.ob_fcurves_offset_cursor"
 	bl_label = "Offset Animation"
 
 	def execute(self, context):
 		como = context.scene.como
 		offset = como.ob_fcurves_offset
 		threshold = como.ob_fcurves_threshold
-		mode = {
-			'scope': 'OBJECT',
-			'anim_data': 'FCURVES',
-		}
+		mode = ['OBJECT', 'FCURVES']
 
 		helpers.offset_cursor(offset, threshold, mode)
 
@@ -535,7 +507,7 @@ class OT_OB_FCURVES_OFFSET_CURSOR(Operator):
 
 class OT_OB_FCURVES_OFFSET_MULTITARGET(Operator):
 	"""Animation offset from multiple targets"""
-	bl_idname = "scene.ob_fcurves_multi_offset"
+	bl_idname = "scene.ob_fcurves_offset_multitarget"
 	bl_label = "Offset Animation"
 
 	@classmethod
@@ -549,10 +521,7 @@ class OT_OB_FCURVES_OFFSET_MULTITARGET(Operator):
 		targets = bpy.data.groups[como.ob_fcurves_group_targets].objects
 		offset = como.ob_fcurves_offset
 		threshold = como.ob_fcurves_threshold
-		mode = {
-			'scope': 'OBJECT',
-			'anim_data': 'FCURVES',
-		}
+		mode = ['OBJECT', 'FCURVES']
 
 		helpers.offset_multitarget(objects, targets, offset, threshold, mode)
 
@@ -561,7 +530,7 @@ class OT_OB_FCURVES_OFFSET_MULTITARGET(Operator):
 
 class OT_OB_FCURVES_OFFSET_NAME(Operator):
 	"""Animation offset by Name"""
-	bl_idname = "scene.ob_fcurves_name_offset"
+	bl_idname = "scene.ob_fcurves_offset_name"
 	bl_label = "Offset Animation"
 
 	def execute(self, context):
@@ -569,11 +538,9 @@ class OT_OB_FCURVES_OFFSET_NAME(Operator):
 		offset = como.ob_fcurves_offset
 		threshold = como.ob_fcurves_threshold
 		reverse = como.ob_fcurves_reverse
-		mode = {
-			'scope': 'OBJECT',
-			'anim_data': 'FCURVES',
-			'reverse': reverse,
-		}
+		mode = ['OBJECT', 'FCURVES']
+		if reverse:
+			mode += ['REVERSE']
 
 		helpers.offset_name(offset, threshold, mode)
 
@@ -591,7 +558,7 @@ class OT_OB_NLA_CREATE(Operator):
 	bl_label = "Create NLA Strips"
 
 	def execute(self, context):
-		mode = 'OBJECT'
+		mode = ['OBJECT']
 
 		helpers.create_strips(mode)
 
@@ -604,7 +571,7 @@ class OT_OB_NLA_TO_FCURVES(Operator):
 	bl_label = "Strips to F-Curves"
 
 	def execute(self, context):
-		mode = 'OBJECT'
+		mode = ['OBJECT']
 
 		helpers.strips_to_fcurves(mode)
 
@@ -617,7 +584,7 @@ class OT_OB_NLA_SYNC_LENGTH(Operator):
 	bl_label = "Sync Length"
 
 	def execute(self, context):
-		mode = 'OBJECT'
+		mode = ['OBJECT']
 
 		helpers.sync_len(mode)
 
@@ -630,10 +597,7 @@ class OT_OB_NLA_LINK_TO_ACTIVE(Operator):
 	bl_label = "Link Strips"
 
 	def execute(self, context):
-		mode = {
-			'scope': 'OBJECT',
-			'anim_data': 'NLA',
-		}
+		mode = ['OBJECT', 'NLA']
 
 		helpers.link_to_active(mode)
 
@@ -642,17 +606,14 @@ class OT_OB_NLA_LINK_TO_ACTIVE(Operator):
 
 class OT_OB_NLA_OFFSET_CURSOR(Operator):
 	"""Automatic offset of NLA strips from cursor"""
-	bl_idname = "scene.ob_nla_offset"
+	bl_idname = "scene.ob_nla_offset_cursor"
 	bl_label = "Offset Strips"
 
 	def execute(self, context):
 		como = context.scene.como
 		offset =  como.ob_nla_offset
 		threshold =  como.ob_nla_threshold
-		mode = {
-			'scope': 'OBJECT',
-			'anim_data': 'NLA',
-		}
+		mode = ['OBJECT', 'NLA']
 
 		helpers.offset_cursor(offset, threshold, mode)
 
@@ -661,7 +622,7 @@ class OT_OB_NLA_OFFSET_CURSOR(Operator):
 
 class OT_OB_NLA_OFFSET_MULTITARGET(Operator):
 	"""Automatic multi offset of NLA strips"""
-	bl_idname = "scene.ob_nla_multi_offset"
+	bl_idname = "scene.ob_nla_offset_multitarget"
 	bl_label = "Offset Strips"
 
 	@classmethod
@@ -675,10 +636,7 @@ class OT_OB_NLA_OFFSET_MULTITARGET(Operator):
 		targets = bpy.data.groups[como.ob_nla_group_targets].objects
 		offset = como.ob_nla_offset
 		threshold = como.ob_nla_threshold
-		mode = {
-			'scope': 'OBJECT',
-			'anim_data': 'NLA',
-		}
+		mode = ['OBJECT', 'NLA']
 
 		helpers.offset_multitarget(objects, targets, offset, threshold, mode)
 
@@ -687,7 +645,7 @@ class OT_OB_NLA_OFFSET_MULTITARGET(Operator):
 
 class OT_OB_NLA_OFFSET_NAME(Operator):
 	"""Animation offset by Name"""
-	bl_idname = "scene.ob_nla_name_offset"
+	bl_idname = "scene.ob_nla_offset_name"
 	bl_label = "Offset Strips"
 
 	def execute(self, context):
@@ -695,11 +653,9 @@ class OT_OB_NLA_OFFSET_NAME(Operator):
 		offset = como.ob_nla_offset
 		threshold = como.ob_nla_threshold
 		reverse = como.ob_nla_reverse
-		mode = {
-			'scope': 'OBJECT',
-			'anim_data': 'NLA',
-			'reverse': reverse,
-		}
+		mode = ['OBJECT', 'NLA']
+		if reverse:
+			mode += ['REVERSE']
 
 		helpers.offset_name(offset, threshold, mode)
 

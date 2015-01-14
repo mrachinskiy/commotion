@@ -123,14 +123,14 @@ class ShapeKeyTools(Panel):
 				col.prop(como, "sk_fcurves_sort_options", expand=True)
 				col = box.column()
 				if como.sk_fcurves_sort_options == 'CURSOR':
-					col.operator("scene.sk_fcurves_offset", icon="FORCE_HARMONIC")
+					col.operator("scene.sk_fcurves_offset_cursor", icon="FORCE_HARMONIC")
 				elif como.sk_fcurves_sort_options == 'MULTITARGET':
 					col.prop_search(como, "sk_fcurves_group_objects", bpy.data, "groups")
 					col.prop_search(como, "sk_fcurves_group_targets", bpy.data, "groups")
-					col.operator("scene.sk_fcurves_multi_offset", icon="FORCE_HARMONIC")
+					col.operator("scene.sk_fcurves_offset_multitarget", icon="FORCE_HARMONIC")
 				elif como.sk_fcurves_sort_options == 'NAME':
 					col.prop(como, "sk_fcurves_reverse")
-					col.operator("scene.sk_fcurves_name_offset", icon="FORCE_HARMONIC")
+					col.operator("scene.sk_fcurves_offset_name", icon="FORCE_HARMONIC")
 			else:
 				col.label("No animation on Shape Keys")
 			
@@ -164,14 +164,14 @@ class ShapeKeyTools(Panel):
 					col.prop(como, "sk_nla_sort_options", expand=True)
 					col = box.column()
 					if como.sk_nla_sort_options == 'CURSOR':
-						col.operator("scene.sk_nla_offset", icon="FORCE_HARMONIC")
+						col.operator("scene.sk_nla_offset_cursor", icon="FORCE_HARMONIC")
 					elif como.sk_nla_sort_options == 'MULTITARGET':
 						col.prop_search(como, "sk_nla_group_objects", bpy.data, "groups")
 						col.prop_search(como, "sk_nla_group_targets", bpy.data, "groups")
-						col.operator("scene.sk_nla_multi_offset", icon="FORCE_HARMONIC")
+						col.operator("scene.sk_nla_offset_multitarget", icon="FORCE_HARMONIC")
 					elif como.sk_nla_sort_options == 'NAME':
 						col.prop(como, "sk_nla_reverse")
-						col.operator("scene.sk_nla_name_offset", icon="FORCE_HARMONIC")
+						col.operator("scene.sk_nla_offset_name", icon="FORCE_HARMONIC")
 			else:
 				col.label("No animation on Shape Keys")
 				
@@ -257,14 +257,14 @@ class ObjectTools(Panel):
 				col.prop(como, "ob_fcurves_sort_options", expand=True)
 				col = box.column()
 				if como.ob_fcurves_sort_options == 'CURSOR':
-					col.operator("scene.ob_fcurves_offset", icon="FORCE_HARMONIC")
+					col.operator("scene.ob_fcurves_offset_cursor", icon="FORCE_HARMONIC")
 				elif como.ob_fcurves_sort_options == 'MULTITARGET':
 					col.prop_search(como, "ob_fcurves_group_objects", bpy.data, "groups")
 					col.prop_search(como, "ob_fcurves_group_targets", bpy.data, "groups")
-					col.operator("scene.ob_fcurves_multi_offset", icon="FORCE_HARMONIC")
+					col.operator("scene.ob_fcurves_offset_multitarget", icon="FORCE_HARMONIC")
 				elif como.ob_fcurves_sort_options == 'NAME':
 					col.prop(como, "ob_fcurves_reverse")
-					col.operator("scene.ob_fcurves_name_offset", icon="FORCE_HARMONIC")
+					col.operator("scene.ob_fcurves_offset_name", icon="FORCE_HARMONIC")
 			else:
 				col.label("No Animation on object")
 			
@@ -298,14 +298,14 @@ class ObjectTools(Panel):
 					col.prop(como, "ob_nla_sort_options", expand=True)
 					col = box.column()
 					if como.ob_nla_sort_options == 'CURSOR':
-						col.operator("scene.ob_nla_offset", icon="FORCE_HARMONIC")
+						col.operator("scene.ob_nla_offset_cursor", icon="FORCE_HARMONIC")
 					elif como.ob_nla_sort_options == 'MULTITARGET':
 						col.prop_search(como, "ob_nla_group_objects", bpy.data, "groups")
 						col.prop_search(como, "ob_nla_group_targets", bpy.data, "groups")
-						col.operator("scene.ob_nla_multi_offset", icon="FORCE_HARMONIC")
+						col.operator("scene.ob_nla_offset_multitarget", icon="FORCE_HARMONIC")
 					elif como.ob_nla_sort_options == 'NAME':
 						col.prop(como, "ob_nla_reverse")
-						col.operator("scene.ob_nla_name_offset", icon="FORCE_HARMONIC")
+						col.operator("scene.ob_nla_offset_name", icon="FORCE_HARMONIC")
 			else:
 				col.label("No animation on object")
 			

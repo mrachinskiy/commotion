@@ -25,6 +25,26 @@
 import bpy
 
 
+def showErrorMessage(message, wrap=80):
+	lines = []
+	if wrap > 0:
+		while len(message) > wrap:
+			i = message.rfind(' ',0,wrap)
+			if i == -1:
+				lines += [message[:wrap]]
+				message = message[wrap:]
+			else:
+				lines += [message[:i]]
+				message = message[i+1:]
+	if message:
+		lines += [message]
+	def draw(self,context):
+		for line in lines:
+			self.layout.label(line)
+	bpy.context.window_manager.popup_menu(draw, title="Error Message", icon="ERROR")
+	return
+
+
 def update_sp(self, context):
 	sce = context.scene
 	spl = sce.spl
@@ -72,21 +92,21 @@ def strips_offset(strip, i):
 
 
 def data_access(mode, ob, i):
-	if mode['anim_data'] == 'FCURVES':
-		if mode['scope'] == 'SHAPE_KEYS':
+	if 'FCURVES' in mode:
+		if 'SHAPE_KEYS' in mode:
 			fcus = ob.data.shape_keys.animation_data.action.fcurves
-		elif mode['scope'] == 'OBJECT':
+		elif 'OBJECT' in mode:
 			fcus = ob.animation_data.action.fcurves
 		keyframes_offset(fcus, i)
 	
-	elif mode['anim_data'] == 'NLA':
-		if mode['scope'] == 'SHAPE_KEYS':
+	elif 'NLA' in mode:
+		if 'SHAPE_KEYS' in mode:
 			strip = ob.data.shape_keys.animation_data.nla_tracks[0].strips[0]
-		elif mode['scope'] == 'OBJECT':
+		elif 'OBJECT' in mode:
 			strip = ob.animation_data.nla_tracks[0].strips[0]
 		strips_offset(strip, i)
 	
-	elif mode['parent']:
+	elif 'PARENT' in mode:
 		ob.use_slow_parent = True
 		ob.slow_parent_offset = i
 
@@ -122,7 +142,7 @@ def offset_name(offset, threshold, mode):
 	dist = {}
 	for ob in obs:
 		dist[ob] = ob.name
-	if mode['reverse']:
+	if 'REVERSE' in mode:
 		dist = sorted(dist, key=dist.get, reverse=True)
 	else:
 		dist = sorted(dist, key=dist.get)
@@ -142,13 +162,14 @@ def offset_name(offset, threshold, mode):
 
 
 def offset_parent(offset):
-	mode = {'parent': True}
+	mode = ['PARENT']
 	obs = bpy.context.selected_objects
 
 	dist = {}
 	for ob in obs:
-		distance = (ob.parent.location - (ob.location + ob.delta_location + ob.parent.location)).length
-		dist[ob] = distance
+		if ob.parent:
+			distance = (ob.parent.location - (ob.location + ob.delta_location + ob.parent.location)).length
+			dist[ob] = distance
 	dist = sorted(dist, key=dist.get)
 
 	i = 0 + offset
@@ -198,10 +219,16 @@ def create_strips(mode):
 
 	for ob in obs:
 		
-		if mode == 'SHAPE_KEYS':
-			anim = ob.data.shape_keys.animation_data
-		elif mode == 'OBJECT':
-			anim = ob.animation_data
+		if 'SHAPE_KEYS' in mode:
+			if ob.data.shape_keys:
+				anim = ob.data.shape_keys.animation_data
+			else:
+				return showErrorMessage('Selected objects have no Shape Keys')
+		elif 'OBJECT' in mode:
+			if ob.animation_data:
+				anim = ob.animation_data
+			else:
+				return showErrorMessage('Selected objects have no Animation')
 
 		frst_frame = anim.action.frame_range[0]
 		
@@ -216,13 +243,13 @@ def link_to_active(mode):
 	obj = bpy.context.active_object
 	obs = bpy.context.selected_objects
 
-	if mode['anim_data'] == 'NLA':
+	if 'NLA' in mode:
 		for ob in obs:
 			
-			if mode['scope'] == 'SHAPE_KEYS':
+			if 'SHAPE_KEYS' in mode:
 				obj_strip = obj.data.shape_keys.animation_data.nla_tracks[0].strips[0]
 				ob_strip = ob.data.shape_keys.animation_data.nla_tracks[0].strips[0]
-			elif mode['scope'] == 'OBJECT':
+			elif 'OBJECT' in mode:
 				obj_strip = obj.animation_data.nla_tracks[0].strips[0]
 				ob_strip = ob.animation_data.nla_tracks[0].strips[0]
 			
@@ -234,10 +261,10 @@ def link_to_active(mode):
 			ob_strip.action_frame_start = obj_a_s
 			ob_strip.action_frame_end = obj_a_e
 
-	elif mode['anim_data'] == 'FCURVES':
+	elif 'FCURVES' in mode:
 		for ob in obs:
 			
-			if mode['scope'] == 'SHAPE_KEYS':
+			if 'SHAPE_KEYS' in mode:
 				action = obj.data.shape_keys.animation_data.action
 				if ob.data.shape_keys.animation_data:
 					ob.data.shape_keys.animation_data.action = action
@@ -245,7 +272,7 @@ def link_to_active(mode):
 					ob.data.shape_keys.animation_data_create()
 					ob.data.shape_keys.animation_data.action = action
 			
-			elif mode['scope'] == 'OBJECT':
+			elif 'OBJECT' in mode:
 				action = obj.animation_data.action
 				if ob.animation_data:
 					ob.animation_data.action = action
@@ -257,18 +284,21 @@ def link_to_active(mode):
 def copy_to_selected(mode):
 	obj = bpy.context.active_object
 	obs = bpy.context.selected_objects
-	
+
 	for ob in obs:
 		
-		if mode == 'SHAPE_KEYS':
-			action = obj.data.shape_keys.animation_data.action
-			if ob.data.shape_keys.animation_data:
-				ob.data.shape_keys.animation_data.action = action.copy()
+		if 'SHAPE_KEYS' in mode:
+			if ob.data.shape_keys:
+				action = obj.data.shape_keys.animation_data.action
+				if ob.data.shape_keys.animation_data:
+					ob.data.shape_keys.animation_data.action = action.copy()
+				else:
+					ob.data.shape_keys.animation_data_create()
+					ob.data.shape_keys.animation_data.action = action.copy()
 			else:
-				ob.data.shape_keys.animation_data_create()
-				ob.data.shape_keys.animation_data.action = action.copy()
+				return showErrorMessage('Selected objects have no Shape Keys')
 		
-		elif mode == 'OBJECT':
+		elif 'OBJECT' in mode:
 			action = obj.animation_data.action
 			if ob.animation_data:
 				ob.animation_data.action = action.copy()
@@ -281,9 +311,9 @@ def strips_to_fcurves(mode):
 	obs = bpy.context.selected_objects
 
 	for ob in obs:
-		if mode == 'SHAPE_KEYS':
+		if 'SHAPE_KEYS' in mode:
 			anim = ob.data.shape_keys.animation_data
-		elif mode == 'OBJECT':
+		elif 'OBJECT' in mode:
 			anim = ob.animation_data
 		
 		trks = anim.nla_tracks
@@ -295,9 +325,9 @@ def sync_len(mode):
 	obs = bpy.context.selected_objects
 	
 	for ob in obs:
-		if mode == 'SHAPE_KEYS':
+		if 'SHAPE_KEYS' in mode:
 			strip = ob.data.shape_keys.animation_data.nla_tracks[0].strips[0]
-		elif mode == 'OBJECT':
+		elif 'OBJECT' in mode:
 			strip = ob.animation_data.nla_tracks[0].strips[0]
 		
 		strip.action_frame_end = (strip.action_frame_start + strip.action.frame_range[1] - 1)

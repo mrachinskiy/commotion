@@ -25,13 +25,13 @@
 bl_info = {
 	"name": "Commotion",
 	"author": "Mikhail Rachinskiy +MikhailRachinskiyByDesign",
-	"version": (1,0),
-	"blender": (2, 7, 2),
+	"version": (1, 2),
+	"blender": (2, 7, 3),
 	"location": "3D View > Tool Shelf",
 	"description": "Animation Tools for motion graphics.",
 	"warning": "",
-	"wiki_url": "https://plus.google.com/+MikhailRachinskiyByDesign",
-	"tracker_url": "https://plus.google.com/+MikhailRachinskiyByDesign",
+	"wiki_url": "https://github.com/mrachinskiy/blender-addon-commotion",
+	"tracker_url": "https://github.com/mrachinskiy/blender-addon-commotion/issues",
 	"category": "Animation"}
 
 if "bpy" in locals():

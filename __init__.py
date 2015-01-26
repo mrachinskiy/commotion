@@ -27,7 +27,7 @@ bl_info = {
 	"author": "Mikhail Rachinskiy +MikhailRachinskiyByDesign",
 	"version": (1, 2),
 	"blender": (2, 7, 3),
-	"location": "3D View > Tool Shelf",
+	"location": "3D View → Tool Shelf",
 	"description": "Animation Tools for motion graphics.",
 	"warning": "",
 	"wiki_url": "https://github.com/mrachinskiy/blender-addon-commotion",
@@ -35,10 +35,10 @@ bl_info = {
 	"category": "Animation"}
 
 if "bpy" in locals():
-	import imp
-	imp.reload(helpers)
-	imp.reload(operators)
-	imp.reload(ui)
+	import importlib
+	importlib.reload(helpers)
+	importlib.reload(operators)
+	importlib.reload(ui)
 else:
 	import bpy
 	from bpy.props import (StringProperty,

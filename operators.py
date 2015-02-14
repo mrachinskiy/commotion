@@ -93,7 +93,10 @@ class OT_SK_FCURVES_OFFSET_CURSOR(Operator):
 		como = context.scene.como
 		offset = como.sk_fcurves_offset
 		threshold = como.sk_fcurves_threshold
+		reverse = como.sk_fcurves_reverse
 		mode = ['SHAPE_KEYS', 'FCURVES']
+		if reverse:
+			mode += ['REVERSE']
 
 		helpers.offset_cursor(offset, threshold, mode, context)
 
@@ -116,7 +119,10 @@ class OT_SK_FCURVES_OFFSET_MULTITARGET(Operator):
 		targets = bpy.data.groups[como.sk_fcurves_group_targets].objects
 		offset = como.sk_fcurves_offset
 		threshold = como.sk_fcurves_threshold
+		reverse = como.sk_fcurves_reverse
 		mode = ['SHAPE_KEYS', 'FCURVES']
+		if reverse:
+			mode += ['REVERSE']
 
 		helpers.offset_multitarget(objects, targets, offset, threshold, mode, context)
 
@@ -216,7 +222,10 @@ class OT_SK_NLA_OFFSET_CURSOR(Operator):
 		como = context.scene.como
 		offset = como.sk_nla_offset
 		threshold = como.sk_nla_threshold
+		reverse = como.sk_nla_reverse
 		mode = ['SHAPE_KEYS', 'NLA']
+		if reverse:
+			mode += ['REVERSE']
 
 		helpers.offset_cursor(offset, threshold, mode, context)
 
@@ -239,7 +248,10 @@ class OT_SK_NLA_OFFSET_MULTITARGET(Operator):
 		targets = bpy.data.groups[como.sk_nla_group_targets].objects
 		offset = como.sk_nla_offset
 		threshold = como.sk_nla_threshold
+		reverse = como.sk_nla_reverse
 		mode = ['SHAPE_KEYS', 'NLA']
+		if reverse:
+			mode += ['REVERSE']
 
 		helpers.offset_multitarget(objects, targets, offset, threshold, mode, context)
 
@@ -388,7 +400,10 @@ class OT_OB_FCURVES_OFFSET_CURSOR(Operator):
 		como = context.scene.como
 		offset = como.ob_fcurves_offset
 		threshold = como.ob_fcurves_threshold
+		reverse = como.ob_fcurves_reverse
 		mode = ['OBJECT', 'FCURVES']
+		if reverse:
+			mode += ['REVERSE']
 
 		helpers.offset_cursor(offset, threshold, mode, context)
 
@@ -411,7 +426,10 @@ class OT_OB_FCURVES_OFFSET_MULTITARGET(Operator):
 		targets = bpy.data.groups[como.ob_fcurves_group_targets].objects
 		offset = como.ob_fcurves_offset
 		threshold = como.ob_fcurves_threshold
+		reverse = como.ob_fcurves_reverse
 		mode = ['OBJECT', 'FCURVES']
+		if reverse:
+			mode += ['REVERSE']
 
 		helpers.offset_multitarget(objects, targets, offset, threshold, mode, context)
 
@@ -503,7 +521,10 @@ class OT_OB_NLA_OFFSET_CURSOR(Operator):
 		como = context.scene.como
 		offset =  como.ob_nla_offset
 		threshold =  como.ob_nla_threshold
+		reverse = como.ob_nla_reverse
 		mode = ['OBJECT', 'NLA']
+		if reverse:
+			mode += ['REVERSE']
 
 		helpers.offset_cursor(offset, threshold, mode, context)
 
@@ -526,7 +547,10 @@ class OT_OB_NLA_OFFSET_MULTITARGET(Operator):
 		targets = bpy.data.groups[como.ob_nla_group_targets].objects
 		offset = como.ob_nla_offset
 		threshold = como.ob_nla_threshold
+		reverse = como.ob_nla_reverse
 		mode = ['OBJECT', 'NLA']
+		if reverse:
+			mode += ['REVERSE']
 
 		helpers.offset_multitarget(objects, targets, offset, threshold, mode, context)
 

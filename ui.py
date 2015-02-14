@@ -121,7 +121,7 @@ class ShapeKeyTools(Panel):
 				col.separator()
 				col.prop(como, "sk_fcurves_offset")
 				col.prop(como, "sk_fcurves_threshold")
-
+				col.prop(como, "sk_fcurves_reverse")
 				col.label('Offset from:')
 				col = col.row(align=True)
 				col.prop(como, "sk_fcurves_sort_options", expand=True)
@@ -133,7 +133,6 @@ class ShapeKeyTools(Panel):
 					col.prop_search(como, "sk_fcurves_group_targets", bpy.data, "groups")
 					col.operator("scene.sk_fcurves_offset_multitarget", icon="FORCE_HARMONIC")
 				elif como.sk_fcurves_sort_options == 'NAME':
-					col.prop(como, "sk_fcurves_reverse")
 					col.operator("scene.sk_fcurves_offset_name", icon="FORCE_HARMONIC")
 			else:
 				col.label("No animation on Shape Keys")
@@ -166,6 +165,7 @@ class ShapeKeyTools(Panel):
 					col.separator()
 					col.prop(como, "sk_nla_offset")
 					col.prop(como, "sk_nla_threshold")
+					col.prop(como, "sk_nla_reverse")
 					col.label('Offset from:')
 					col = col.row(align=True)
 					col.prop(como, "sk_nla_sort_options", expand=True)
@@ -177,7 +177,6 @@ class ShapeKeyTools(Panel):
 						col.prop_search(como, "sk_nla_group_targets", bpy.data, "groups")
 						col.operator("scene.sk_nla_offset_multitarget", icon="FORCE_HARMONIC")
 					elif como.sk_nla_sort_options == 'NAME':
-						col.prop(como, "sk_nla_reverse")
 						col.operator("scene.sk_nla_offset_name", icon="FORCE_HARMONIC")
 			else:
 				col.label("No animation on Shape Keys")
@@ -266,6 +265,7 @@ class ObjectTools(Panel):
 				col.separator()
 				col.prop(como, "ob_fcurves_offset")
 				col.prop(como, "ob_fcurves_threshold")
+				col.prop(como, "ob_fcurves_reverse")
 				col.label('Offset from:')
 				col = col.row(align=True)
 				col.prop(como, "ob_fcurves_sort_options", expand=True)
@@ -277,7 +277,6 @@ class ObjectTools(Panel):
 					col.prop_search(como, "ob_fcurves_group_targets", bpy.data, "groups")
 					col.operator("scene.ob_fcurves_offset_multitarget", icon="FORCE_HARMONIC")
 				elif como.ob_fcurves_sort_options == 'NAME':
-					col.prop(como, "ob_fcurves_reverse")
 					col.operator("scene.ob_fcurves_offset_name", icon="FORCE_HARMONIC")
 			else:
 				col.label("No Animation on object")
@@ -309,6 +308,7 @@ class ObjectTools(Panel):
 					col.separator()
 					col.prop(como, "ob_nla_offset")
 					col.prop(como, "ob_nla_threshold")
+					col.prop(como, "ob_nla_reverse")
 					col.label('Offset from:')
 					col = col.row(align=True)
 					col.prop(como, "ob_nla_sort_options", expand=True)
@@ -320,7 +320,6 @@ class ObjectTools(Panel):
 						col.prop_search(como, "ob_nla_group_targets", bpy.data, "groups")
 						col.operator("scene.ob_nla_offset_multitarget", icon="FORCE_HARMONIC")
 					elif como.ob_nla_sort_options == 'NAME':
-						col.prop(como, "ob_nla_reverse")
 						col.operator("scene.ob_nla_offset_name", icon="FORCE_HARMONIC")
 			else:
 				col.label("No animation on object")

@@ -154,7 +154,11 @@ def offset_cursor(offset, threshold, mode, context):
 	for ob in obs:
 		distance = (cursor - (ob.location + ob.delta_location)).length
 		dist[ob] = distance
-	dist = sorted(dist, key=dist.get)
+
+	if 'REVERSE' in mode:
+		dist = sorted(dist, key=dist.get, reverse=True)
+	else:
+		dist = sorted(dist, key=dist.get)
 
 	i = 0
 	i2 = threshold
@@ -176,6 +180,7 @@ def offset_name(offset, threshold, mode, context):
 	dist = {}
 	for ob in obs:
 		dist[ob] = ob.name
+	
 	if 'REVERSE' in mode:
 		dist = sorted(dist, key=dist.get, reverse=True)
 	else:
@@ -224,17 +229,23 @@ def offset_multitarget(objects, targets, offset, threshold, mode, context):
 		obs[ob] = [dist, targs[dist]]
 
 	for t in targets:
-		obs_th = []
+		obs_thold = []
 		i = 0
 		i2 = threshold
-		for ob in sorted(obs, key=obs.get):
+		
+		if 'REVERSE' in mode:
+			obs_sorted = sorted(obs, key=obs.get, reverse=True)
+		else:
+			obs_sorted = sorted(obs, key=obs.get)
+		
+		for ob in obs_sorted:
 			if obs[ob][1] == t:
 				
 				data_access(mode, ob, i, context)
 				
 				if i2 > 1:
-					obs_th.append(ob)
-					if i2 <= (obs_th.index(ob) + 1):
+					obs_thold.append(ob)
+					if i2 <= (obs_thold.index(ob) + 1):
 						i += offset
 						i2 += threshold
 				else:

@@ -45,6 +45,28 @@ def showErrorMessage(message, wrap=80):
 	return
 
 
+
+
+
+
+
+
+def shape_list_refresh(context):
+	sce = context.scene
+	spl = sce.spl
+	
+	if hasattr(sce, 'spl'):
+		for sps in spl:
+			spl.remove(0)
+	
+	i=0
+	for kb in context.active_object.data.shape_keys.key_blocks:
+		spl.add()
+		spl[i].name = kb.name
+		spl[i].index = i
+		i+=1
+
+
 def update_sp(self, context):
 	sce = context.scene
 	spl = sce.spl
@@ -69,11 +91,21 @@ def update_sp(self, context):
 
 
 
+def auto_keyframes(context):
+	frame = context.scene.frame_current
+	obs = context.selected_objects
+
+	for ob in obs:
+		key = ob.data.shape_keys
+
+		key.eval_time = int(key.key_blocks[1].frame)
+		key.keyframe_insert(data_path="eval_time", frame=frame)
+		key.eval_time = int(key.key_blocks[-1].frame)
+		key.keyframe_insert(data_path="eval_time", frame=frame+20)
 
 
-
-def keyframes_offset(fcus, i):
-	sce = bpy.context.scene
+def keyframes_offset(fcus, i, context):
+	sce = context.scene
 	frame = sce.frame_current
 	
 	for fcu in fcus:
@@ -84,8 +116,8 @@ def keyframes_offset(fcus, i):
 			kp.handle_right[0] = kp.handle_right[0] + frame + i - fcu_range
 
 
-def strips_offset(strip, i):
-	sce = bpy.context.scene
+def strips_offset(strip, i, context):
+	sce = context.scene
 	frame = sce.frame_current
 	
 	strip.frame_end = frame - 1 + i + strip.frame_end
@@ -93,30 +125,30 @@ def strips_offset(strip, i):
 	strip.scale = 1
 
 
-def data_access(mode, ob, i):
+def data_access(mode, ob, i, context):
 	if 'FCURVES' in mode:
 		if 'SHAPE_KEYS' in mode:
 			fcus = ob.data.shape_keys.animation_data.action.fcurves
 		elif 'OBJECT' in mode:
 			fcus = ob.animation_data.action.fcurves
-		keyframes_offset(fcus, i)
+		keyframes_offset(fcus, i, context)
 	
 	elif 'NLA' in mode:
 		if 'SHAPE_KEYS' in mode:
 			strip = ob.data.shape_keys.animation_data.nla_tracks[0].strips[0]
 		elif 'OBJECT' in mode:
 			strip = ob.animation_data.nla_tracks[0].strips[0]
-		strips_offset(strip, i)
+		strips_offset(strip, i, context)
 	
 	elif 'PARENT' in mode:
 		ob.use_slow_parent = True
 		ob.slow_parent_offset = i
 
 
-def offset_cursor(offset, threshold, mode):
-	sce = bpy.context.scene
+def offset_cursor(offset, threshold, mode, context):
+	sce = context.scene
 	cursor = sce.cursor_location
-	obs = bpy.context.selected_objects
+	obs = context.selected_objects
 
 	dist = {}
 	for ob in obs:
@@ -128,7 +160,7 @@ def offset_cursor(offset, threshold, mode):
 	i2 = threshold
 	for ob in dist:
 		
-		data_access(mode, ob, i)
+		data_access(mode, ob, i, context)
 		
 		if i2 > 1:
 			if i2 <= (dist.index(ob) + 1):
@@ -138,8 +170,8 @@ def offset_cursor(offset, threshold, mode):
 			i += offset
 
 
-def offset_name(offset, threshold, mode):
-	obs = bpy.context.selected_objects
+def offset_name(offset, threshold, mode, context):
+	obs = context.selected_objects
 
 	dist = {}
 	for ob in obs:
@@ -153,7 +185,7 @@ def offset_name(offset, threshold, mode):
 	i2 = threshold
 	for ob in dist:
 		
-		data_access(mode, ob, i)
+		data_access(mode, ob, i, context)
 		
 		if i2 > 1:
 			if i2 <= (dist.index(ob) + 1):
@@ -163,9 +195,9 @@ def offset_name(offset, threshold, mode):
 			i += offset
 
 
-def offset_parent(offset):
+def offset_parent(offset, context):
 	mode = ['PARENT']
-	obs = bpy.context.selected_objects
+	obs = context.selected_objects
 
 	dist = {}
 	for ob in obs:
@@ -176,11 +208,11 @@ def offset_parent(offset):
 
 	i = 0 + offset
 	for ob in dist:
-		data_access(mode, ob, i)
+		data_access(mode, ob, i, context)
 		i += offset
 
 
-def offset_multitarget(objects, targets, offset, threshold, mode):
+def offset_multitarget(objects, targets, offset, threshold, mode, context):
 
 	obs = {}
 	for ob in objects:
@@ -198,7 +230,7 @@ def offset_multitarget(objects, targets, offset, threshold, mode):
 		for ob in sorted(obs, key=obs.get):
 			if obs[ob][1] == t:
 				
-				data_access(mode, ob, i)
+				data_access(mode, ob, i, context)
 				
 				if i2 > 1:
 					obs_th.append(ob)
@@ -225,8 +257,8 @@ def create_nla_tracks(anim):
 	anim.action = None
 
 
-def create_strips(mode):
-	obs = bpy.context.selected_objects
+def create_strips(mode, context):
+	obs = context.selected_objects
 
 	if 'SHAPE_KEYS' in mode:
 		for ob in obs:
@@ -262,9 +294,9 @@ def link_strips(obj_strip, ob_strip):
 	ob_strip.action_frame_end = obj_a_e
 
 
-def link_to_active(mode):
-	obj = bpy.context.active_object
-	obs = bpy.context.selected_objects
+def link_to_active(mode, context):
+	obj = context.active_object
+	obs = context.selected_objects
 
 	if 'NLA' in mode:
 		if 'SHAPE_KEYS' in mode:
@@ -305,9 +337,9 @@ def link_to_active(mode):
 
 
 
-def copy_to_selected(mode):
-	obj = bpy.context.active_object
-	obs = bpy.context.selected_objects
+def copy_to_selected(mode, context):
+	obj = context.active_object
+	obs = context.selected_objects
 
 	if 'SHAPE_KEYS' in mode:
 		action = obj.data.shape_keys.animation_data.action
@@ -343,8 +375,8 @@ def remove_nla_track(anim):
 	trks.remove(trks[0])
 
 
-def strips_to_fcurves(mode):
-	obs = bpy.context.selected_objects
+def strips_to_fcurves(mode, context):
+	obs = context.selected_objects
 
 	if 'SHAPE_KEYS' in mode:
 		for ob in obs:
@@ -362,9 +394,10 @@ def strips_to_fcurves(mode):
 
 
 
-def sync_len(mode):
-	obs = bpy.context.selected_objects
-	
+
+def sync_len(mode, context):
+	obs = context.selected_objects
+
 	if 'SHAPE_KEYS' in mode:
 		for ob in obs:
 			strip = ob.data.shape_keys.animation_data.nla_tracks[0].strips[0]
@@ -382,6 +415,81 @@ def sync_len(mode):
 
 
 
+
+def driver_set(context):
+	obj = context.active_object
+	obs = context.selected_objects
+
+	try:
+		for ob in obs:
+			if ob != obj:
+				key = ob.data.shape_keys
+				kb = int(key.key_blocks[1].frame)
+				kb_last = str(int(key.key_blocks[-1].frame) + 5)
+				
+				key.driver_add("eval_time")
+				
+				fcus = ob.data.shape_keys.animation_data.drivers
+				for fcu in fcus:
+					if fcu.data_path == 'eval_time':
+						
+						drv = fcu.driver
+						drv.type = 'SCRIPTED'
+						drv.expression = kb_last + '-(dist*3/sx)'
+						drv.show_debug_info = True
+
+						var = drv.variables.new()
+						var.name = 'dist'
+						var.type = 'LOC_DIFF'
+						var.targets[0].id = ob
+						var.targets[1].id = obj
+					
+						var = drv.variables.new()
+						var.name = 'sx'
+						var.type = 'SINGLE_PROP'
+						var.targets[0].id = obj
+						var.targets[0].data_path = 'scale[0]'
+
+						if fcu.modifiers:
+							fcu.modifiers.remove(fcu.modifiers[0])
+
+						fcu.keyframe_points.insert(0, kb)
+						fcu.keyframe_points.insert(kb, kb)
+						fcu.keyframe_points.insert(kb + 10, kb + 10)
+
+						fcu.extrapolation = 'LINEAR'
+						for kp in fcu.keyframe_points:
+							kp.interpolation = 'LINEAR'
+	except:
+		return showErrorMessage('Selected objects have no Shape Keys')
+
+
+def targets_remap(context):
+	obs = context.selected_objects
+
+	for ob in obs:
+		fcus = ob.data.shape_keys.animation_data.drivers
+		for fcu in fcus:
+			if fcu.data_path == 'eval_time':
+				for var in fcu.driver.variables:
+					if var.name == 'dist':
+						var.targets[0].id = ob
+
+
+def expression_copy(context):
+	obj = context.active_object
+	obs = context.selected_objects
+
+	active_fcus = obj.data.shape_keys.animation_data.drivers
+	for active_fcu in active_fcus:
+		if active_fcu.data_path == 'eval_time':
+			for ob in obs:
+				fcus = ob.data.shape_keys.animation_data.drivers
+				for fcu in fcus:
+					if fcu.data_path == 'eval_time':
+						fcu.driver.expression = active_fcu.driver.expression
+
+
 def dist_trigger(var, name):
 	etm = bpy.context.scene.objects[name].data.shape_keys.eval_time
 	
@@ -389,3 +497,30 @@ def dist_trigger(var, name):
 		etm = var
 	
 	return etm
+
+
+def register_driver_function(context):
+	obs = context.scene.objects
+	bpy.app.driver_namespace['dist_trigger'] = helpers.dist_trigger
+
+	for ob in obs:
+		if (ob.data and ob.data.shape_keys and
+						ob.data.shape_keys.animation_data and
+						ob.data.shape_keys.animation_data.drivers):
+			fcus = ob.data.shape_keys.animation_data.drivers
+			for fcu in fcus:
+				if fcu.data_path == 'eval_time':
+					fcu.driver.expression = fcu.driver.expression
+
+
+def expression_func_set(context):
+	como = context.scene.como
+	expr = como.sk_drivers_expression_func
+	obs = context.selected_objects
+
+	for ob in obs:
+		func_expr = "dist_trigger(" + expr + ", '" + ob.name + "')"
+		fcus = ob.data.shape_keys.animation_data.drivers
+		for fcu in fcus:
+			if fcu.data_path == 'eval_time':
+				fcu.driver.expression = func_expr

@@ -26,8 +26,6 @@ import bpy
 from bpy.types import Panel
 
 
-
-
 class ShapeKeyTools(Panel):
 	
 	bl_label = "Shape Key Tools"

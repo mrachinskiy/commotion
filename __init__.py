@@ -81,7 +81,7 @@ class CommotionProperties(PropertyGroup):
 
 
 	sk_fcurves = BoolProperty(name="F-Curves")
-	sk_fcurves_offset = FloatProperty(name="Frame Offset", description="Frame step for animation offset", default=1, min=1, step=100, precision=0)
+	sk_fcurves_offset = FloatProperty(name="Frame Offset", description="Frame step for animation offset", default=1, min=0, step=10, precision=3)
 	sk_fcurves_threshold = FloatProperty(name="Threshold", description="Number of objects to animate per frame step", default=1, min=1, step=100, precision=0)
 	sk_fcurves_sort_options = EnumProperty(
 		items=(
@@ -98,7 +98,7 @@ class CommotionProperties(PropertyGroup):
 
 
 	sk_nla = BoolProperty(name="NLA")
-	sk_nla_offset = FloatProperty(name="Frame Offset", description="Frame step for animation offset", default=1, min=1, step=100, precision=0)
+	sk_nla_offset = FloatProperty(name="Frame Offset", description="Frame step for animation offset", default=1, min=0, step=10, precision=3)
 	sk_nla_threshold = FloatProperty(name="Threshold", description="Number of objects to animate per frame step", default=1, min=1, step=100, precision=0)
 	sk_nla_sort_options = EnumProperty(
 		items=(
@@ -120,7 +120,7 @@ class CommotionProperties(PropertyGroup):
 
 
 	ob_fcurves = BoolProperty(name="F-Curves")
-	ob_fcurves_offset = FloatProperty(name="Frame Offset", description="Frame step for animation offset", default=1, min=1, step=100, precision=0)
+	ob_fcurves_offset = FloatProperty(name="Frame Offset", description="Frame step for animation offset", default=1, min=0, step=10, precision=3)
 	ob_fcurves_threshold = FloatProperty(name="Threshold", description="Number of objects to animate per frame step", default=1, min=1, step=100, precision=0)
 	ob_fcurves_sort_options = EnumProperty(
 		items=(
@@ -137,7 +137,7 @@ class CommotionProperties(PropertyGroup):
 
 
 	ob_nla = BoolProperty(name="NLA")
-	ob_nla_offset = FloatProperty(name="Frame Offset", description="Frame step for animation offset", default=1, min=1, step=100, precision=0)
+	ob_nla_offset = FloatProperty(name="Frame Offset", description="Frame step for animation offset", default=1, min=0, step=10, precision=3)
 	ob_nla_threshold = FloatProperty(name="Threshold", description="Number of objects to animate per frame step", default=1, min=1, step=100, precision=0)
 	ob_nla_sort_options = EnumProperty(
 		items=(

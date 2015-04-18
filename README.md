@@ -1,16 +1,22 @@
-Commotion Blender Addon
+Commotion Blender Add-on
 ========================
 
-Commotion — is a Blender addon for motion graphics, made specifically for easy handling Shape Keys, F-Curves, NLA strips, Drivers and object relations between number of objects, in order to esasily create awesome motion graphics.
+Commotion—is a Blender add-on for motion graphics, made specifically for easy handling Shape Keys, F-Curves, NLA strips, Drivers and object relations between number of objects, in order to esasily create awesome motion graphics.
 
-#### Demo: http://youtu.be/gLj4PvHbm4s
-#### Tutorial: http://youtu.be/qbJMTOUdxRY
+#### Watch [Demo]
+#### Watch [Tutorial]
 
 
-How to Install
-========================
+How to install
+------------------------
 
-- Download this project as a ZIP
-- [Install in Blender User Preferences][1]
+1. Download add-on using “Download ZIP” button
+2. Go to Blender “User Preferences” → “Add-ons” category
+3. Use “[Install from File…]” feature to install add-on from downloaded zip archive
 
-[1]:http://wiki.blender.org/index.php/Doc:2.6/Manual/Extensions/Python/Add-Ons
+
+
+
+[Demo]: http://youtu.be/gLj4PvHbm4s
+[Tutorial]: http://youtu.be/qbJMTOUdxRY
+[Install from File…]: http://www.blender.org/manual/extensions/python/add_ons.html#installation-of-a-3rd-party-add-on

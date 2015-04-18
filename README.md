@@ -5,3 +5,12 @@ Commotion — is a Blender addon for motion graphics, made specifically for easy
 
 #### Demo: http://youtu.be/gLj4PvHbm4s
 #### Tutorial: http://youtu.be/qbJMTOUdxRY
+
+
+How to Install
+========================
+
+- Download this project as a ZIP
+- [Install in Blender User Preferences][1]
+
+[1]:http://wiki.blender.org/index.php/Doc:2.6/Manual/Extensions/Python/Add-Ons

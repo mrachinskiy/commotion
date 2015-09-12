@@ -15,6 +15,8 @@ How to install
 2. Go to Blender “User Preferences” → “Add-ons” category
 3. Use “[Install from File…]” feature to install add-on from downloaded zip archive
 
+\* **Note for Mac users:** OSX will automatically unpack downloaded zip archive, so in order to install the add-on you should pack all files inside unpacked folder back into zip archive
+
 
 
 

@@ -23,4 +23,4 @@ How to install
 [Demo]: http://youtu.be/gLj4PvHbm4s
 [master.zip]: https://github.com/mrachinskiy/blender-addon-commotion/archive/master.zip
 [Tutorial]: http://youtu.be/qbJMTOUdxRY
-[Install from File…]: http://blender.org/manual/advanced/scripting/python/add_ons.html#installation-of-a-3rd-party-add-on
+[Install from File…]: https://blender.org/manual/advanced/scripting/python/add_ons.html#installation-of-a-3rd-party-add-on

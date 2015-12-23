@@ -11,15 +11,16 @@ Commotion—is a Blender add-on for motion graphics, made specifically for easy 
 How to install
 ------------------------
 
-1. Download add-on using “Download ZIP” option
+1. [Download][master.zip] the add-on
 2. Go to Blender “User Preferences” → “Add-ons” category
 3. Use “[Install from File…]” feature to install add-on from downloaded zip archive
 
-\* **Note for Mac users:** OSX will automatically unpack downloaded zip archive, so in order to install the add-on you should pack all files inside unpacked folder back into zip archive
+\* **Note for Mac users:** OSX will automatically unpack downloaded zip archive, so in order to install the add-on you should pack folder with add-on files back into zip archive
 
 
 
 
 [Demo]: http://youtu.be/gLj4PvHbm4s
+[master.zip]: https://github.com/mrachinskiy/blender-addon-commotion/archive/master.zip
 [Tutorial]: http://youtu.be/qbJMTOUdxRY
-[Install from File…]: http://www.blender.org/manual/extensions/python/add_ons.html#installation-of-a-3rd-party-add-on
+[Install from File…]: http://blender.org/manual/advanced/scripting/python/add_ons.html#installation-of-a-3rd-party-add-on

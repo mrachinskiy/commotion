@@ -548,6 +548,6 @@ class SLOW_PARENT_OFFSET(Operator):
 	bl_label = "Offset Slow Parent"
 
 	def execute(self, context):
-		offset = context.scene.props.slow_parent_offset
+		offset = context.scene.commotion.slow_parent_offset
 		helpers.offset_parent(offset, context)
 		return {'FINISHED'}

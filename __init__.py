@@ -1,19 +1,20 @@
 bl_info = {
 	"name": "Commotion",
-	"author": "Mikhail Rachinskiy +MikhailRachinskiyByDesign",
+	"author": "Mikhail Rachinskiy (@_rachinskiy)",
 	"version": (1,2),
 	"blender": (2,7,4),
 	"location": "3D View → Tool Shelf",
-	"description": "Animation Tools for motion graphics.",
+	"description": "Animation offset tools for motion graphics.",
 	"wiki_url": "https://github.com/mrachinskiy/blender-addon-commotion",
 	"tracker_url": "https://github.com/mrachinskiy/blender-addon-commotion/issues",
 	"category": "Animation"}
 
 if "bpy" in locals():
-	import importlib
-	importlib.reload(helpers)
-	importlib.reload(operators)
-	importlib.reload(ui)
+	from importlib import reload
+	reload(helpers)
+	reload(operators)
+	reload(ui)
+	del reload
 else:
 	import bpy
 	from bpy.props import (
@@ -125,7 +126,7 @@ class CommotionProperties(PropertyGroup):
 
 
 
-class ShapeKeysProperties(PropertyGroup):
+class ShapeKeyProperties(PropertyGroup):
 	selected = BoolProperty(description="Affect referenced shape key")
 	index = IntProperty()
 	name = StringProperty()
@@ -178,8 +179,8 @@ classes = (
 
 	operators.SLOW_PARENT_OFFSET,
 
-	ShapeKeysProperties,
 	CommotionProperties,
+	ShapeKeyProperties,
 )
 
 
@@ -189,7 +190,7 @@ def register():
 		bpy.utils.register_class(cls)
 
 	bpy.types.Scene.commotion = PointerProperty(type=CommotionProperties)
-	bpy.types.Scene.commotion_skp = CollectionProperty(type=ShapeKeysProperties)
+	bpy.types.Scene.commotion_skp = CollectionProperty(type=ShapeKeyProperties)
 
 def unregister():
 	for cls in classes:

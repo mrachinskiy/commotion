@@ -5,10 +5,9 @@ from bpy.types import Panel
 
 def icon_tria(prop):
 	if prop:
-		icon = 'TRIA_DOWN'
+		return 'TRIA_DOWN'
 	else:
-		icon = 'TRIA_RIGHT'
-	return icon
+		return 'TRIA_RIGHT'
 
 
 

@@ -26,7 +26,7 @@ class ShapeKeyTools(Panel):
 
 	def draw(self, context):
 		props = context.scene.commotion
-		skp = context.scene.commotion_skp
+		skcoll = context.scene.commotion_skcoll
 		obj = context.active_object
 
 
@@ -47,23 +47,23 @@ class ShapeKeyTools(Panel):
 				key = obj.data.shape_keys
 				col.operator("commotion.shape_list_refresh")
 
-				if len(key.key_blocks) == len(skp):
+				if len(key.key_blocks) == len(skcoll):
 					split = box.split()
 					col = split.column(align=True)
-					for sk in skp:
+					for sk in skcoll:
 						col.prop(sk, "selected", expand=True, icon="SHAPEKEY_DATA", text=sk.name)
 
 					col = split.column(align=True)
 					if key.use_relative:
 						i = 0
 						for kb in key.key_blocks:
-							if skp[i].selected:
-								col.prop(kb, "value", expand=True, icon="GHOST", text=skp[i].name)
+							if skcoll[i].selected:
+								col.prop(kb, "value", expand=True, icon="GHOST", text=skcoll[i].name)
 							i += 1
 					else:
 						i = 0
 						for kb in key.key_blocks:
-							if skp[i].selected:
+							if skcoll[i].selected:
 								col.prop(kb, "interpolation", text="")
 							i += 1
 

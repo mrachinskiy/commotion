@@ -1,23 +1,12 @@
 import bpy
 
 
-def show_error_message(message, wrap=80):
-	lines = []
-	if wrap > 0:
-		while len(message) > wrap:
-			i = message.rfind(' ',0,wrap)
-			if i == -1:
-				lines.append(message[:wrap])
-				message = message[wrap:]
-			else:
-				lines.append(message[:i])
-				message = message[i+1:]
-	if message:
-		lines.append(message)
+def show_error_message(message):
+
 	def draw(self, context):
-		for line in lines:
-			self.layout.label(line)
-	bpy.context.window_manager.popup_menu(draw, title="Error Message", icon="ERROR")
+		self.layout.label(line)
+
+	bpy.context.window_manager.popup_menu(draw, title="Error", icon="ERROR")
 
 
 
@@ -28,35 +17,35 @@ def show_error_message(message, wrap=80):
 
 def shape_list_refresh(context):
 	sce = context.scene
-	skp = sce.commotion_skp
+	skcoll = sce.commotion_skcoll
 
-	if hasattr(sce, 'commotion_skp'):
-		for sps in skp:
-			skp.remove(0)
+	if hasattr(sce, 'commotion_skcoll'):
+		for sk in skcoll:
+			skcoll.remove(0)
 
 	i = 0
 	for kb in context.active_object.data.shape_keys.key_blocks:
-		skp.add()
-		skp[i].name = kb.name
-		skp[i].index = i
+		skcoll.add()
+		skcoll[i].name = kb.name
+		skcoll[i].index = i
 		i += 1
 
 
 def update_sp(self, context):
 	sce = context.scene
-	skp = sce.commotion_skp
+	skcoll = sce.commotion_skcoll
 	props = sce.commotion
 	key = context.active_object.data.shape_keys
 
 	if key.use_relative:
-		for sps in skp:
-			if sps.selected:
-				key.key_blocks[sps.index].value = props.shape_value
+		for sk in skcoll:
+			if sk.selected:
+				key.key_blocks[sk.index].value = props.shape_value
 	else:
 		for ob in context.selected_objects:
-			for sps in skp:
-				if sps.selected:
-					ob.data.shape_keys.key_blocks[sps.index].interpolation = props.shape_interpolation
+			for sk in skcoll:
+				if sk.selected:
+					ob.data.shape_keys.key_blocks[sk.index].interpolation = props.shape_interpolation
 
 
 

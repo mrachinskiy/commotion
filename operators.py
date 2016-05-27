@@ -4,9 +4,9 @@ from . import helpers
 
 
 class SHAPE_LIST_REFRESH(Operator):
-	'''Refresh list of toggles for available shape keys on active object'''
-	bl_idname = "commotion.shape_list_refresh"
-	bl_label = "Refresh Shape List"
+	"""Refresh list of toggles for available shape keys on active object"""
+	bl_idname = 'commotion.shape_list_refresh'
+	bl_label = 'Refresh Shape List'
 	bl_options = {'INTERNAL'}
 
 	def execute(self, context):
@@ -15,10 +15,10 @@ class SHAPE_LIST_REFRESH(Operator):
 
 
 class AUTO_KEYFRAMES(Operator):
-	'''Create keyframes for Evaluation Time property for selected objects, ''' \
-	'''based on current frame, amount and timings of absolute shape keys'''
-	bl_idname = "commotion.auto_keyframes"
-	bl_label = "Auto Keyframes"
+	"""Create keyframes for Evaluation Time property for selected objects, """ \
+	"""based on current frame, amount and timings of absolute shape keys"""
+	bl_idname = 'commotion.auto_keyframes'
+	bl_label = 'Auto Keyframes'
 
 	def execute(self, context):
 		helpers.auto_keyframes(context)
@@ -30,9 +30,9 @@ class AUTO_KEYFRAMES(Operator):
 
 
 class SK_FCURVES_LINK(Operator):
-	'''Link animation from active to selected objects'''
-	bl_idname = "commotion.sk_fcurves_link"
-	bl_label = "Link Animation"
+	"""Link animation from active to selected objects"""
+	bl_idname = 'commotion.sk_fcurves_link'
+	bl_label = 'Link Animation'
 	bl_options = {'INTERNAL'}
 
 	def execute(self, context):
@@ -42,9 +42,9 @@ class SK_FCURVES_LINK(Operator):
 
 
 class SK_FCURVES_COPY(Operator):
-	'''Copy animation from active to selected objects (can also use this to unlink animation)'''
-	bl_idname = "commotion.sk_fcurves_copy"
-	bl_label = "Copy Animation"
+	"""Copy animation from active to selected objects (can also use this to unlink animation)"""
+	bl_idname = 'commotion.sk_fcurves_copy'
+	bl_label = 'Copy Animation'
 	bl_options = {'INTERNAL'}
 
 	def execute(self, context):
@@ -54,9 +54,9 @@ class SK_FCURVES_COPY(Operator):
 
 
 class SK_FCURVES_OFFSET_CURSOR(Operator):
-	'''Offset animation for selected objects (wont work if F-Curves are linked, for obvious reasons)'''
-	bl_idname = "commotion.sk_fcurves_offset_cursor"
-	bl_label = "Offset Animation"
+	"""Offset animation for selected objects (won't work if F-Curves are linked)"""
+	bl_idname = 'commotion.sk_fcurves_offset_cursor'
+	bl_label = 'Offset Animation'
 	bl_options = {'INTERNAL'}
 
 	def execute(self, context):
@@ -74,9 +74,9 @@ class SK_FCURVES_OFFSET_CURSOR(Operator):
 
 
 class SK_FCURVES_OFFSET_MULTITARGET(Operator):
-	'''Offset animation for selected objects (wont work if F-Curves are linked, for obvious reasons)'''
-	bl_idname = "commotion.sk_fcurves_offset_multitarget"
-	bl_label = "Offset Animation"
+	"""Offset animation for selected objects (won't work if F-Curves are linked)"""
+	bl_idname = 'commotion.sk_fcurves_offset_multitarget'
+	bl_label = 'Offset Animation'
 	bl_options = {'INTERNAL'}
 
 	@classmethod
@@ -101,9 +101,9 @@ class SK_FCURVES_OFFSET_MULTITARGET(Operator):
 
 
 class SK_FCURVES_OFFSET_NAME(Operator):
-	'''Offset animation for selected objects (wont work if F-Curves are linked, for obvious reasons)'''
-	bl_idname = "commotion.sk_fcurves_offset_name"
-	bl_label = "Offset Animation"
+	"""Offset animation for selected objects (won't work if F-Curves are linked)"""
+	bl_idname = 'commotion.sk_fcurves_offset_name'
+	bl_label = 'Offset Animation'
 	bl_options = {'INTERNAL'}
 
 	def execute(self, context):
@@ -125,9 +125,9 @@ class SK_FCURVES_OFFSET_NAME(Operator):
 
 
 class SK_NLA_CREATE(Operator):
-	'''Create NLA strips from absolute shape keys animation'''
-	bl_idname = "commotion.sk_nla_create"
-	bl_label = "Create NLA Strips"
+	"""Create NLA strips from absolute shape keys animation"""
+	bl_idname = 'commotion.sk_nla_create'
+	bl_label = 'Create NLA Strips'
 	bl_options = {'INTERNAL'}
 
 	def execute(self, context):
@@ -137,9 +137,9 @@ class SK_NLA_CREATE(Operator):
 
 
 class SK_NLA_TO_FCURVES(Operator):
-	'''Convert NLA strips to F-Curves'''
-	bl_idname = "commotion.sk_nla_to_fcurves"
-	bl_label = "Strips to F-Curves"
+	"""Convert NLA strips to F-Curves"""
+	bl_idname = 'commotion.sk_nla_to_fcurves'
+	bl_label = 'Strips to F-Curves'
 	bl_options = {'INTERNAL'}
 
 	def execute(self, context):
@@ -149,9 +149,9 @@ class SK_NLA_TO_FCURVES(Operator):
 
 
 class SK_NLA_SYNC_LENGTH(Operator):
-	'''Sync length of NLA strips for selected objects'''
-	bl_idname = "commotion.sk_nla_sync_length"
-	bl_label = "Sync Length"
+	"""Sync length of NLA strips for selected objects"""
+	bl_idname = 'commotion.sk_nla_sync_length'
+	bl_label = 'Sync Length'
 	bl_options = {'INTERNAL'}
 
 	def execute(self, context):
@@ -161,9 +161,9 @@ class SK_NLA_SYNC_LENGTH(Operator):
 
 
 class SK_NLA_LINK_TO_ACTIVE(Operator):
-	'''Link strips from active to selected objects'''
-	bl_idname = "commotion.sk_nla_link_to_active"
-	bl_label = "Link Strips"
+	"""Link strips from active to selected objects"""
+	bl_idname = 'commotion.sk_nla_link_to_active'
+	bl_label = 'Link Strips'
 	bl_options = {'INTERNAL'}
 
 	def execute(self, context):
@@ -173,9 +173,9 @@ class SK_NLA_LINK_TO_ACTIVE(Operator):
 
 
 class SK_NLA_OFFSET_CURSOR(Operator):
-	'''Offset animation for selected objects'''
-	bl_idname = "commotion.sk_nla_offset_cursor"
-	bl_label = "Offset Strips"
+	"""Offset animation for selected objects"""
+	bl_idname = 'commotion.sk_nla_offset_cursor'
+	bl_label = 'Offset Strips'
 	bl_options = {'INTERNAL'}
 
 	def execute(self, context):
@@ -193,9 +193,9 @@ class SK_NLA_OFFSET_CURSOR(Operator):
 
 
 class SK_NLA_OFFSET_MULTITARGET(Operator):
-	'''Offset animation for selected objects'''
-	bl_idname = "commotion.sk_nla_offset_multitarget"
-	bl_label = "Offset Strips"
+	"""Offset animation for selected objects"""
+	bl_idname = 'commotion.sk_nla_offset_multitarget'
+	bl_label = 'Offset Strips'
 	bl_options = {'INTERNAL'}
 
 	@classmethod
@@ -220,9 +220,9 @@ class SK_NLA_OFFSET_MULTITARGET(Operator):
 
 
 class SK_NLA_OFFSET_NAME(Operator):
-	'''Offset animation for selected objects'''
-	bl_idname = "commotion.sk_nla_offset_name"
-	bl_label = "Offset Strips"
+	"""Offset animation for selected objects"""
+	bl_idname = 'commotion.sk_nla_offset_name'
+	bl_label = 'Offset Strips'
 	bl_options = {'INTERNAL'}
 
 	def execute(self, context):
@@ -244,10 +244,9 @@ class SK_NLA_OFFSET_NAME(Operator):
 
 
 class SK_DRIVER_SET(Operator):
-	'''Set driver with distance varable for selected objects. ''' \
-	'''Active object would be considered as target for a distance variable.'''
-	bl_idname = "commotion.sk_driver_set"
-	bl_label = "Set Distance Driver"
+	"""Set driver with distance varable for selected objects. Active object would be considered as target for a distance variable."""
+	bl_idname = 'commotion.sk_driver_set'
+	bl_label = 'Set Distance Driver'
 
 	def execute(self, context):
 		helpers.driver_set(context)
@@ -255,9 +254,9 @@ class SK_DRIVER_SET(Operator):
 
 
 class SK_TARGETS_REMAP(Operator):
-	'''Remap driver’s distance variable target property, from original to current object'''
-	bl_idname = "commotion.sk_targets_remap"
-	bl_label = "Remap Targets"
+	"""Remap driver's distance variable target property, from original to current object"""
+	bl_idname = 'commotion.sk_targets_remap'
+	bl_label = 'Remap Targets'
 
 	def execute(self, context):
 		helpers.targets_remap(context)
@@ -265,9 +264,9 @@ class SK_TARGETS_REMAP(Operator):
 
 
 class SK_EXPRESSION_COPY(Operator):
-	'''Copy driver's expression from active to selected objects'''
-	bl_idname = "commotion.sk_expression_copy"
-	bl_label = "Copy To Selected"
+	"""Copy driver's expression from active to selected objects"""
+	bl_idname = 'commotion.sk_expression_copy'
+	bl_label = 'Copy To Selected'
 	bl_options = {'INTERNAL'}
 
 	def execute(self, context):
@@ -276,9 +275,9 @@ class SK_EXPRESSION_COPY(Operator):
 
 
 class SK_DRIVER_FUNC_REG(Operator):
-	'''Register driver function and update driver dependencies (required for “Distance Trigger” to work)'''
-	bl_idname = "commotion.sk_driver_func_reg"
-	bl_label = "Register driver function"
+	"""Register driver function and update driver dependencies (required for "Distance Trigger" to work)"""
+	bl_idname = 'commotion.sk_driver_func_reg'
+	bl_label = 'Register driver function'
 	bl_options = {'INTERNAL'}
 
 	def execute(self, context):
@@ -287,9 +286,9 @@ class SK_DRIVER_FUNC_REG(Operator):
 
 
 class SK_EVAL_TIME_RESET(Operator):
-	'''Reset Evaluation Time property of selected objects to 0'''
-	bl_idname = "commotion.sk_eval_time_reset"
-	bl_label = "Reset Eval Time"
+	"""Reset Evaluation Time property of selected objects to 0"""
+	bl_idname = 'commotion.sk_eval_time_reset'
+	bl_label = 'Reset Eval Time'
 	bl_options = {'INTERNAL'}
 
 	def execute(self, context):
@@ -299,9 +298,9 @@ class SK_EVAL_TIME_RESET(Operator):
 
 
 class SK_EXPRESSION_FUNC_GET(Operator):
-	'''Get expression from current object'''
-	bl_idname = "commotion.sk_expression_func_get"
-	bl_label = "Get Expression"
+	"""Get expression from current object"""
+	bl_idname = 'commotion.sk_expression_func_get'
+	bl_label = 'Get Expression'
 	bl_options = {'INTERNAL'}
 
 	def execute(self, context):
@@ -314,9 +313,9 @@ class SK_EXPRESSION_FUNC_GET(Operator):
 
 
 class SK_EXPRESSION_FUNC_SET(Operator):
-	'''Set distance trigger expression for selected objects'''
-	bl_idname = "commotion.sk_expression_func_set"
-	bl_label = "Set Expression"
+	"""Set distance trigger expression for selected objects"""
+	bl_idname = 'commotion.sk_expression_func_set'
+	bl_label = 'Set Expression'
 	bl_options = {'INTERNAL'}
 
 	def execute(self, context):
@@ -329,9 +328,9 @@ class SK_EXPRESSION_FUNC_SET(Operator):
 
 
 class OB_FCURVES_LINK(Operator):
-	'''Link animation from active to selected objects'''
-	bl_idname = "commotion.ob_fcurves_link"
-	bl_label = "Link Animation"
+	"""Link animation from active to selected objects"""
+	bl_idname = 'commotion.ob_fcurves_link'
+	bl_label = 'Link Animation'
 	bl_options = {'INTERNAL'}
 
 	def execute(self, context):
@@ -341,9 +340,9 @@ class OB_FCURVES_LINK(Operator):
 
 
 class OB_FCURVES_COPY(Operator):
-	'''Copy animation from active to selected objects (can also use this to unlink animation)'''
-	bl_idname = "commotion.ob_fcurves_copy"
-	bl_label = "Copy Animation"
+	"""Copy animation from active to selected objects (can also use this to unlink animation)"""
+	bl_idname = 'commotion.ob_fcurves_copy'
+	bl_label = 'Copy Animation'
 	bl_options = {'INTERNAL'}
 
 	def execute(self, context):
@@ -353,9 +352,9 @@ class OB_FCURVES_COPY(Operator):
 
 
 class OB_FCURVES_OFFSET_CURSOR(Operator):
-	'''Offset animation for selected objects (wont work if F-Curves are linked, for obvious reasons)'''
-	bl_idname = "commotion.ob_fcurves_offset_cursor"
-	bl_label = "Offset Animation"
+	"""Offset animation for selected objects (won't work if F-Curves are linked)"""
+	bl_idname = 'commotion.ob_fcurves_offset_cursor'
+	bl_label = 'Offset Animation'
 	bl_options = {'INTERNAL'}
 
 	def execute(self, context):
@@ -373,9 +372,9 @@ class OB_FCURVES_OFFSET_CURSOR(Operator):
 
 
 class OB_FCURVES_OFFSET_MULTITARGET(Operator):
-	'''Offset animation for selected objects (wont work if F-Curves are linked, for obvious reasons)'''
-	bl_idname = "commotion.ob_fcurves_offset_multitarget"
-	bl_label = "Offset Animation"
+	"""Offset animation for selected objects (won't work if F-Curves are linked)"""
+	bl_idname = 'commotion.ob_fcurves_offset_multitarget'
+	bl_label = 'Offset Animation'
 	bl_options = {'INTERNAL'}
 
 	@classmethod
@@ -400,9 +399,9 @@ class OB_FCURVES_OFFSET_MULTITARGET(Operator):
 
 
 class OB_FCURVES_OFFSET_NAME(Operator):
-	'''Offset animation for selected objects (wont work if F-Curves are linked, for obvious reasons)'''
-	bl_idname = "commotion.ob_fcurves_offset_name"
-	bl_label = "Offset Animation"
+	"""Offset animation for selected objects (won't work if F-Curves are linked)"""
+	bl_idname = 'commotion.ob_fcurves_offset_name'
+	bl_label = 'Offset Animation'
 	bl_options = {'INTERNAL'}
 
 	def execute(self, context):
@@ -424,9 +423,9 @@ class OB_FCURVES_OFFSET_NAME(Operator):
 
 
 class OB_NLA_CREATE(Operator):
-	'''Create NLA strips from object animation'''
-	bl_idname = "commotion.ob_nla_create"
-	bl_label = "Create NLA Strips"
+	"""Create NLA strips from object animation"""
+	bl_idname = 'commotion.ob_nla_create'
+	bl_label = 'Create NLA Strips'
 	bl_options = {'INTERNAL'}
 
 	def execute(self, context):
@@ -436,9 +435,9 @@ class OB_NLA_CREATE(Operator):
 
 
 class OB_NLA_TO_FCURVES(Operator):
-	'''Convert NLA strips to F-Curves'''
-	bl_idname = "commotion.ob_nla_to_fcurves"
-	bl_label = "Strips to F-Curves"
+	"""Convert NLA strips to F-Curves"""
+	bl_idname = 'commotion.ob_nla_to_fcurves'
+	bl_label = 'Strips to F-Curves'
 	bl_options = {'INTERNAL'}
 
 	def execute(self, context):
@@ -448,9 +447,9 @@ class OB_NLA_TO_FCURVES(Operator):
 
 
 class OB_NLA_SYNC_LENGTH(Operator):
-	'''Sync length of NLA strips for selected objects'''
-	bl_idname = "commotion.ob_nla_sync_length"
-	bl_label = "Sync Length"
+	"""Sync length of NLA strips for selected objects"""
+	bl_idname = 'commotion.ob_nla_sync_length'
+	bl_label = 'Sync Length'
 	bl_options = {'INTERNAL'}
 
 	def execute(self, context):
@@ -460,9 +459,9 @@ class OB_NLA_SYNC_LENGTH(Operator):
 
 
 class OB_NLA_LINK_TO_ACTIVE(Operator):
-	'''Link strips from active to selected objects'''
-	bl_idname = "commotion.ob_nla_link_to_active"
-	bl_label = "Link Strips"
+	"""Link strips from active to selected objects"""
+	bl_idname = 'commotion.ob_nla_link_to_active'
+	bl_label = 'Link Strips'
 	bl_options = {'INTERNAL'}
 
 	def execute(self, context):
@@ -472,9 +471,9 @@ class OB_NLA_LINK_TO_ACTIVE(Operator):
 
 
 class OB_NLA_OFFSET_CURSOR(Operator):
-	'''Offset animation for selected objects'''
-	bl_idname = "commotion.ob_nla_offset_cursor"
-	bl_label = "Offset Strips"
+	"""Offset animation for selected objects"""
+	bl_idname = 'commotion.ob_nla_offset_cursor'
+	bl_label = 'Offset Strips'
 	bl_options = {'INTERNAL'}
 
 	def execute(self, context):
@@ -492,9 +491,9 @@ class OB_NLA_OFFSET_CURSOR(Operator):
 
 
 class OB_NLA_OFFSET_MULTITARGET(Operator):
-	'''Offset animation for selected objects'''
-	bl_idname = "commotion.ob_nla_offset_multitarget"
-	bl_label = "Offset Strips"
+	"""Offset animation for selected objects"""
+	bl_idname = 'commotion.ob_nla_offset_multitarget'
+	bl_label = 'Offset Strips'
 	bl_options = {'INTERNAL'}
 
 	@classmethod
@@ -519,9 +518,9 @@ class OB_NLA_OFFSET_MULTITARGET(Operator):
 
 
 class OB_NLA_OFFSET_NAME(Operator):
-	'''Offset animation for selected objects'''
-	bl_idname = "commotion.ob_nla_offset_name"
-	bl_label = "Offset Strips"
+	"""Offset animation for selected objects"""
+	bl_idname = 'commotion.ob_nla_offset_name'
+	bl_label = 'Offset Strips'
 	bl_options = {'INTERNAL'}
 
 	def execute(self, context):
@@ -543,9 +542,9 @@ class OB_NLA_OFFSET_NAME(Operator):
 
 
 class SLOW_PARENT_OFFSET(Operator):
-	'''Offset “Slow Parent” object property for selected objects'''
-	bl_idname = "commotion.slow_parent_offset"
-	bl_label = "Offset Slow Parent"
+	"""Offset "Slow Parent" object property for selected objects"""
+	bl_idname = 'commotion.slow_parent_offset'
+	bl_label = 'Offset Slow Parent'
 
 	def execute(self, context):
 		offset = context.scene.commotion.slow_parent_offset

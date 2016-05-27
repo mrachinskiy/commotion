@@ -1,15 +1,16 @@
 bl_info = {
-	"name": "Commotion",
-	"author": "Mikhail Rachinskiy (@_rachinskiy)",
-	"version": (1,2),
-	"blender": (2,74,0),
-	"location": "3D View → Tool Shelf",
-	"description": "Animation offset tools for motion graphics.",
-	"wiki_url": "https://github.com/mrachinskiy/blender-addon-commotion",
-	"tracker_url": "https://github.com/mrachinskiy/blender-addon-commotion/issues",
-	"category": "Animation"}
+	'name': 'Commotion',
+	'author': 'Mikhail Rachinskiy (@_rachinskiy)',
+	'version': (1, 2),
+	'blender': (2, 74, 0),
+	'location': '3D View > Tool Shelf',
+	'description': 'Animation offset tools for motion graphics.',
+	'wiki_url': 'https://github.com/mrachinskiy/blender-addon-commotion#readme',
+	'tracker_url': 'https://github.com/mrachinskiy/blender-addon-commotion/issues',
+	'category': 'Animation'}
 
-if "bpy" in locals():
+
+if 'bpy' in locals():
 	from importlib import reload
 	reload(helpers)
 	reload(operators)
@@ -35,101 +36,110 @@ else:
 
 
 
+
+
+
 class CommotionProperties(PropertyGroup):
 
 
 	shapekeys = BoolProperty(default=True)
-	shape_value = FloatProperty(name="Value", min=0.0, max=1.0, update=helpers.update_sp)
+	shape_value = FloatProperty(name='Value', min=0.0, max=1.0, update=helpers.update_sp)
 	shape_interpolation = EnumProperty(
 		items=(
-			('KEY_LINEAR',      "Linear",      ""),
-			('KEY_CARDINAL',    "Cardinal",    ""),
-			('KEY_CATMULL_ROM', "Catmull-Rom", ""),
-			('KEY_BSPLINE',     "BSpline",     ""),
+			('KEY_LINEAR',      'Linear',      ''),
+			('KEY_CARDINAL',    'Cardinal',    ''),
+			('KEY_CATMULL_ROM', 'Catmull-Rom', ''),
+			('KEY_BSPLINE',     'BSpline',     ''),
 		),
-		description="Set interpolation type for selected shape keys",
 		default='KEY_LINEAR',
+		description='Set interpolation type for selected shape keys',
 		update=helpers.update_sp)
 
 
 	sk_fcurves = BoolProperty()
-	sk_fcurves_offset = FloatProperty(name="Frame Offset", description="Frame step for animation offset", default=1, min=0, step=10, precision=3)
-	sk_fcurves_threshold = FloatProperty(name="Threshold", description="Number of objects to animate per frame step", default=1, min=1, step=100, precision=0)
+	sk_fcurves_offset = FloatProperty(name='Frame Offset', description='Frame step for animation offset', default=1, min=0, step=10, precision=3)
+	sk_fcurves_threshold = FloatProperty(name='Threshold', description='Number of objects to animate per frame step', default=1, min=1, step=100, precision=0)
 	sk_fcurves_sort_options = EnumProperty(
 		items=(
-			('CURSOR',      "Cursor",       ""),
-			('MULTITARGET', "Multi-target", ""),
-			('NAME',        "Name",         ""),
+			('CURSOR',      'Cursor',       ''),
+			('MULTITARGET', 'Multi-target', ''),
+			('NAME',        'Name',         ''),
 		),
-		description="Animation offset by",
-		default='CURSOR')
-	sk_fcurves_reverse = BoolProperty(name="Reverse", description="Reverse animation offset")
-	sk_fcurves_group_objects = StringProperty(name="Objects", description="Object group for animation offset")
-	sk_fcurves_group_targets = StringProperty(name="Targets", description="Object group for targets, from which animation would be offseted")
+		default='CURSOR',
+		description='Animation offset by')
+	sk_fcurves_reverse = BoolProperty(name='Reverse', description='Reverse animation offset')
+	sk_fcurves_group_objects = StringProperty(name='Objects', description='Object group for animation offset')
+	sk_fcurves_group_targets = StringProperty(name='Targets', description='Object group for targets, from which animation would be offseted')
 
 
 	sk_nla = BoolProperty()
-	sk_nla_offset = FloatProperty(name="Frame Offset", description="Frame step for animation offset", default=1, min=0, step=10, precision=3)
-	sk_nla_threshold = FloatProperty(name="Threshold", description="Number of objects to animate per frame step", default=1, min=1, step=100, precision=0)
+	sk_nla_offset = FloatProperty(name='Frame Offset', description='Frame step for animation offset', default=1, min=0, step=10, precision=3)
+	sk_nla_threshold = FloatProperty(name='Threshold', description='Number of objects to animate per frame step', default=1, min=1, step=100, precision=0)
 	sk_nla_sort_options = EnumProperty(
 		items=(
-			('CURSOR',      "Cursor",       ""),
-			('MULTITARGET', "Multi-target", ""),
-			('NAME',        "Name",         ""),
+			('CURSOR',      'Cursor',       ''),
+			('MULTITARGET', 'Multi-target', ''),
+			('NAME',        'Name',         ''),
 		),
-		description="Animation offset by",
-		default='CURSOR')
-	sk_nla_reverse = BoolProperty(name="Reverse", description="Reverse animation offset")
-	sk_nla_group_objects = StringProperty(name="Objects", description="Object group for animation offset")
-	sk_nla_group_targets = StringProperty(name="Targets", description="Object group for targets, from which animation would be offseted")
+		default='CURSOR',
+		description='Animation offset by')
+	sk_nla_reverse = BoolProperty(name='Reverse', description='Reverse animation offset')
+	sk_nla_group_objects = StringProperty(name='Objects', description='Object group for animation offset')
+	sk_nla_group_targets = StringProperty(name='Targets', description='Object group for targets, from which animation would be offseted')
 
 
 	sk_drivers = BoolProperty()
 	sk_drivers_dist_trigger = BoolProperty()
-	sk_drivers_expression_func = StringProperty(description="Distance trigger expression")
+	sk_drivers_expression_func = StringProperty(description='Distance trigger expression')
 
 
 	ob_fcurves = BoolProperty()
-	ob_fcurves_offset = FloatProperty(name="Frame Offset", description="Frame step for animation offset", default=1, min=0, step=10, precision=3)
-	ob_fcurves_threshold = FloatProperty(name="Threshold", description="Number of objects to animate per frame step", default=1, min=1, step=100, precision=0)
+	ob_fcurves_offset = FloatProperty(name='Frame Offset', description='Frame step for animation offset', default=1, min=0, step=10, precision=3)
+	ob_fcurves_threshold = FloatProperty(name='Threshold', description='Number of objects to animate per frame step', default=1, min=1, step=100, precision=0)
 	ob_fcurves_sort_options = EnumProperty(
 		items=(
-			('CURSOR',      "Cursor",       ""),
-			('MULTITARGET', "Multi-target", ""),
-			('NAME',        "Name",         ""),
+			('CURSOR',      'Cursor',       ''),
+			('MULTITARGET', 'Multi-target', ''),
+			('NAME',        'Name',         ''),
 		),
-		description="Animation offset by",
-		default='CURSOR')
-	ob_fcurves_reverse = BoolProperty(name="Reverse", description="Reverse animation offset")
-	ob_fcurves_group_objects = StringProperty(name="Objects", description="Object group for animation offset")
-	ob_fcurves_group_targets = StringProperty(name="Targets", description="Object group for targets, from which animation would be offseted")
+		default='CURSOR',
+		description='Animation offset by')
+	ob_fcurves_reverse = BoolProperty(name='Reverse', description='Reverse animation offset')
+	ob_fcurves_group_objects = StringProperty(name='Objects', description='Object group for animation offset')
+	ob_fcurves_group_targets = StringProperty(name='Targets', description='Object group for targets, from which animation would be offseted')
 
 
 	ob_nla = BoolProperty()
-	ob_nla_offset = FloatProperty(name="Frame Offset", description="Frame step for animation offset", default=1, min=0, step=10, precision=3)
-	ob_nla_threshold = FloatProperty(name="Threshold", description="Number of objects to animate per frame step", default=1, min=1, step=100, precision=0)
+	ob_nla_offset = FloatProperty(name='Frame Offset', description='Frame step for animation offset', default=1, min=0, step=10, precision=3)
+	ob_nla_threshold = FloatProperty(name='Threshold', description='Number of objects to animate per frame step', default=1, min=1, step=100, precision=0)
 	ob_nla_sort_options = EnumProperty(
 		items=(
-			('CURSOR',      "Cursor",       ""),
-			('MULTITARGET', "Multi-target", ""),
-			('NAME',        "Name",         ""),
+			('CURSOR',      'Cursor',       ''),
+			('MULTITARGET', 'Multi-target', ''),
+			('NAME',        'Name',         ''),
 		),
-		description="Animation offset by",
-		default='CURSOR')
-	ob_nla_reverse = BoolProperty(name="Reverse", description="Reverse animation offset")
-	ob_nla_group_objects = StringProperty(name="Objects", description="Object group for animation offset")
-	ob_nla_group_targets = StringProperty(name="Targets", description="Object group for targets, from which animation would be offseted")
+		default='CURSOR',
+		description='Animation offset by')
+	ob_nla_reverse = BoolProperty(name='Reverse', description='Reverse animation offset')
+	ob_nla_group_objects = StringProperty(name='Objects', description='Object group for animation offset')
+	ob_nla_group_targets = StringProperty(name='Targets', description='Object group for targets, from which animation would be offseted')
 
 
 	transforms = BoolProperty()
-	slow_parent_offset = FloatProperty(name="Offset Factor", description="Offset step for slow parent offset", default=1, min=0, step=10, precision=1)
+	slow_parent_offset = FloatProperty(name='Offset Factor', description='Offset step for slow parent offset', default=1, min=0, step=10, precision=1)
+
+
+
 
 
 
 class ShapeKeysCollection(PropertyGroup):
-	selected = BoolProperty(description="Affect referenced shape key")
+	selected = BoolProperty(description='Affect referenced shape key')
 	index = IntProperty()
 	name = StringProperty()
+
+
+
 
 
 
@@ -185,6 +195,9 @@ classes = (
 
 
 
+
+
+
 def register():
 	for cls in classes:
 		bpy.utils.register_class(cls)
@@ -201,5 +214,5 @@ def unregister():
 	del bpy.types.Scene.commotion_skcoll
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
 	register()

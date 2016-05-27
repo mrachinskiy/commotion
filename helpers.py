@@ -4,11 +4,9 @@ import bpy
 def show_error_message(message):
 
 	def draw(self, context):
-		self.layout.label(line)
+		self.layout.label(message)
 
-	bpy.context.window_manager.popup_menu(draw, title="Error", icon="ERROR")
-
-
+	bpy.context.window_manager.popup_menu(draw, title='Error', icon='ERROR')
 
 
 
@@ -16,10 +14,10 @@ def show_error_message(message):
 
 
 def shape_list_refresh(context):
-	sce = context.scene
-	skcoll = sce.commotion_skcoll
+	scene = context.scene
+	skcoll = scene.commotion_skcoll
 
-	if hasattr(sce, 'commotion_skcoll'):
+	if hasattr(scene, 'commotion_skcoll'):
 		for sk in skcoll:
 			skcoll.remove(0)
 
@@ -32,9 +30,9 @@ def shape_list_refresh(context):
 
 
 def update_sp(self, context):
-	sce = context.scene
-	skcoll = sce.commotion_skcoll
-	props = sce.commotion
+	scene = context.scene
+	skcoll = scene.commotion_skcoll
+	props = scene.commotion
 	key = context.active_object.data.shape_keys
 
 	if key.use_relative:
@@ -52,8 +50,6 @@ def update_sp(self, context):
 
 
 
-
-
 def auto_keyframes(context):
 	frame = context.scene.frame_current
 
@@ -61,9 +57,9 @@ def auto_keyframes(context):
 		key = ob.data.shape_keys
 
 		key.eval_time = int(key.key_blocks[1].frame)
-		key.keyframe_insert(data_path="eval_time", frame=frame)
+		key.keyframe_insert(data_path='eval_time', frame=frame)
 		key.eval_time = int(key.key_blocks[-1].frame)
-		key.keyframe_insert(data_path="eval_time", frame=frame+20)
+		key.keyframe_insert(data_path='eval_time', frame=frame + 20)
 
 
 def keyframes_offset(fcus, i, context):
@@ -213,8 +209,6 @@ def offset_multitarget(objects, targets, offset, threshold, mode, context):
 
 
 
-
-
 def create_nla_tracks(anim):
 	frst_frame = anim.action.frame_range[0]
 
@@ -243,9 +237,6 @@ def create_strips(mode, context):
 			else:
 				return show_error_message('Selected objects have no Animation')
 			create_nla_tracks(anim)
-
-
-
 
 
 
@@ -301,10 +292,6 @@ def link_to_active(mode, context):
 
 
 
-
-
-
-
 def copy_to_selected(mode, context):
 	obj = context.active_object
 	obs = context.selected_objects
@@ -335,8 +322,6 @@ def copy_to_selected(mode, context):
 
 
 
-
-
 def remove_nla_track(anim):
 	trks = anim.nla_tracks
 	anim.action = trks[0].strips[0].action
@@ -360,9 +345,6 @@ def strips_to_fcurves(mode, context):
 
 
 
-
-
-
 def sync_len(mode, context):
 	obs = context.selected_objects
 
@@ -374,10 +356,6 @@ def sync_len(mode, context):
 		for ob in obs:
 			strip = ob.animation_data.nla_tracks[0].strips[0]
 			strip.action_frame_end = (strip.action_frame_start + strip.action.frame_range[1] - 1)
-
-
-
-
 
 
 
@@ -479,7 +457,7 @@ def expression_func_set(context):
 	expr = props.sk_drivers_expression_func
 
 	for ob in context.selected_objects:
-		func_expr = "dist_trigger(" + expr + ", '" + ob.name + "')"
+		func_expr = "dist_trigger(%s, '%s')" % (expr, ob.name)
 		fcus = ob.data.shape_keys.animation_data.drivers
 		for fcu in fcus:
 			if fcu.data_path == 'eval_time':

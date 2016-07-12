@@ -5,7 +5,7 @@ from .utility import icon_tria
 
 class ShapeKeyTools(Panel):
 	bl_category = 'Commotion'
-	bl_label = 'Shape sk Tools'
+	bl_label = 'Shape Key Tools'
 	bl_idname = 'commotion_sk_tools'
 	bl_space_type = 'VIEW_3D'
 	bl_region_type = 'TOOLS'
@@ -19,7 +19,10 @@ class ShapeKeyTools(Panel):
 		props = context.scene.commotion
 		skcoll = context.scene.commotion_skcoll
 		obj = context.active_object
-		sk = obj.data.shape_keys if (obj.data and obj.data.shape_keys) else False
+		try:
+			sk = obj.data.shape_keys
+		except:
+			sk = False
 
 
 

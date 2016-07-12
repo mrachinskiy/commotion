@@ -18,11 +18,18 @@ def update_sk(self, context):
 		for kb in skcoll:
 			if kb.selected:
 				sk.key_blocks[kb.index].value = props.sk_shape_value
+
 	else:
 		for ob in context.selected_objects:
+
+			try:
+				sk = ob.data.shape_keys
+			except:
+				continue
+
 			for kb in skcoll:
 				if kb.selected:
-					ob.data.shape_keys.key_blocks[kb.index].interpolation = props.sk_shape_interpolation
+					sk.key_blocks[kb.index].interpolation = props.sk_shape_interpolation
 
 
 def dist_trigger(var, name):

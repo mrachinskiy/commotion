@@ -14,9 +14,9 @@ if 'bpy' in locals():
 	from importlib import reload
 	reload(operators)
 	reload(ui)
-	reload(modules.anim_tools)
-	reload(modules.nla)
-	reload(modules.utility)
+	reload(anim_tools)
+	reload(nla_tools)
+	reload(utility)
 	del reload
 else:
 	import bpy
@@ -34,7 +34,7 @@ else:
 		operators,
 		ui,
 	)
-	from .modules.utility import update_sk
+	from .utility import update_sk
 
 
 
@@ -175,10 +175,10 @@ classes = (
 
 	operators.SK_DRIVERS_SET_DISTANCE,
 	operators.SK_DRIVERS_COPY_EXPRESSION,
-	operators.SK_DRIVERS_REGISTER_DRV_FUNCTION,
+	operators.SK_DRIVERS_REGISTER_FUNCTION,
 	operators.SK_DRIVERS_RESET_EVAL_TIME,
-	operators.SK_DRIVERS_GET_DRV_FUNC_EXPRESSION,
-	operators.SK_DRIVERS_SET_DRV_FUNC_EXPRESSION,
+	operators.SK_DRIVERS_GET_FUNC_EXPRESSION,
+	operators.SK_DRIVERS_SET_FUNC_EXPRESSION,
 
 	operators.OB_FCURVES_LINK,
 	operators.OB_FCURVES_COPY,
@@ -199,6 +199,8 @@ classes = (
 	operators.OB_NLA_ADD_TO_GROUP_TARGETS,
 
 	operators.OB_OFFSET_SLOW_PARENT,
+	operators.OB_SLOW_PARENT_ON,
+	operators.OB_SLOW_PARENT_OFF,
 )
 
 

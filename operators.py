@@ -1,9 +1,9 @@
 import bpy
 from bpy.types import Operator
 from re import sub
-from .modules import (
+from . import (
 	anim_tools,
-	nla,
+	nla_tools,
 	utility,
 )
 
@@ -42,15 +42,19 @@ class SK_AUTO_KEYFRAMES(Operator):
 		frame = context.scene.frame_current
 
 		for ob in context.selected_objects:
-			sk = ob.data.shape_keys
+			try:
+				sk = ob.data.shape_keys
+			except:
+				continue
 
-			sk.eval_time = int(sk.key_blocks[1].frame)
-			sk.keyframe_insert(data_path='eval_time', frame=frame)
-			sk.eval_time = int(sk.key_blocks[-1].frame)
-			sk.keyframe_insert(data_path='eval_time', frame=frame + 20)
+			if not sk.use_relative:
+				sk.eval_time = int(sk.key_blocks[1].frame)
+				sk.keyframe_insert(data_path='eval_time', frame=frame)
+				sk.eval_time = int(sk.key_blocks[-1].frame)
+				sk.keyframe_insert(data_path='eval_time', frame=frame + 20)
 
-			for fcu in sk.animation_data.action.fcurves:
-				fcu.color_mode = 'AUTO_RAINBOW'
+				for fcu in sk.animation_data.action.fcurves:
+					fcu.color_mode = 'AUTO_RAINBOW'
 
 		return {'FINISHED'}
 
@@ -65,6 +69,13 @@ class SK_FCURVES_LINK(Operator):
 	bl_idname = 'commotion.sk_fcurves_link'
 	bl_options = {'INTERNAL'}
 
+	@classmethod
+	def poll(cls, context):
+		try:
+			return context.active_object.data.shape_keys.animation_data.action
+		except:
+			return False
+
 	def execute(self, context):
 		mode = ['SHAPE_KEYS', 'FCURVES']
 		anim_tools.anim_link_to_active(mode, context)
@@ -76,6 +87,13 @@ class SK_FCURVES_COPY(Operator):
 	bl_label = 'Copy Animation'
 	bl_idname = 'commotion.sk_fcurves_copy'
 	bl_options = {'INTERNAL'}
+
+	@classmethod
+	def poll(cls, context):
+		try:
+			return context.active_object.data.shape_keys.animation_data.action
+		except:
+			return False
 
 	def execute(self, context):
 		mode = ['SHAPE_KEYS']
@@ -184,9 +202,16 @@ class SK_NLA_CREATE(Operator):
 	bl_idname = 'commotion.sk_nla_create'
 	bl_options = {'INTERNAL'}
 
+	@classmethod
+	def poll(cls, context):
+		try:
+			return context.active_object.data.shape_keys.animation_data.action
+		except:
+			return False
+
 	def execute(self, context):
 		mode = ['SHAPE_KEYS']
-		nla.create_strips(mode, context)
+		nla_tools.create_strips(mode, context)
 		return {'FINISHED'}
 
 
@@ -196,9 +221,16 @@ class SK_NLA_TO_FCURVES(Operator):
 	bl_idname = 'commotion.sk_nla_to_fcurves'
 	bl_options = {'INTERNAL'}
 
+	@classmethod
+	def poll(cls, context):
+		try:
+			return context.active_object.data.shape_keys.animation_data.nla_tracks[0].strips
+		except:
+			return False
+
 	def execute(self, context):
 		mode = ['SHAPE_KEYS']
-		nla.strips_to_fcurves(mode, context)
+		nla_tools.strips_to_fcurves(mode, context)
 		return {'FINISHED'}
 
 
@@ -208,9 +240,16 @@ class SK_NLA_SYNC_LENGTH(Operator):
 	bl_idname = 'commotion.sk_nla_sync_length'
 	bl_options = {'INTERNAL'}
 
+	@classmethod
+	def poll(cls, context):
+		try:
+			return context.active_object.data.shape_keys.animation_data.nla_tracks[0].strips
+		except:
+			return False
+
 	def execute(self, context):
 		mode = ['SHAPE_KEYS']
-		nla.sync_len(mode, context)
+		nla_tools.sync_len(mode, context)
 		return {'FINISHED'}
 
 
@@ -219,6 +258,13 @@ class SK_NLA_LINK_TO_ACTIVE(Operator):
 	bl_label = 'Link Strips'
 	bl_idname = 'commotion.sk_nla_link_to_active'
 	bl_options = {'INTERNAL'}
+
+	@classmethod
+	def poll(cls, context):
+		try:
+			return context.active_object.data.shape_keys.animation_data.nla_tracks[0].strips
+		except:
+			return False
 
 	def execute(self, context):
 		mode = ['SHAPE_KEYS', 'NLA']
@@ -401,11 +447,11 @@ class SK_DRIVERS_COPY_EXPRESSION(Operator):
 		return {'FINISHED'}
 
 
-class SK_DRIVERS_REGISTER_DRV_FUNCTION(Operator):
+class SK_DRIVERS_REGISTER_FUNCTION(Operator):
 	"""Register Distance Trigger driver function.\n""" \
 	"""Use it every time when open blend file, otherwise Distance Trigger drivers won't work."""
 	bl_label = 'Register driver function'
-	bl_idname = 'commotion.sk_drivers_register_drv_function'
+	bl_idname = 'commotion.sk_drivers_register_function'
 	bl_options = {'INTERNAL'}
 
 	def execute(self, context):
@@ -435,10 +481,10 @@ class SK_DRIVERS_RESET_EVAL_TIME(Operator):
 		return {'FINISHED'}
 
 
-class SK_DRIVERS_GET_DRV_FUNC_EXPRESSION(Operator):
+class SK_DRIVERS_GET_FUNC_EXPRESSION(Operator):
 	"""Get expression from active object"""
 	bl_label = 'Get Expression'
-	bl_idname = 'commotion.sk_drivers_get_drv_func_expression'
+	bl_idname = 'commotion.sk_drivers_get_func_expression'
 	bl_options = {'INTERNAL'}
 
 	def execute(self, context):
@@ -449,10 +495,10 @@ class SK_DRIVERS_GET_DRV_FUNC_EXPRESSION(Operator):
 		return {'FINISHED'}
 
 
-class SK_DRIVERS_SET_DRV_FUNC_EXPRESSION(Operator):
+class SK_DRIVERS_SET_FUNC_EXPRESSION(Operator):
 	"""Set distance trigger expression for selected objects"""
 	bl_label = 'Set Expression'
-	bl_idname = 'commotion.sk_drivers_set_drv_func_expression'
+	bl_idname = 'commotion.sk_drivers_set_func_expression'
 	bl_options = {'INTERNAL'}
 
 	def execute(self, context):
@@ -479,6 +525,13 @@ class OB_FCURVES_LINK(Operator):
 	bl_idname = 'commotion.ob_fcurves_link'
 	bl_options = {'INTERNAL'}
 
+	@classmethod
+	def poll(cls, context):
+		try:
+			return context.active_object.animation_data.action
+		except:
+			return False
+
 	def execute(self, context):
 		mode = ['OBJECT', 'FCURVES']
 		anim_tools.anim_link_to_active(mode, context)
@@ -490,6 +543,13 @@ class OB_FCURVES_COPY(Operator):
 	bl_label = 'Copy Animation'
 	bl_idname = 'commotion.ob_fcurves_copy'
 	bl_options = {'INTERNAL'}
+
+	@classmethod
+	def poll(cls, context):
+		try:
+			return context.active_object.animation_data.action
+		except:
+			return False
 
 	def execute(self, context):
 		mode = ['OBJECT']
@@ -598,9 +658,16 @@ class OB_NLA_CREATE(Operator):
 	bl_idname = 'commotion.ob_nla_create'
 	bl_options = {'INTERNAL'}
 
+	@classmethod
+	def poll(cls, context):
+		try:
+			return context.active_object.animation_data.action
+		except:
+			return False
+
 	def execute(self, context):
 		mode = ['OBJECT']
-		nla.create_strips(mode, context)
+		nla_tools.create_strips(mode, context)
 		return {'FINISHED'}
 
 
@@ -610,9 +677,16 @@ class OB_NLA_TO_FCURVES(Operator):
 	bl_idname = 'commotion.ob_nla_to_fcurves'
 	bl_options = {'INTERNAL'}
 
+	@classmethod
+	def poll(cls, context):
+		try:
+			return context.active_object.animation_data.nla_tracks[0].strips
+		except:
+			return False
+
 	def execute(self, context):
 		mode = ['OBJECT']
-		nla.strips_to_fcurves(mode, context)
+		nla_tools.strips_to_fcurves(mode, context)
 		return {'FINISHED'}
 
 
@@ -622,9 +696,16 @@ class OB_NLA_SYNC_LENGTH(Operator):
 	bl_idname = 'commotion.ob_nla_sync_length'
 	bl_options = {'INTERNAL'}
 
+	@classmethod
+	def poll(cls, context):
+		try:
+			return context.active_object.animation_data.nla_tracks[0].strips
+		except:
+			return False
+
 	def execute(self, context):
 		mode = ['OBJECT']
-		nla.sync_len(mode, context)
+		nla_tools.sync_len(mode, context)
 		return {'FINISHED'}
 
 
@@ -633,6 +714,13 @@ class OB_NLA_LINK_TO_ACTIVE(Operator):
 	bl_label = 'Link Strips'
 	bl_idname = 'commotion.ob_nla_link_to_active'
 	bl_options = {'INTERNAL'}
+
+	@classmethod
+	def poll(cls, context):
+		try:
+			return context.active_object.animation_data.nla_tracks[0].strips
+		except:
+			return False
 
 	def execute(self, context):
 		mode = ['OBJECT', 'NLA']
@@ -743,4 +831,28 @@ class OB_OFFSET_SLOW_PARENT(Operator):
 	def execute(self, context):
 		offset = context.scene.commotion.ob_offset_slow_parent
 		anim_tools.offset_parent(offset, context)
+		return {'FINISHED'}
+
+
+class OB_SLOW_PARENT_ON(Operator):
+	"""Toggle Slow Parent property on for selected objects"""
+	bl_label = 'On'
+	bl_idname = 'commotion.ob_slow_parent_on'
+
+	def execute(self, context):
+		for ob in context.selected_objects:
+			if ob.parent:
+				ob.use_slow_parent = True
+		return {'FINISHED'}
+
+
+class OB_SLOW_PARENT_OFF(Operator):
+	"""Toggle Slow Parent property off for selected objects"""
+	bl_label = 'Off'
+	bl_idname = 'commotion.ob_slow_parent_off'
+
+	def execute(self, context):
+		for ob in context.selected_objects:
+			if ob.parent:
+				ob.use_slow_parent = False
 		return {'FINISHED'}

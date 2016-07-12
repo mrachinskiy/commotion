@@ -110,7 +110,8 @@ def offset_cursor(offset, threshold, mode, context):
 	i2 = threshold
 	for ob in dist:
 
-		data_access(mode, ob, i, context)
+		if data_access(mode, ob, i, context) is False:
+			continue
 
 		if i2 > 1:
 			if i2 <= (dist.index(ob) + 1):
@@ -136,7 +137,8 @@ def offset_name(offset, threshold, mode, context):
 	i2 = threshold
 	for ob in dist:
 
-		data_access(mode, ob, i, context)
+		if data_access(mode, ob, i, context) is False:
+			continue
 
 		if i2 > 1:
 			if i2 <= (dist.index(ob) + 1):
@@ -186,7 +188,8 @@ def offset_multitarget(objects, targets, offset, threshold, mode, context):
 		for ob in obs_sorted:
 			if obs[ob][1] == t:
 
-				data_access(mode, ob, i, context)
+				if data_access(mode, ob, i, context) is False:
+					continue
 
 				if i2 > 1:
 					obs_thold.append(ob)
@@ -253,36 +256,42 @@ def data_access(mode, ob, i, context):
 
 	frame = context.scene.frame_current
 
-
-	if 'FCURVES' in mode:
-
-		if 'SHAPE_KEYS' in mode:
-			fcus = ob.data.shape_keys.animation_data.action.fcurves
-
-		elif 'OBJECT' in mode:
-			fcus = ob.animation_data.action.fcurves
-
-		for fcu in fcus:
-			fcu_range = fcu.range()[0]
-			for kp in fcu.keyframe_points:
-				kp.co[0] = kp.co[0] + frame + i - fcu_range
-				kp.handle_left[0] = kp.handle_left[0] + frame + i - fcu_range
-				kp.handle_right[0] = kp.handle_right[0] + frame + i - fcu_range
+	try:
 
 
-	elif 'NLA' in mode:
+		if 'FCURVES' in mode:
 
-		if 'SHAPE_KEYS' in mode:
-			strip = ob.data.shape_keys.animation_data.nla_tracks[0].strips[0]
+			if 'SHAPE_KEYS' in mode:
+				fcus = ob.data.shape_keys.animation_data.action.fcurves
 
-		elif 'OBJECT' in mode:
-			strip = ob.animation_data.nla_tracks[0].strips[0]
+			elif 'OBJECT' in mode:
+				fcus = ob.animation_data.action.fcurves
 
-		strip.frame_end = frame - 1 + i + strip.frame_end
-		strip.frame_start = frame + i
-		strip.scale = 1
+			for fcu in fcus:
+				fcu_range = fcu.range()[0]
+				for kp in fcu.keyframe_points:
+					kp.co[0] = kp.co[0] + frame + i - fcu_range
+					kp.handle_left[0] = kp.handle_left[0] + frame + i - fcu_range
+					kp.handle_right[0] = kp.handle_right[0] + frame + i - fcu_range
 
 
-	elif 'PARENT' in mode:
-		ob.use_slow_parent = True
-		ob.slow_parent_offset = i
+		elif 'NLA' in mode:
+
+			if 'SHAPE_KEYS' in mode:
+				strip = ob.data.shape_keys.animation_data.nla_tracks[0].strips[0]
+
+			elif 'OBJECT' in mode:
+				strip = ob.animation_data.nla_tracks[0].strips[0]
+
+			strip.frame_end = frame - 1 + i + strip.frame_end
+			strip.frame_start = frame + i
+			strip.scale = 1
+
+
+		elif 'PARENT' in mode:
+			ob.use_slow_parent = True
+			ob.slow_parent_offset = i
+
+
+	except:
+		return False

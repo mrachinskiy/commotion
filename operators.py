@@ -1,26 +1,23 @@
 import bpy
 from bpy.types import Operator
-from re import sub
-from . import (
-	anim_tools,
-	nla_tools,
-	utility,
+from bpy.props import (
+	StringProperty,
+	FloatProperty,
+	BoolProperty,
 )
+from re import sub
 
 
-class SK_REFRESH(Operator):
+class SK_COLL_REFRESH(Operator):
 	"""Refresh shape key list for active object"""
 	bl_label = 'Refresh Shape List'
-	bl_idname = 'commotion.sk_refresh'
+	bl_idname = 'commotion.sk_coll_refresh'
 	bl_options = {'INTERNAL'}
 
 	def execute(self, context):
-		scene = context.scene
-		skcoll = scene.commotion_skcoll
+		skcoll = context.scene.commotion_skcoll
 
-		if hasattr(scene, 'commotion_skcoll'):
-			for kb in skcoll:
-				skcoll.remove(0)
+		skcoll.clear()
 
 		i = 0
 		for kb in context.active_object.data.shape_keys.key_blocks:
@@ -28,6 +25,31 @@ class SK_REFRESH(Operator):
 			skcoll[i].name = kb.name
 			skcoll[i].index = i
 			i += 1
+
+		return {'FINISHED'}
+
+
+class SK_INTERPOLATION_SET(Operator):
+	"""Set interpolation type for selected shape keys (Linear, Cardinal, Catmull-Rom, BSpline)"""
+	bl_label = 'Set Interpolation'
+	bl_idname = 'commotion.sk_interpolation_set'
+	bl_options = {'INTERNAL'}
+
+	intr = StringProperty(options={'HIDDEN', 'SKIP_SAVE'})
+
+	def execute(self, context):
+		skcoll = context.scene.commotion_skcoll
+
+		for ob in context.selected_objects:
+
+			try:
+				sk = ob.data.shape_keys
+			except:
+				continue
+
+			for kb in skcoll:
+				if kb.selected:
+					sk.key_blocks[kb.index].interpolation = self.intr
 
 		return {'FINISHED'}
 
@@ -59,319 +81,388 @@ class SK_AUTO_KEYFRAMES(Operator):
 		return {'FINISHED'}
 
 
-
-
-
-
-class SK_FCURVES_LINK(Operator):
+class ANIMATION_LINK(Operator):
 	"""Link animation from active to selected objects"""
-	bl_label = 'Link Animation'
-	bl_idname = 'commotion.sk_fcurves_link'
+	bl_label = 'Link'
+	bl_idname = 'commotion.animation_link'
 	bl_options = {'INTERNAL'}
 
-	@classmethod
-	def poll(cls, context):
-		try:
-			return context.active_object.data.shape_keys.animation_data.action
-		except:
-			return False
+	ad_type = StringProperty(options={'HIDDEN', 'SKIP_SAVE'})
 
 	def execute(self, context):
-		mode = ['SHAPE_KEYS', 'FCURVES']
-		anim_tools.anim_link_to_active(mode, context)
+
+		def link_strips(ob_strip, obj_strip):
+			obj_fstart = obj_strip.action_frame_start
+			obj_fend = obj_strip.action_frame_end
+			ob_strip.action = obj_strip.action
+			ob_strip.action_frame_start = obj_fstart
+			ob_strip.action_frame_end = obj_fend
+
+		obj = context.active_object
+		obs = context.selected_objects
+
+		if 'FCURVES' in self.ad_type:
+
+			if 'SHAPE_KEYS' in self.ad_type:
+				action = obj.data.shape_keys.animation_data.action
+				for ob in obs:
+					if (ob.data and ob.data.shape_keys):
+						sk = ob.data.shape_keys
+						if sk.animation_data:
+							sk.animation_data.action = action
+						else:
+							sk.animation_data_create()
+							sk.animation_data.action = action
+
+			elif 'OBJECT' in self.ad_type:
+				action = obj.animation_data.action
+				for ob in obs:
+					if ob.animation_data:
+						ob.animation_data.action = action
+					else:
+						ob.animation_data_create()
+						ob.animation_data.action = action
+
+		elif 'NLA' in self.ad_type:
+
+			if 'SHAPE_KEYS' in self.ad_type:
+				obj_strip = obj.data.shape_keys.animation_data.nla_tracks[0].strips[0]
+				for ob in obs:
+					try:
+						ob_strip = ob.data.shape_keys.animation_data.nla_tracks[0].strips[0]
+						link_strips(ob_strip, obj_strip)
+					except:
+						continue
+
+			elif 'OBJECT' in self.ad_type:
+				obj_strip = obj.animation_data.nla_tracks[0].strips[0]
+				for ob in obs:
+					try:
+						ob_strip = ob.animation_data.nla_tracks[0].strips[0]
+						link_strips(ob_strip, obj_strip)
+					except:
+						continue
+
 		return {'FINISHED'}
 
 
-class SK_FCURVES_COPY(Operator):
+class ANIMATION_COPY(Operator):
 	"""Copy animation from active to selected objects (can also use this to unlink animation)"""
-	bl_label = 'Copy Animation'
-	bl_idname = 'commotion.sk_fcurves_copy'
+	bl_label = 'Copy'
+	bl_idname = 'commotion.animation_copy'
 	bl_options = {'INTERNAL'}
 
-	@classmethod
-	def poll(cls, context):
-		try:
-			return context.active_object.data.shape_keys.animation_data.action
-		except:
-			return False
+	ad_type = StringProperty(options={'HIDDEN', 'SKIP_SAVE'})
 
 	def execute(self, context):
-		mode = ['SHAPE_KEYS']
-		anim_tools.fcurves_copy_to_selected(mode, context)
-		return {'FINISHED'}
+		obj = context.active_object
+		obs = context.selected_objects
 
+		if 'SHAPE_KEYS' in self.ad_type:
+			action = obj.data.shape_keys.animation_data.action
+			for ob in obs:
+				if (ob.data and ob.data.shape_keys):
+					if ob.data.shape_keys.animation_data:
+						ob.data.shape_keys.animation_data.action = action.copy()
+					else:
+						ob.data.shape_keys.animation_data_create()
+						ob.data.shape_keys.animation_data.action = action.copy()
 
-class SK_FCURVES_OFFSET_CURSOR(Operator):
-	"""Offset animation for selected objects (won't work if F-Curves are linked)"""
-	bl_label = 'Offset Animation'
-	bl_idname = 'commotion.sk_fcurves_offset_cursor'
-	bl_options = {'INTERNAL'}
-
-	def execute(self, context):
-		props = context.scene.commotion
-		offset = props.sk_fcurves_offset
-		threshold = props.sk_fcurves_threshold
-		reverse = props.sk_fcurves_reverse
-		mode = ['SHAPE_KEYS', 'FCURVES']
-		if reverse:
-			mode += ['REVERSE']
-
-		anim_tools.offset_cursor(offset, threshold, mode, context)
+		elif 'OBJECT' in self.ad_type:
+			action = obj.animation_data.action
+			for ob in obs:
+				if ob.animation_data:
+					ob.animation_data.action = action.copy()
+				else:
+					ob.animation_data_create()
+					ob.animation_data.action = action.copy()
 
 		return {'FINISHED'}
 
 
-class SK_FCURVES_OFFSET_MULTITARGET(Operator):
-	"""Offset animation for selected objects (won't work if F-Curves are linked)"""
-	bl_label = 'Offset Animation'
-	bl_idname = 'commotion.sk_fcurves_offset_multitarget'
+class NLA_TO_STRIPS(Operator):
+	"""Convert F-Curves to NLA strips"""
+	bl_label = 'F-Curves to Strips'
+	bl_idname = 'commotion.nla_to_strips'
 	bl_options = {'INTERNAL'}
 
-	@classmethod
-	def poll(cls, context):
-		props = context.scene.commotion
-		return (props.sk_fcurves_group_objects and props.sk_fcurves_group_targets)
+	ad_type = StringProperty(options={'HIDDEN', 'SKIP_SAVE'})
 
 	def execute(self, context):
-		props = context.scene.commotion
-		objects = bpy.data.groups[props.sk_fcurves_group_objects].objects
-		targets = bpy.data.groups[props.sk_fcurves_group_targets].objects
-		offset = props.sk_fcurves_offset
-		threshold = props.sk_fcurves_threshold
-		reverse = props.sk_fcurves_reverse
-		mode = ['SHAPE_KEYS', 'FCURVES']
-		if reverse:
-			mode += ['REVERSE']
 
-		anim_tools.offset_multitarget(objects, targets, offset, threshold, mode, context)
+		def strips_create(ad):
+			fstart = ad.action.frame_range[0]
+			if not ad.nla_tracks:
+				ad.nla_tracks.new()
+			ad.nla_tracks[0].strips.new('name', fstart, ad.action)
+			ad.action = None
+
+		if 'SHAPE_KEYS' in self.ad_type:
+			for ob in context.selected_objects:
+				if (ob.data and ob.data.shape_keys):
+					ad = ob.data.shape_keys.animation_data
+					strips_create(ad)
+
+		elif 'OBJECT' in self.ad_type:
+			for ob in context.selected_objects:
+				if ob.animation_data:
+					ad = ob.animation_data
+					strips_create(ad)
 
 		return {'FINISHED'}
 
 
-class SK_FCURVES_OFFSET_NAME(Operator):
-	"""Offset animation for selected objects (won't work if F-Curves are linked)"""
-	bl_label = 'Offset Animation'
-	bl_idname = 'commotion.sk_fcurves_offset_name'
-	bl_options = {'INTERNAL'}
-
-	def execute(self, context):
-		props = context.scene.commotion
-		offset = props.sk_fcurves_offset
-		threshold = props.sk_fcurves_threshold
-		reverse = props.sk_fcurves_reverse
-		mode = ['SHAPE_KEYS', 'FCURVES']
-		if reverse:
-			mode += ['REVERSE']
-
-		anim_tools.offset_name(offset, threshold, mode, context)
-
-		return {'FINISHED'}
-
-
-class SK_FCURVES_ADD_TO_GROUP_OBJECTS(Operator):
-	"""Add selected objects to group"""
-	bl_label = 'Add to group'
-	bl_idname = 'commotion.sk_fcurves_add_to_group_objects'
-	bl_options = {'INTERNAL'}
-
-	def execute(self, context):
-		mode = ['SHAPE_KEYS', 'FCURVES']
-		anim_tools.add_to_group('Objects', mode, context)
-		return {'FINISHED'}
-
-
-class SK_FCURVES_ADD_TO_GROUP_TARGETS(Operator):
-	"""Add selected objects to group"""
-	bl_label = 'Add to group'
-	bl_idname = 'commotion.sk_fcurves_add_to_group_targets'
-	bl_options = {'INTERNAL'}
-
-	def execute(self, context):
-		mode = ['SHAPE_KEYS', 'FCURVES']
-		anim_tools.add_to_group('Targets', mode, context)
-		return {'FINISHED'}
-
-
-
-
-
-
-class SK_NLA_CREATE(Operator):
-	"""Create NLA strips from shape keys animation"""
-	bl_label = 'Create NLA Strips'
-	bl_idname = 'commotion.sk_nla_create'
-	bl_options = {'INTERNAL'}
-
-	@classmethod
-	def poll(cls, context):
-		try:
-			return context.active_object.data.shape_keys.animation_data.action
-		except:
-			return False
-
-	def execute(self, context):
-		mode = ['SHAPE_KEYS']
-		nla_tools.create_strips(mode, context)
-		return {'FINISHED'}
-
-
-class SK_NLA_TO_FCURVES(Operator):
-	"""Convert NLA strips back to F-Curves"""
+class NLA_TO_FCURVES(Operator):
+	"""Convert strips back to F-Curves"""
 	bl_label = 'Strips to F-Curves'
-	bl_idname = 'commotion.sk_nla_to_fcurves'
+	bl_idname = 'commotion.nla_to_fcurves'
 	bl_options = {'INTERNAL'}
 
-	@classmethod
-	def poll(cls, context):
-		try:
-			return context.active_object.data.shape_keys.animation_data.nla_tracks[0].strips
-		except:
-			return False
+	ad_type = StringProperty(options={'HIDDEN', 'SKIP_SAVE'})
 
 	def execute(self, context):
-		mode = ['SHAPE_KEYS']
-		nla_tools.strips_to_fcurves(mode, context)
+
+		def remove_nla_track(ad):
+			trks = ad.nla_tracks
+			ad.action = trks[0].strips[0].action
+			trks.remove(trks[0])
+
+		obs = context.selected_objects
+
+		if 'SHAPE_KEYS' in self.ad_type:
+			for ob in obs:
+				try:
+					ad = ob.data.shape_keys.animation_data
+					remove_nla_track(ad)
+				except:
+					continue
+
+		elif 'OBJECT' in self.ad_type:
+			for ob in obs:
+				try:
+					ad = ob.animation_data
+					remove_nla_track(ad)
+				except:
+					continue
+
 		return {'FINISHED'}
 
 
-class SK_NLA_SYNC_LENGTH(Operator):
-	"""Synchronize length of NLA strips for selected objects"""
+class NLA_SYNC_LENGTH(Operator):
+	"""Synchronize strip length for selected objects"""
 	bl_label = 'Sync Length'
-	bl_idname = 'commotion.sk_nla_sync_length'
+	bl_idname = 'commotion.nla_sync_length'
 	bl_options = {'INTERNAL'}
 
-	@classmethod
-	def poll(cls, context):
+	ad_type = StringProperty(options={'HIDDEN', 'SKIP_SAVE'})
+
+	def execute(self, context):
+		obs = context.selected_objects
+
+		if 'SHAPE_KEYS' in self.ad_type:
+			for ob in obs:
+				try:
+					strip = ob.data.shape_keys.animation_data.nla_tracks[0].strips[0]
+					strip.action_frame_end = (strip.action_frame_start + strip.action.frame_range[1] - 1)
+				except:
+					continue
+
+		elif 'OBJECT' in self.ad_type:
+			for ob in obs:
+				try:
+					strip = ob.animation_data.nla_tracks[0].strips[0]
+					strip.action_frame_end = (strip.action_frame_start + strip.action.frame_range[1] - 1)
+				except:
+					continue
+
+		return {'FINISHED'}
+
+
+class AnimationOffset():
+	bl_label = 'Offset Animation'
+	bl_options = {'INTERNAL'}
+
+	ad_type = StringProperty(options={'HIDDEN', 'SKIP_SAVE'})
+	prop_pfx = StringProperty(options={'HIDDEN', 'SKIP_SAVE'})
+
+	def __init__(self):
+		scene = bpy.context.scene
+		props = scene.commotion
+		self.frame = scene.frame_current
+		self.offset        = getattr(props, '%s_offset' % self.prop_pfx)
+		self.threshold     = getattr(props, '%s_threshold' % self.prop_pfx)
+		self.reverse       = getattr(props, '%s_reverse' % self.prop_pfx)
+		self.sort_options  = getattr(props, '%s_sort_options' % self.prop_pfx)
+		self.group_objects = getattr(props, '%s_group_objects' % self.prop_pfx)
+		self.group_targets = getattr(props, '%s_group_targets' % self.prop_pfx)
+
+	def preset_add(self, ob):
+		ob['commotion_preset'] = {
+			'offset'        : self.offset,
+			'threshold'     : self.threshold,
+			'reverse'       : self.reverse,
+			'sort_options'  : self.sort_options,
+			'group_objects' : self.group_objects,
+			'group_targets' : self.group_targets,
+		}
+
+	def offset_simple(self, dist):
+		dist = sorted(dist, key=dist.get, reverse=self.reverse)
+
+		i = 0
+		i2 = self.threshold
+		for ob in dist:
+
+			if self.ad_offset(ob, i) is False:
+				continue
+
+			self.preset_add(ob)
+
+			if i2 > 1:
+				if i2 <= (dist.index(ob) + 1):
+					i2 += self.threshold
+					i += self.offset
+			else:
+				i += self.offset
+
+	def ad_offset(self, ob, i):
 		try:
-			return context.active_object.data.shape_keys.animation_data.nla_tracks[0].strips
+
+			if 'FCURVES' in self.ad_type:
+
+				if 'SHAPE_KEYS' in self.ad_type:
+					fcus = ob.data.shape_keys.animation_data.action.fcurves
+
+				elif 'OBJECT' in self.ad_type:
+					fcus = ob.animation_data.action.fcurves
+
+				for fcu in fcus:
+					fcu_range = fcu.range()[0]
+					for kp in fcu.keyframe_points:
+						kp.co[0] = kp.co[0] + self.frame + i - fcu_range
+						kp.handle_left[0] = kp.handle_left[0] + self.frame + i - fcu_range
+						kp.handle_right[0] = kp.handle_right[0] + self.frame + i - fcu_range
+
+			elif 'NLA' in self.ad_type:
+
+				if 'SHAPE_KEYS' in self.ad_type:
+					strip = ob.data.shape_keys.animation_data.nla_tracks[0].strips[0]
+
+				elif 'OBJECT' in self.ad_type:
+					strip = ob.animation_data.nla_tracks[0].strips[0]
+
+				strip.frame_end = self.frame - 1 + i + strip.frame_end
+				strip.frame_start = self.frame + i
+				strip.scale = 1
+
 		except:
 			return False
 
-	def execute(self, context):
-		mode = ['SHAPE_KEYS']
-		nla_tools.sync_len(mode, context)
-		return {'FINISHED'}
 
-
-class SK_NLA_LINK_TO_ACTIVE(Operator):
-	"""Link strips from active to selected objects"""
-	bl_label = 'Link Strips'
-	bl_idname = 'commotion.sk_nla_link_to_active'
-	bl_options = {'INTERNAL'}
-
-	@classmethod
-	def poll(cls, context):
-		try:
-			return context.active_object.data.shape_keys.animation_data.nla_tracks[0].strips
-		except:
-			return False
+class ANIMATION_OFFSET_CURSOR(AnimationOffset, Operator):
+	"""Offset animation from 3D cursor for selected objects (won't work if F-Curves are linked)"""
+	bl_idname = 'commotion.animation_offset_cursor'
 
 	def execute(self, context):
-		mode = ['SHAPE_KEYS', 'NLA']
-		anim_tools.anim_link_to_active(mode, context)
-		return {'FINISHED'}
+		cursor = context.scene.cursor_location
+		dist = {}
+		for ob in context.selected_objects:
+			distance = (cursor - (ob.location + ob.delta_location)).length
+			dist[ob] = distance
 
-
-class SK_NLA_OFFSET_CURSOR(Operator):
-	"""Offset animation for selected objects"""
-	bl_label = 'Offset Strips'
-	bl_idname = 'commotion.sk_nla_offset_cursor'
-	bl_options = {'INTERNAL'}
-
-	def execute(self, context):
-		props = context.scene.commotion
-		offset = props.sk_nla_offset
-		threshold = props.sk_nla_threshold
-		reverse = props.sk_nla_reverse
-		mode = ['SHAPE_KEYS', 'NLA']
-		if reverse:
-			mode += ['REVERSE']
-
-		anim_tools.offset_cursor(offset, threshold, mode, context)
+		self.offset_simple(dist)
 
 		return {'FINISHED'}
 
 
-class SK_NLA_OFFSET_MULTITARGET(Operator):
-	"""Offset animation for selected objects"""
-	bl_label = 'Offset Strips'
-	bl_idname = 'commotion.sk_nla_offset_multitarget'
-	bl_options = {'INTERNAL'}
-
-	@classmethod
-	def poll(cls, context):
-		props = context.scene.commotion
-		return (props.sk_nla_group_objects and props.sk_nla_group_targets)
+class ANIMATION_OFFSET_NAME(AnimationOffset, Operator):
+	"""Offset animation by object name for selected objects (won't work if F-Curves are linked)"""
+	bl_idname = 'commotion.animation_offset_name'
 
 	def execute(self, context):
-		props = context.scene.commotion
-		objects = bpy.data.groups[props.sk_nla_group_objects].objects
-		targets = bpy.data.groups[props.sk_nla_group_targets].objects
-		offset = props.sk_nla_offset
-		threshold = props.sk_nla_threshold
-		reverse = props.sk_nla_reverse
-		mode = ['SHAPE_KEYS', 'NLA']
-		if reverse:
-			mode += ['REVERSE']
+		dist = {}
+		for ob in context.selected_objects:
+			dist[ob] = ob.name
 
-		anim_tools.offset_multitarget(objects, targets, offset, threshold, mode, context)
+		self.offset_simple(dist)
 
 		return {'FINISHED'}
 
 
-class SK_NLA_OFFSET_NAME(Operator):
-	"""Offset animation for selected objects"""
-	bl_label = 'Offset Strips'
-	bl_idname = 'commotion.sk_nla_offset_name'
-	bl_options = {'INTERNAL'}
+class ANIMATION_OFFSET_MULTITARGET(AnimationOffset, Operator):
+	"""Offset animation from multiple targets for selected objects (won't work if F-Curves are linked)"""
+	bl_idname = 'commotion.animation_offset_multitarget'
 
 	def execute(self, context):
-		props = context.scene.commotion
-		offset = props.sk_nla_offset
-		threshold = props.sk_nla_threshold
-		reverse = props.sk_nla_reverse
-		mode = ['SHAPE_KEYS', 'NLA']
-		if reverse:
-			mode += ['REVERSE']
+		objects = bpy.data.groups[self.group_objects].objects
+		targets = bpy.data.groups[self.group_targets].objects
 
-		anim_tools.offset_name(offset, threshold, mode, context)
+		obs = {}
+		for ob in objects:
+			targs = {}
+			for t in targets:
+				distance = (t.location - (ob.location + ob.delta_location)).length
+				targs[distance] = t
+				dist = sorted(targs)[0]
+			obs[ob] = [dist, targs[dist]]
+
+		for t in targets:
+			obs_thold = []
+			i = 0
+			i2 = self.threshold
+
+			obs_sorted = sorted(obs, key=obs.get, reverse=self.reverse)
+
+			for ob in obs_sorted:
+				if obs[ob][1] == t:
+
+					if self.ad_offset(ob, i) is False:
+						continue
+
+					self.preset_add(ob)
+
+					if i2 > 1:
+						obs_thold.append(ob)
+						if i2 <= (obs_thold.index(ob) + 1):
+							i += self.offset
+							i2 += self.threshold
+					else:
+						i += self.offset
 
 		return {'FINISHED'}
 
 
-class SK_NLA_ADD_TO_GROUP_OBJECTS(Operator):
-	"""Add selected objects to group"""
-	bl_label = 'Add to group'
-	bl_idname = 'commotion.sk_nla_add_to_group_objects'
-	bl_options = {'INTERNAL'}
+class OB_SLOW_PARENT_OFFSET(Operator):
+	"""Offset Slow Parent property for selected objects"""
+	bl_label = 'Offset Slow Parent'
+	bl_idname = 'commotion.ob_slow_parent_offset'
+	bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
+
+	offset = FloatProperty(name='Offset Factor', default=1, min=0, step=10, precision=1)
 
 	def execute(self, context):
-		mode = ['SHAPE_KEYS', 'NLA']
-		anim_tools.add_to_group('Objects', mode, context)
+		dist = {}
+		for ob in context.selected_objects:
+			if ob.parent:
+				distance = (ob.parent.location - (ob.location + ob.delta_location + ob.parent.location)).length
+				dist[ob] = distance
+
+		dist = sorted(dist, key=dist.get)
+
+		i = self.offset
+		for ob in dist:
+			ob.use_slow_parent = True
+			ob.slow_parent_offset = i
+			i += self.offset
+
 		return {'FINISHED'}
 
 
-class SK_NLA_ADD_TO_GROUP_TARGETS(Operator):
-	"""Add selected objects to group"""
-	bl_label = 'Add to group'
-	bl_idname = 'commotion.sk_nla_add_to_group_targets'
-	bl_options = {'INTERNAL'}
-
-	def execute(self, context):
-		mode = ['SHAPE_KEYS', 'NLA']
-		anim_tools.add_to_group('Targets', mode, context)
-		return {'FINISHED'}
-
-
-
-
-
-
-class SK_DRIVERS_SET_DISTANCE(Operator):
+class SK_DRIVERS_DISTANCE_SET(Operator):
 	"""Set distance driver for absolute shape keys on selected objects. """ \
 	"""Empty created as a target for driver's distance variable."""
 	bl_label = 'Set Distance Driver'
-	bl_idname = 'commotion.sk_drivers_set_distance'
+	bl_idname = 'commotion.sk_drivers_distance_set'
 
 	def execute(self, context):
 		scene = context.scene
@@ -380,7 +471,7 @@ class SK_DRIVERS_SET_DISTANCE(Operator):
 		empty.location = scene.cursor_location
 		empty.select = True
 		empty.empty_draw_type = 'SPHERE'
-		empty.empty_draw_size = 2.0
+		empty.empty_draw_size = 3.5
 
 		for ob in context.selected_objects:
 
@@ -400,17 +491,17 @@ class SK_DRIVERS_SET_DISTANCE(Operator):
 
 				drv = fcu.driver
 				drv.type = 'SCRIPTED'
-				drv.expression = kb_last + ' - (dist * 3 / scale)'
+				drv.expression = kb_last + ' - (dis * 3 / sc)'
 				drv.show_debug_info = True
 
 				var = drv.variables.new()
-				var.name = 'dist'
+				var.name = 'dis'
 				var.type = 'LOC_DIFF'
 				var.targets[0].id = ob
 				var.targets[1].id = empty
 
 				var = drv.variables.new()
-				var.name = 'scale'
+				var.name = 'sc'
 				var.type = 'SINGLE_PROP'
 				var.targets[0].id = empty
 				var.targets[0].data_path = 'scale[0]'
@@ -429,10 +520,10 @@ class SK_DRIVERS_SET_DISTANCE(Operator):
 		return {'FINISHED'}
 
 
-class SK_DRIVERS_COPY_EXPRESSION(Operator):
+class SK_DRIVERS_EXPRESSION_COPY(Operator):
 	"""Copy driver's expression from active to selected objects"""
 	bl_label = 'Copy To Selected'
-	bl_idname = 'commotion.sk_drivers_copy_expression'
+	bl_idname = 'commotion.sk_drivers_expression_copy'
 	bl_options = {'INTERNAL'}
 
 	def execute(self, context):
@@ -447,15 +538,24 @@ class SK_DRIVERS_COPY_EXPRESSION(Operator):
 		return {'FINISHED'}
 
 
-class SK_DRIVERS_REGISTER_FUNCTION(Operator):
+def dis_trig(var, name):
+	etm = bpy.context.scene.objects[name].data.shape_keys.eval_time
+
+	if var > etm:
+		etm = var
+
+	return etm
+
+
+class SK_DRIVERS_FUNCTION_REGISTER(Operator):
 	"""Register Distance Trigger driver function.\n""" \
 	"""Use it every time when open blend file, otherwise Distance Trigger drivers won't work."""
 	bl_label = 'Register driver function'
-	bl_idname = 'commotion.sk_drivers_register_function'
+	bl_idname = 'commotion.sk_drivers_function_register'
 	bl_options = {'INTERNAL'}
 
 	def execute(self, context):
-		bpy.app.driver_namespace['dist_trigger'] = utility.dist_trigger
+		bpy.app.driver_namespace['dis_trig'] = dis_trig
 
 		for sk in bpy.data.shape_keys:
 			if (sk.animation_data and sk.animation_data.drivers):
@@ -465,10 +565,10 @@ class SK_DRIVERS_REGISTER_FUNCTION(Operator):
 		return {'FINISHED'}
 
 
-class SK_DRIVERS_RESET_EVAL_TIME(Operator):
+class SK_DRIVERS_EVAL_TIME_RESET(Operator):
 	"""Reset Evaluation Time property for selected objects to 0"""
 	bl_label = 'Reset Evaluation Time'
-	bl_idname = 'commotion.sk_drivers_reset_eval_time'
+	bl_idname = 'commotion.sk_drivers_eval_time_reset'
 	bl_options = {'INTERNAL'}
 
 	def execute(self, context):
@@ -481,24 +581,24 @@ class SK_DRIVERS_RESET_EVAL_TIME(Operator):
 		return {'FINISHED'}
 
 
-class SK_DRIVERS_GET_FUNC_EXPRESSION(Operator):
+class SK_DRIVERS_FUNC_EXPRESSION_GET(Operator):
 	"""Get expression from active object"""
 	bl_label = 'Get Expression'
-	bl_idname = 'commotion.sk_drivers_get_func_expression'
+	bl_idname = 'commotion.sk_drivers_func_expression_get'
 	bl_options = {'INTERNAL'}
 
 	def execute(self, context):
 		fcu = context.active_object.data.shape_keys.animation_data.drivers.find('eval_time')
 		expression = fcu.driver.expression
-		sanitized = sub(r'dist_trigger\((.+),.+\)', r'\1', expression)
+		sanitized = sub(r'dis_trig\((.+),.+\)', r'\1', expression)
 		context.scene.commotion.sk_drivers_expression_func = sanitized
 		return {'FINISHED'}
 
 
-class SK_DRIVERS_SET_FUNC_EXPRESSION(Operator):
+class SK_DRIVERS_FUNC_EXPRESSION_SET(Operator):
 	"""Set distance trigger expression for selected objects"""
 	bl_label = 'Set Expression'
-	bl_idname = 'commotion.sk_drivers_set_func_expression'
+	bl_idname = 'commotion.sk_drivers_func_expression_set'
 	bl_options = {'INTERNAL'}
 
 	def execute(self, context):
@@ -508,351 +608,87 @@ class SK_DRIVERS_SET_FUNC_EXPRESSION(Operator):
 		for ob in context.selected_objects:
 			try:
 				fcu = ob.data.shape_keys.animation_data.drivers.find('eval_time')
-				fcu.driver.expression = "dist_trigger(%s, '%s')" % (expr, ob.name)
+				fcu.driver.expression = 'dis_trig(%s, "%s")' % (expr, ob.name)
 			except:
 				pass
 
 		return {'FINISHED'}
 
 
-
-
-
-
-class OB_FCURVES_LINK(Operator):
-	"""Link animation from active to selected objects"""
-	bl_label = 'Link Animation'
-	bl_idname = 'commotion.ob_fcurves_link'
+class PRESET_APPLY(Operator):
+	"""Apply preset from active object"""
+	bl_label = 'Apply Preset'
+	bl_idname = 'commotion.preset_apply'
 	bl_options = {'INTERNAL'}
 
-	@classmethod
-	def poll(cls, context):
-		try:
-			return context.active_object.animation_data.action
-		except:
-			return False
-
-	def execute(self, context):
-		mode = ['OBJECT', 'FCURVES']
-		anim_tools.anim_link_to_active(mode, context)
-		return {'FINISHED'}
-
-
-class OB_FCURVES_COPY(Operator):
-	"""Copy animation from active to selected objects (can also use this to unlink animation)"""
-	bl_label = 'Copy Animation'
-	bl_idname = 'commotion.ob_fcurves_copy'
-	bl_options = {'INTERNAL'}
-
-	@classmethod
-	def poll(cls, context):
-		try:
-			return context.active_object.animation_data.action
-		except:
-			return False
-
-	def execute(self, context):
-		mode = ['OBJECT']
-		anim_tools.fcurves_copy_to_selected(mode, context)
-		return {'FINISHED'}
-
-
-class OB_FCURVES_OFFSET_CURSOR(Operator):
-	"""Offset animation for selected objects (won't work if F-Curves are linked)"""
-	bl_label = 'Offset Animation'
-	bl_idname = 'commotion.ob_fcurves_offset_cursor'
-	bl_options = {'INTERNAL'}
+	prop_pfx = StringProperty(options={'HIDDEN', 'SKIP_SAVE'})
 
 	def execute(self, context):
 		props = context.scene.commotion
-		offset = props.ob_fcurves_offset
-		threshold = props.ob_fcurves_threshold
-		reverse = props.ob_fcurves_reverse
-		mode = ['OBJECT', 'FCURVES']
-		if reverse:
-			mode += ['REVERSE']
+		obj = context.active_object
 
-		anim_tools.offset_cursor(offset, threshold, mode, context)
-
-		return {'FINISHED'}
-
-
-class OB_FCURVES_OFFSET_MULTITARGET(Operator):
-	"""Offset animation for selected objects (won't work if F-Curves are linked)"""
-	bl_label = 'Offset Animation'
-	bl_idname = 'commotion.ob_fcurves_offset_multitarget'
-	bl_options = {'INTERNAL'}
-
-	@classmethod
-	def poll(cls, context):
-		props = context.scene.commotion
-		return (props.ob_fcurves_group_objects and props.ob_fcurves_group_targets)
-
-	def execute(self, context):
-		props = context.scene.commotion
-		objects = bpy.data.groups[props.ob_fcurves_group_objects].objects
-		targets = bpy.data.groups[props.ob_fcurves_group_targets].objects
-		offset = props.ob_fcurves_offset
-		threshold = props.ob_fcurves_threshold
-		reverse = props.ob_fcurves_reverse
-		mode = ['OBJECT', 'FCURVES']
-		if reverse:
-			mode += ['REVERSE']
-
-		anim_tools.offset_multitarget(objects, targets, offset, threshold, mode, context)
+		if 'commotion_preset' in obj:
+			val = obj['commotion_preset']
+			setattr(props, '%s_offset' % self.prop_pfx,        val['offset'])
+			setattr(props, '%s_threshold' % self.prop_pfx,     val['threshold'])
+			setattr(props, '%s_reverse' % self.prop_pfx,       val['reverse'])
+			setattr(props, '%s_sort_options' % self.prop_pfx,  val['sort_options'])
+			setattr(props, '%s_group_objects' % self.prop_pfx, val['group_objects'])
+			setattr(props, '%s_group_targets' % self.prop_pfx, val['group_targets'])
+		else:
+			self.report({'WARNING'}, 'Active object has no preset')
 
 		return {'FINISHED'}
 
 
-class OB_FCURVES_OFFSET_NAME(Operator):
-	"""Offset animation for selected objects (won't work if F-Curves are linked)"""
-	bl_label = 'Offset Animation'
-	bl_idname = 'commotion.ob_fcurves_offset_name'
-	bl_options = {'INTERNAL'}
-
-	def execute(self, context):
-		props = context.scene.commotion
-		offset = props.ob_fcurves_offset
-		threshold = props.ob_fcurves_threshold
-		reverse = props.ob_fcurves_reverse
-		mode = ['OBJECT', 'FCURVES']
-		if reverse:
-			mode += ['REVERSE']
-
-		anim_tools.offset_name(offset, threshold, mode, context)
-
-		return {'FINISHED'}
-
-
-class OB_FCURVES_ADD_TO_GROUP_OBJECTS(Operator):
-	"""Add selected objects to group"""
+class AddToGroup:
 	bl_label = 'Add to group'
-	bl_idname = 'commotion.ob_fcurves_add_to_group_objects'
 	bl_options = {'INTERNAL'}
 
+	prop_pfx = StringProperty(options={'HIDDEN', 'SKIP_SAVE'})
+
 	def execute(self, context):
-		mode = ['OBJECT', 'FCURVES']
-		anim_tools.add_to_group('Objects', mode, context)
+		group_name = bpy.data.groups.new(self.group).name
+		bpy.ops.object.group_link(group=group_name)
+		bpy.ops.group.objects_add_active()
+
+		setattr(context.scene.commotion, self.prop_pfx + self.prop_suf, group_name)
+
 		return {'FINISHED'}
 
 
-class OB_FCURVES_ADD_TO_GROUP_TARGETS(Operator):
-	"""Add selected objects to group"""
-	bl_label = 'Add to group'
-	bl_idname = 'commotion.ob_fcurves_add_to_group_targets'
+class ADD_TO_GROUP_OBJECTS(AddToGroup, Operator):
+	"""Add selected objects to Objects group for multi-offset"""
+	bl_idname = 'commotion.add_to_group_objects'
+	group = 'Objects'
+	prop_suf = '_group_objects'
+
+
+class ADD_TO_GROUP_TARGETS(AddToGroup, Operator):
+	"""Add selected objects to Targets group for multi-offset"""
+	bl_idname = 'commotion.add_to_group_targets'
+	group = 'Targets'
+	prop_suf = '_group_targets'
+
+
+class OB_SLOW_PARENT_TOGGLE(Operator):
+	"""Toggle Slow Parent property on or off for selected objects"""
+	bl_label = 'Toggle Slow Parent'
+	bl_idname = 'commotion.ob_slow_parent_toggle'
 	bl_options = {'INTERNAL'}
 
-	def execute(self, context):
-		mode = ['OBJECT', 'FCURVES']
-		anim_tools.add_to_group('Targets', mode, context)
-		return {'FINISHED'}
-
-
-
-
-
-
-class OB_NLA_CREATE(Operator):
-	"""Create NLA strips from object animation"""
-	bl_label = 'Create NLA Strips'
-	bl_idname = 'commotion.ob_nla_create'
-	bl_options = {'INTERNAL'}
-
-	@classmethod
-	def poll(cls, context):
-		try:
-			return context.active_object.animation_data.action
-		except:
-			return False
+	off = BoolProperty(options={'HIDDEN', 'SKIP_SAVE'})
 
 	def execute(self, context):
-		mode = ['OBJECT']
-		nla_tools.create_strips(mode, context)
-		return {'FINISHED'}
+		obs = context.selected_objects
 
+		if self.off:
+			for ob in obs:
+				if ob.parent:
+					ob.use_slow_parent = False
+		else:
+			for ob in obs:
+				if ob.parent:
+					ob.use_slow_parent = True
 
-class OB_NLA_TO_FCURVES(Operator):
-	"""Convert NLA strips back to F-Curves"""
-	bl_label = 'Strips to F-Curves'
-	bl_idname = 'commotion.ob_nla_to_fcurves'
-	bl_options = {'INTERNAL'}
-
-	@classmethod
-	def poll(cls, context):
-		try:
-			return context.active_object.animation_data.nla_tracks[0].strips
-		except:
-			return False
-
-	def execute(self, context):
-		mode = ['OBJECT']
-		nla_tools.strips_to_fcurves(mode, context)
-		return {'FINISHED'}
-
-
-class OB_NLA_SYNC_LENGTH(Operator):
-	"""Synchronize length of NLA strips for selected objects"""
-	bl_label = 'Sync Length'
-	bl_idname = 'commotion.ob_nla_sync_length'
-	bl_options = {'INTERNAL'}
-
-	@classmethod
-	def poll(cls, context):
-		try:
-			return context.active_object.animation_data.nla_tracks[0].strips
-		except:
-			return False
-
-	def execute(self, context):
-		mode = ['OBJECT']
-		nla_tools.sync_len(mode, context)
-		return {'FINISHED'}
-
-
-class OB_NLA_LINK_TO_ACTIVE(Operator):
-	"""Link strips from active to selected objects"""
-	bl_label = 'Link Strips'
-	bl_idname = 'commotion.ob_nla_link_to_active'
-	bl_options = {'INTERNAL'}
-
-	@classmethod
-	def poll(cls, context):
-		try:
-			return context.active_object.animation_data.nla_tracks[0].strips
-		except:
-			return False
-
-	def execute(self, context):
-		mode = ['OBJECT', 'NLA']
-		anim_tools.anim_link_to_active(mode, context)
-		return {'FINISHED'}
-
-
-class OB_NLA_OFFSET_CURSOR(Operator):
-	"""Offset animation for selected objects"""
-	bl_label = 'Offset Strips'
-	bl_idname = 'commotion.ob_nla_offset_cursor'
-	bl_options = {'INTERNAL'}
-
-	def execute(self, context):
-		props = context.scene.commotion
-		offset =  props.ob_nla_offset
-		threshold =  props.ob_nla_threshold
-		reverse = props.ob_nla_reverse
-		mode = ['OBJECT', 'NLA']
-		if reverse:
-			mode += ['REVERSE']
-
-		anim_tools.offset_cursor(offset, threshold, mode, context)
-
-		return {'FINISHED'}
-
-
-class OB_NLA_OFFSET_MULTITARGET(Operator):
-	"""Offset animation for selected objects"""
-	bl_label = 'Offset Strips'
-	bl_idname = 'commotion.ob_nla_offset_multitarget'
-	bl_options = {'INTERNAL'}
-
-	@classmethod
-	def poll(cls, context):
-		props = context.scene.commotion
-		return (props.ob_nla_group_objects and props.ob_nla_group_targets)
-
-	def execute(self, context):
-		props = context.scene.commotion
-		objects = bpy.data.groups[props.ob_nla_group_objects].objects
-		targets = bpy.data.groups[props.ob_nla_group_targets].objects
-		offset = props.ob_nla_offset
-		threshold = props.ob_nla_threshold
-		reverse = props.ob_nla_reverse
-		mode = ['OBJECT', 'NLA']
-		if reverse:
-			mode += ['REVERSE']
-
-		anim_tools.offset_multitarget(objects, targets, offset, threshold, mode, context)
-
-		return {'FINISHED'}
-
-
-class OB_NLA_OFFSET_NAME(Operator):
-	"""Offset animation for selected objects"""
-	bl_label = 'Offset Strips'
-	bl_idname = 'commotion.ob_nla_offset_name'
-	bl_options = {'INTERNAL'}
-
-	def execute(self, context):
-		props = context.scene.commotion
-		offset = props.ob_nla_offset
-		threshold = props.ob_nla_threshold
-		reverse = props.ob_nla_reverse
-		mode = ['OBJECT', 'NLA']
-		if reverse:
-			mode += ['REVERSE']
-
-		anim_tools.offset_name(offset, threshold, mode, context)
-
-		return {'FINISHED'}
-
-
-class OB_NLA_ADD_TO_GROUP_OBJECTS(Operator):
-	"""Add selected objects to group"""
-	bl_label = 'Add to group'
-	bl_idname = 'commotion.ob_nla_add_to_group_objects'
-	bl_options = {'INTERNAL'}
-
-	def execute(self, context):
-		mode = ['OBJECT', 'NLA']
-		anim_tools.add_to_group('Objects', mode, context)
-		return {'FINISHED'}
-
-
-class OB_NLA_ADD_TO_GROUP_TARGETS(Operator):
-	"""Add selected objects to group"""
-	bl_label = 'Add to group'
-	bl_idname = 'commotion.ob_nla_add_to_group_targets'
-	bl_options = {'INTERNAL'}
-
-	def execute(self, context):
-		mode = ['OBJECT', 'NLA']
-		anim_tools.add_to_group('Targets', mode, context)
-		return {'FINISHED'}
-
-
-
-
-
-
-class OB_OFFSET_SLOW_PARENT(Operator):
-	"""Offset Slow Parent property for selected objects"""
-	bl_label = 'Offset Slow Parent'
-	bl_idname = 'commotion.ob_offset_slow_parent'
-
-	def execute(self, context):
-		offset = context.scene.commotion.ob_offset_slow_parent
-		anim_tools.offset_parent(offset, context)
-		return {'FINISHED'}
-
-
-class OB_SLOW_PARENT_ON(Operator):
-	"""Toggle Slow Parent property on for selected objects"""
-	bl_label = 'On'
-	bl_idname = 'commotion.ob_slow_parent_on'
-
-	def execute(self, context):
-		for ob in context.selected_objects:
-			if ob.parent:
-				ob.use_slow_parent = True
-		return {'FINISHED'}
-
-
-class OB_SLOW_PARENT_OFF(Operator):
-	"""Toggle Slow Parent property off for selected objects"""
-	bl_label = 'Off'
-	bl_idname = 'commotion.ob_slow_parent_off'
-
-	def execute(self, context):
-		for ob in context.selected_objects:
-			if ob.parent:
-				ob.use_slow_parent = False
 		return {'FINISHED'}

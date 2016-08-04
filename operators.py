@@ -289,12 +289,12 @@ class AnimationOffset():
 		scene = bpy.context.scene
 		props = scene.commotion
 		self.frame = scene.frame_current
-		self.offset        = getattr(props, '%s_offset' % self.prop_pfx)
-		self.threshold     = getattr(props, '%s_threshold' % self.prop_pfx)
-		self.reverse       = getattr(props, '%s_reverse' % self.prop_pfx)
-		self.sort_options  = getattr(props, '%s_sort_options' % self.prop_pfx)
-		self.group_objects = getattr(props, '%s_group_objects' % self.prop_pfx)
-		self.group_targets = getattr(props, '%s_group_targets' % self.prop_pfx)
+		self.offset        = getattr(props, self.prop_pfx + '_offset')
+		self.threshold     = getattr(props, self.prop_pfx + '_threshold')
+		self.reverse       = getattr(props, self.prop_pfx + '_reverse')
+		self.sort_options  = getattr(props, self.prop_pfx + '_sort_options')
+		self.group_objects = getattr(props, self.prop_pfx + '_group_objects')
+		self.group_targets = getattr(props, self.prop_pfx + '_group_targets')
 
 	def preset_add(self, ob):
 		ob['commotion_preset'] = {
@@ -629,12 +629,12 @@ class PRESET_APPLY(Operator):
 
 		if 'commotion_preset' in obj:
 			val = obj['commotion_preset']
-			setattr(props, '%s_offset' % self.prop_pfx,        val['offset'])
-			setattr(props, '%s_threshold' % self.prop_pfx,     val['threshold'])
-			setattr(props, '%s_reverse' % self.prop_pfx,       val['reverse'])
-			setattr(props, '%s_sort_options' % self.prop_pfx,  val['sort_options'])
-			setattr(props, '%s_group_objects' % self.prop_pfx, val['group_objects'])
-			setattr(props, '%s_group_targets' % self.prop_pfx, val['group_targets'])
+			setattr(props, self.prop_pfx + '_offset',        val['offset'])
+			setattr(props, self.prop_pfx + '_threshold',     val['threshold'])
+			setattr(props, self.prop_pfx + '_reverse',       val['reverse'])
+			setattr(props, self.prop_pfx + '_sort_options',  val['sort_options'])
+			setattr(props, self.prop_pfx + '_group_objects', val['group_objects'])
+			setattr(props, self.prop_pfx + '_group_targets', val['group_targets'])
 		else:
 			self.report({'WARNING'}, 'Active object has no preset')
 

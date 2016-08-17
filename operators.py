@@ -522,7 +522,7 @@ class SK_DRIVERS_DISTANCE_SET(Operator):
 
 class SK_DRIVERS_EXPRESSION_COPY(Operator):
 	"""Copy driver's expression from active to selected objects"""
-	bl_label = 'Copy To Selected'
+	bl_label = 'Copy'
 	bl_idname = 'commotion.sk_drivers_expression_copy'
 	bl_options = {'INTERNAL'}
 
@@ -534,6 +534,23 @@ class SK_DRIVERS_EXPRESSION_COPY(Operator):
 				fcu.driver.expression = active_fcu.driver.expression
 			except:
 				pass
+
+		return {'FINISHED'}
+
+
+class SK_DRIVERS_TARGET_REMAP(Operator):
+	"""Remap driver's distance variable target property from original to current object. """ \
+	bl_idname = 'commotion.sk_drivers_target_remap'
+	bl_label = 'Remap Target'
+
+	def execute(self, context):
+		for ob in context.selected_objects:
+			try:
+				fcu = ob.data.shape_keys.animation_data.drivers.find('eval_time')
+				var = fcu.driver.variables['dis']
+				var.targets[0].id = ob
+			except:
+				continue
 
 		return {'FINISHED'}
 
@@ -550,7 +567,7 @@ def dis_trig(var, name):
 class SK_DRIVERS_FUNCTION_REGISTER(Operator):
 	"""Register Distance Trigger driver function.\n""" \
 	"""Use it every time when open blend file, otherwise Distance Trigger drivers won't work."""
-	bl_label = 'Register driver function'
+	bl_label = 'Register Driver Function'
 	bl_idname = 'commotion.sk_drivers_function_register'
 	bl_options = {'INTERNAL'}
 

@@ -22,6 +22,7 @@ class ShapeKeyTools(Panel):
 		return context.active_object
 
 	def draw(self, context):
+		layout = self.layout
 		props = context.scene.commotion
 		obj = context.active_object
 		try:
@@ -31,7 +32,6 @@ class ShapeKeyTools(Panel):
 			sk = False
 			ad = False
 
-		layout = self.layout
 		col = layout.column(align=True)
 
 		box = col.box()
@@ -213,6 +213,9 @@ class ShapeKeyTools(Panel):
 				fcu = ad.drivers.find('eval_time')
 				col.prop(fcu.driver, 'expression', text='')
 				col.operator('commotion.sk_drivers_expression_copy', icon='COPYDOWN')
+
+				col.label('Variables:')
+				col.operator('commotion.sk_drivers_target_remap')
 				col.separator()
 
 				row = col.row()
@@ -220,12 +223,11 @@ class ShapeKeyTools(Panel):
 				row.label(text='Distance Trigger', icon='AUTOMERGE_ON')
 				if props.sk_drivers_dist_trigger:
 					col.separator()
-
 					col = col.column(align=True)
 					col.operator('commotion.sk_drivers_function_register', icon='COPY_ID')
 					col.operator('commotion.sk_drivers_eval_time_reset', icon='FILE_REFRESH')
-					col.separator()
 
+					col.label('Expression:')
 					row = col.row(align=True)
 					row.prop(props, 'sk_drivers_expression_func', text='')
 					row.operator('commotion.sk_drivers_func_expression_get', text='', icon='EYEDROPPER')
@@ -245,11 +247,11 @@ class ObjectTools(Panel):
 		return context.active_object
 
 	def draw(self, context):
+		layout = self.layout
 		props = context.scene.commotion
 		obj = context.active_object
 		ad = obj.animation_data
 
-		layout = self.layout
 		col = layout.column(align=True)
 
 		box = col.box()

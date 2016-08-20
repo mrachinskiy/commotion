@@ -540,6 +540,7 @@ class SK_DRIVERS_EXPRESSION_COPY(Operator):
 
 class SK_DRIVERS_TARGET_REMAP(Operator):
 	"""Remap driver's distance variable target property from original to current object. """ \
+	"""Useful after Make Single User on linked objects, when distance variable on all objects points only to one object."""
 	bl_idname = 'commotion.sk_drivers_target_remap'
 	bl_label = 'Remap Target'
 

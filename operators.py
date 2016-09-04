@@ -1,11 +1,20 @@
 import bpy
+from re import sub
 from bpy.types import Operator
 from bpy.props import (
 	StringProperty,
 	FloatProperty,
 	BoolProperty,
-)
-from re import sub
+	)
+
+
+"""
+Cannot inherit properties from a base class,
+because property order will be random every time in operator redo UI
+"""
+_offset = FloatProperty(name='Frame Offset', description='Frame step for animation offset', default=1, min=0, step=10, precision=3)
+_threshold = FloatProperty(name='Threshold', description='Number of objects to animate per frame step', default=1, min=1, step=100, precision=0)
+_reverse = BoolProperty(name='Reverse', description='Reverse animation offset')
 
 
 class SK_COLL_REFRESH(Operator):
@@ -280,7 +289,7 @@ class NLA_SYNC_LENGTH(Operator):
 
 class AnimationOffset():
 	bl_label = 'Offset Animation'
-	bl_options = {'INTERNAL'}
+	bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
 
 	ad_type = StringProperty(options={'HIDDEN', 'SKIP_SAVE'})
 	prop_pfx = StringProperty(options={'HIDDEN', 'SKIP_SAVE'})
@@ -304,7 +313,7 @@ class AnimationOffset():
 			'sort_options'  : self.sort_options,
 			'group_objects' : self.group_objects,
 			'group_targets' : self.group_targets,
-		}
+			}
 
 	def offset_simple(self, dist):
 		dist = sorted(dist, key=dist.get, reverse=self.reverse)
@@ -363,6 +372,10 @@ class ANIMATION_OFFSET_CURSOR(AnimationOffset, Operator):
 	"""Offset animation from 3D cursor for selected objects (won't work if F-Curves are linked)"""
 	bl_idname = 'commotion.animation_offset_cursor'
 
+	offset = _offset
+	threshold = _threshold
+	reverse = _reverse
+
 	def execute(self, context):
 		cursor = context.scene.cursor_location
 		dist = {}
@@ -379,6 +392,10 @@ class ANIMATION_OFFSET_NAME(AnimationOffset, Operator):
 	"""Offset animation by object name for selected objects (won't work if F-Curves are linked)"""
 	bl_idname = 'commotion.animation_offset_name'
 
+	offset = _offset
+	threshold = _threshold
+	reverse = _reverse
+
 	def execute(self, context):
 		dist = {}
 		for ob in context.selected_objects:
@@ -392,6 +409,10 @@ class ANIMATION_OFFSET_NAME(AnimationOffset, Operator):
 class ANIMATION_OFFSET_MULTITARGET(AnimationOffset, Operator):
 	"""Offset animation from multiple targets for selected objects (won't work if F-Curves are linked)"""
 	bl_idname = 'commotion.animation_offset_multitarget'
+
+	offset = _offset
+	threshold = _threshold
+	reverse = _reverse
 
 	def execute(self, context):
 		objects = bpy.data.groups[self.group_objects].objects

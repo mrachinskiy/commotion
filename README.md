@@ -15,9 +15,21 @@ How to install
 2. Go to Blender `User Preferences` → `Add-ons` category
 3. Use `Install from File…` to install add-on from downloaded zip archive\*\*
 
-\* **Note for Mac users:** OSX will automatically unpack downloaded zip archive, so in order to install the add-on you have to pack folder with add-on files back into zip archive  
+\* **Note for Mac users:** macOS will automatically unpack downloaded zip archive, so in order to install the add-on you have to pack folder with add-on files back into zip archive  
 \*\* Add-on is available for **Blender 2.77 and above**, versions below are not supported  
 **IMPORTANT:** to make drivers work, enable `User Preferences` → `File` → `Auto Run Python Scripts` setting
+
+
+Установка
+--------------------------
+
+1. [Загрузите][addon] аддон\*
+2. Зайдите в настройки Blender `User Preferences` → `Add-ons`
+3. Воспользуйтесь `Install from File…` чтобы установить аддон из загруженного архива\*\*
+
+\* **Для пользователей Mac:** macOS автоматически распаковывает скачиваемые zip архивы, поэтому, чтобы установить аддон, необходимо запаковать директорию с файлами аддона обратно в zip архив  
+\*\* Аддон доступен для **Blender 2.77 и новее**, ранние версии не поддерживаются  
+**ВАЖНО:** чтобы драйвера работали, необходимо активировать опцию `User Preferences` → `File` → `Auto Run Python Scripts`
 
 
 [addon]: https://github.com/mrachinskiy/commotion/archive/master.zip

@@ -9,17 +9,20 @@ def icon_tria(prop):
 		return 'TRIA_RIGHT'
 
 
-class ShapeKeyTools(Panel):
+class UI:
 	bl_category = 'Commotion'
-	bl_label = 'Shape Key Tools'
-	bl_idname = 'commotion_sk_tools'
 	bl_space_type = 'VIEW_3D'
 	bl_region_type = 'TOOLS'
 	bl_context = 'objectmode'
 
 	@classmethod
 	def poll(cls, context):
-		return context.active_object
+		return context.active_object is not None
+
+
+class ShapeKeyTools(UI, Panel):
+	bl_label = 'Shape Key Tools'
+	bl_idname = 'commotion_sk_tools'
 
 	def draw(self, context):
 		layout = self.layout
@@ -234,17 +237,9 @@ class ShapeKeyTools(Panel):
 					col.operator('commotion.sk_drivers_func_expression_set', icon='COPYDOWN')
 
 
-class ObjectTools(Panel):
-	bl_category = 'Commotion'
+class ObjectTools(UI, Panel):
 	bl_label = 'Object Tools'
 	bl_idname = 'commotion_ob_tools'
-	bl_space_type = 'VIEW_3D'
-	bl_region_type = 'TOOLS'
-	bl_context = 'objectmode'
-
-	@classmethod
-	def poll(cls, context):
-		return context.active_object
 
 	def draw(self, context):
 		layout = self.layout

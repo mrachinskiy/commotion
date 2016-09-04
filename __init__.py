@@ -7,7 +7,8 @@ bl_info = {
 	'description': 'Animation offset tools for motion graphics.',
 	'wiki_url': 'https://github.com/mrachinskiy/commotion#readme',
 	'tracker_url': 'https://github.com/mrachinskiy/commotion/issues',
-	'category': 'Animation'}
+	'category': 'Animation',
+	}
 
 
 if 'bpy' in locals():
@@ -26,8 +27,11 @@ else:
 		EnumProperty,
 		PointerProperty,
 		CollectionProperty,
-	)
-	from . import (ui, operators)
+		)
+	from . import (
+		ui,
+		operators,
+		)
 
 
 def sk_value_update(self, context):
@@ -49,7 +53,8 @@ def generateprops(self):
 		       ('MULTITARGET', 'Multi-target', ''),
 		       ('NAME',        'Name',         '')),
 		default='CURSOR',
-		description='Animation offset by')
+		description='Animation offset by',
+		)
 	group_objects = StringProperty(name='Objects', description='Object group for animation offset')
 	group_targets = StringProperty(name='Targets', description='Object group for targets, from which animation would be offseted')
 
@@ -115,7 +120,7 @@ classes = (
 	operators.ADD_TO_GROUP_OBJECTS,
 	operators.ADD_TO_GROUP_TARGETS,
 	operators.OB_SLOW_PARENT_TOGGLE,
-)
+	)
 
 
 def register():

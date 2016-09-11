@@ -201,7 +201,7 @@ class ShapeKeyTools(UI, Panel):
 		if props.sk_drivers:
 			col = box.column(align=True)
 
-			if not context.user_preferences.system.use_scripts_auto_execute:
+			if bpy.app.autoexec_fail:
 				col.label('Auto Run disabled', icon='ERROR')
 				col.separator()
 

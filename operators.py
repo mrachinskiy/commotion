@@ -298,6 +298,7 @@ class AnimationOffset():
 		scene = bpy.context.scene
 		props = scene.commotion
 		self.frame = scene.frame_current
+		self.cursor = scene.cursor_location
 		self.offset        = getattr(props, self.prop_pfx + '_offset')
 		self.threshold     = getattr(props, self.prop_pfx + '_threshold')
 		self.reverse       = getattr(props, self.prop_pfx + '_reverse')
@@ -377,10 +378,9 @@ class ANIMATION_OFFSET_CURSOR(AnimationOffset, Operator):
 	reverse = _reverse
 
 	def execute(self, context):
-		cursor = context.scene.cursor_location
 		dist = {}
 		for ob in context.selected_objects:
-			distance = (cursor - (ob.location + ob.delta_location)).length
+			distance = (self.cursor - (ob.location + ob.delta_location)).length
 			dist[ob] = distance
 
 		self.offset_simple(dist)

@@ -481,18 +481,19 @@ class OB_SLOW_PARENT_OFFSET(Operator):
 
 class SK_DRIVERS_DISTANCE_SET(Operator):
 	"""Set distance driver for absolute shape keys on selected objects. """ \
-	"""Empty created as a target for driver's distance variable."""
+	"""If active object is not an Empty, then a new Empty object will be created """ \
+	"""as a target for driver's distance variable."""
 	bl_label = 'Set Distance Driver'
 	bl_idname = 'commotion.sk_drivers_distance_set'
 
 	def execute(self, context):
-		scene = context.scene
-		empty = bpy.data.objects.new('Distance Target', None)
-		scene.objects.link(empty)
-		empty.location = scene.cursor_location
-		empty.select = True
-		empty.empty_draw_type = 'SPHERE'
-		empty.empty_draw_size = 3.5
+		if context.active_object.type != 'EMPTY':
+			scene = context.scene
+			empty = bpy.data.objects.new('Distance Target', None)
+			scene.objects.link(empty)
+			empty.location = scene.cursor_location
+			empty.select = True
+			empty.empty_draw_type = 'SPHERE'
 
 		for ob in context.selected_objects:
 

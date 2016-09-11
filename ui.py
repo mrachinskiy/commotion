@@ -201,13 +201,9 @@ class ShapeKeyTools(UI, Panel):
 		if props.sk_drivers:
 			col = box.column(align=True)
 
-			warn = col.column(align=True)
-			col = col.column(align=True)
-
 			if not context.user_preferences.system.use_scripts_auto_execute:
-				warn.label('Auto Run disabled', icon='ERROR')
-				warn.separator()
-				col.enabled = False
+				col.label('Auto Run disabled', icon='ERROR')
+				col.separator()
 
 			if not (ad and ad.drivers):
 				col.operator('commotion.sk_drivers_distance_set')

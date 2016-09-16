@@ -581,9 +581,13 @@ class SK_DRIVERS_TARGET_REMAP(Operator):
 
 
 def dis_trig(var, name):
-	etm = bpy.context.scene.objects[name].data.shape_keys.eval_time
+	scene = bpy.context.scene
+	etm = scene.objects[name].data.shape_keys.eval_time
 
-	if var > etm:
+	if scene.frame_current <= scene.frame_start:
+		etm = 0
+
+	elif var > etm:
 		etm = var
 
 	return etm

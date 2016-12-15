@@ -12,10 +12,9 @@ bl_info = {
 
 
 if 'bpy' in locals():
-	from importlib import reload
-	reload(ui)
-	reload(operators)
-	del reload
+	import importlib
+	importlib.reload(ui)
+	importlib.reload(operators)
 else:
 	import bpy
 	from bpy.types import PropertyGroup

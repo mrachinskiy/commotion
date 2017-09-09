@@ -1,7 +1,7 @@
 bl_info = {
 	'name': 'Commotion',
-	'author': 'Mikhail Rachinskiy (@_rachinskiy)',
-	'version': (1, 4),
+	'author': 'Mikhail Rachinskiy',
+	'version': (1, 5, 0),
 	'blender': (2, 77, 0),
 	'location': '3D View > Tool Shelf',
 	'description': 'Animation offset tools for motion graphics.',
@@ -13,124 +13,81 @@ bl_info = {
 
 if 'bpy' in locals():
 	import importlib
+	importlib.reload(preferences)
 	importlib.reload(ui)
-	importlib.reload(operators)
+	importlib.reload(ops_anim)
+	importlib.reload(ops_driver)
+	importlib.reload(ops_shapekey)
+	importlib.reload(ops_slow_parent)
+	importlib.reload(ops_utils)
 else:
 	import bpy
-	from bpy.types import PropertyGroup
-	from bpy.props import (
-		StringProperty,
-		BoolProperty,
-		IntProperty,
-		FloatProperty,
-		EnumProperty,
-		PointerProperty,
-		CollectionProperty,
-		)
+	from bpy.props import PointerProperty, CollectionProperty
 	from . import (
+		preferences,
 		ui,
-		operators,
+		ops_anim,
+		ops_driver,
+		ops_shapekey,
+		ops_slow_parent,
+		ops_utils,
 		)
 
-
-def sk_value_update(self, context):
-	scene = context.scene
-	props = scene.commotion
-	sk = context.active_object.data.shape_keys
-
-	for kb in scene.commotion_skcoll:
-		if kb.selected:
-			sk.key_blocks[kb.index].value = props.sk_value
-
-
-def generateprops(self):
-	offset = FloatProperty(name='Frame Offset', description='Frame step for animation offset', default=1, min=0, step=10, precision=3)
-	threshold = FloatProperty(name='Threshold', description='Number of objects to animate per frame step', default=1, min=1, step=100, precision=0)
-	reverse = BoolProperty(name='Reverse', description='Reverse animation offset')
-	sort_options = EnumProperty(
-		items=(('CURSOR',      'Cursor',       ''),
-		       ('MULTITARGET', 'Multi-target', ''),
-		       ('NAME',        'Name',         '')),
-		default='CURSOR',
-		description='Animation offset by',
-		)
-	group_objects = StringProperty(name='Objects', description='Object group for animation offset')
-	group_targets = StringProperty(name='Targets', description='Object group for targets, from which animation would be offseted')
-
-	for prefix in ('sk_fcurves', 'sk_nla', 'ob_fcurves', 'ob_nla'):
-		setattr(self, prefix,                    BoolProperty())
-		setattr(self, prefix + '_offset',        offset)
-		setattr(self, prefix + '_threshold',     threshold)
-		setattr(self, prefix + '_reverse',       reverse)
-		setattr(self, prefix + '_sort_options',  sort_options)
-		setattr(self, prefix + '_group_objects', group_objects)
-		setattr(self, prefix + '_group_targets', group_targets)
-
-	return self
-
-
-@generateprops
-class Properties(PropertyGroup):
-	sk_shapekeys = BoolProperty(default=True)
-	sk_value = FloatProperty(name='Value', min=0.0, max=1.0, update=sk_value_update)
-	sk_drivers = BoolProperty()
-	sk_drivers_dist_trigger = BoolProperty()
-	sk_drivers_expression_func = StringProperty(description='Distance trigger expression')
-	ob_transforms = BoolProperty()
-	ob_slow_parent_offset = FloatProperty(name='Offset Factor', description='Offset step for slow parent offset', default=1, min=0, step=10, precision=1)
-
-
-class ShapeKeysCollection(PropertyGroup):
-	selected = BoolProperty(description='Affect referenced shape key')
-	index = IntProperty()
-	name = StringProperty()
+	# Extern
+	from . import addon_updater_ops
 
 
 classes = (
-	Properties,
-	ShapeKeysCollection,
+	preferences.Commotion_Preferences,
+	preferences.Commotion_Scene_Props,
+	preferences.Commotion_SK_Collection,
 
-	ui.ShapeKeyTools,
-	ui.ObjectTools,
+	ui.VIEW3D_PT_Commotion_Shape_Key_Tools,
+	ui.VIEW3D_PT_Commotion_Object_Tools,
 
-	operators.SK_COLL_REFRESH,
-	operators.SK_INTERPOLATION_SET,
-	operators.SK_AUTO_KEYFRAMES,
+	ops_shapekey.OBJECT_OT_Commotion_SK_Coll_Refresh,
+	ops_shapekey.OBJECT_OT_Commotion_SK_Interpolation_Set,
+	ops_shapekey.ANIM_OT_Commotion_SK_Auto_Keyframes,
+	ops_shapekey.OBJECT_OT_Commotion_SK_Reset_Eval_Time,
 
-	operators.ANIMATION_LINK,
-	operators.ANIMATION_COPY,
-	operators.NLA_TO_STRIPS,
-	operators.NLA_TO_FCURVES,
-	operators.NLA_SYNC_LENGTH,
-	operators.ANIMATION_OFFSET_CURSOR,
-	operators.ANIMATION_OFFSET_MULTITARGET,
-	operators.ANIMATION_OFFSET_NAME,
-	operators.OB_SLOW_PARENT_OFFSET,
+	ops_anim.ANIM_OT_Commotion_Animation_Link,
+	ops_anim.ANIM_OT_Commotion_Animation_Copy,
+	ops_anim.ANIM_OT_Commotion_FCurves_To_NLA,
+	ops_anim.ANIM_OT_Commotion_NLA_To_FCurves,
+	ops_anim.NLA_OT_Commotion_Sync_Length,
+	ops_anim.ANIM_OT_Commotion_Offset_Cursor,
+	ops_anim.ANIM_OT_Commotion_Offset_Multitarget,
+	ops_anim.ANIM_OT_Commotion_Offset_Name,
 
-	operators.SK_DRIVERS_DISTANCE_SET,
-	operators.SK_DRIVERS_EXPRESSION_COPY,
-	operators.SK_DRIVERS_TARGET_REMAP,
-	operators.SK_DRIVERS_FUNCTION_REGISTER,
-	operators.SK_DRIVERS_EVAL_TIME_RESET,
-	operators.SK_DRIVERS_FUNC_EXPRESSION_GET,
-	operators.SK_DRIVERS_FUNC_EXPRESSION_SET,
+	ops_driver.ANIM_OT_Commotion_SK_Driver_Distance_Set,
+	ops_driver.ANIM_OT_Commotion_SK_Driver_Expression_Copy,
+	ops_driver.ANIM_OT_Commotion_SK_Driver_Target_Remap,
+	ops_driver.ANIM_OT_Commotion_SK_Driver_Function_Register,
+	ops_driver.ANIM_OT_Commotion_SK_Driver_Func_Expression_Get,
+	ops_driver.ANIM_OT_Commotion_SK_Driver_Func_Expression_SET,
 
-	operators.PRESET_APPLY,
-	operators.ADD_TO_GROUP_OBJECTS,
-	operators.ADD_TO_GROUP_TARGETS,
-	operators.OB_SLOW_PARENT_TOGGLE,
+	ops_slow_parent.OBJECT_OT_Commotion_Slow_Parent_Offset,
+	ops_slow_parent.OBJECT_OT_Commotion_Slow_Parent_Toggle,
+
+	ops_utils.VIEW3D_OT_Commotion_Preset_Apply,
+	ops_utils.OBJECT_OT_Commotion_Add_To_Group_Objects,
+	ops_utils.OBJECT_OT_Commotion_Add_To_Group_Targets,
 	)
 
 
 def register():
+	addon_updater_ops.register(bl_info)
+
 	for cls in classes:
 		bpy.utils.register_class(cls)
 
-	bpy.types.Scene.commotion = PointerProperty(type=Properties)
-	bpy.types.Scene.commotion_skcoll = CollectionProperty(type=ShapeKeysCollection)
+	bpy.types.Scene.commotion = PointerProperty(type=preferences.Commotion_Scene_Props)
+	bpy.types.Scene.commotion_skcoll = CollectionProperty(type=preferences.Commotion_SK_Collection)
 
 
 def unregister():
+	addon_updater_ops.unregister()
+
 	for cls in classes:
 		bpy.utils.unregister_class(cls)
 

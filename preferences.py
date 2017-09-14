@@ -47,12 +47,6 @@ class Commotion_Preferences(AddonPreferences):
 		addon_updater_ops.update_settings_ui(self, context)
 
 
-class Commotion_SK_Collection(PropertyGroup):
-	selected = BoolProperty(description='Affect referenced shape key')
-	index = IntProperty()
-	name = StringProperty()
-
-
 def sk_value_update(self, context):
 	scene = context.scene
 	props = scene.commotion
@@ -91,10 +85,16 @@ def generateprops(self):
 
 @generateprops
 class Commotion_Scene_Props(PropertyGroup):
-	sk_shapekeys = BoolProperty(default=True)
+	sk_shapekeys = BoolProperty()
 	sk_value = FloatProperty(name='Value', min=0.0, max=1.0, update=sk_value_update)
 	sk_drivers = BoolProperty()
 	sk_drivers_dist_trigger = BoolProperty()
 	sk_drivers_expression_func = StringProperty(description='Distance trigger expression')
 	ob_transforms = BoolProperty()
 	ob_slow_parent_offset = FloatProperty(name='Offset Factor', description='Offset step for slow parent offset', default=1, min=0, step=10, precision=1)
+
+
+class Commotion_SK_Collection(PropertyGroup):
+	selected = BoolProperty(description='Affect referenced shape key')
+	index = IntProperty()
+	name = StringProperty()

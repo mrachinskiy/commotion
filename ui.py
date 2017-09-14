@@ -25,7 +25,6 @@ class Setup:
 
 class VIEW3D_PT_Commotion_Shape_Key_Tools(Panel, Setup):
 	bl_label = 'Shape Key Tools'
-	bl_idname = 'VIEW3D_PT_commotion_shape_key_tools'
 
 	def draw(self, context):
 
@@ -245,7 +244,6 @@ class VIEW3D_PT_Commotion_Shape_Key_Tools(Panel, Setup):
 
 class VIEW3D_PT_Commotion_Object_Tools(Panel, Setup):
 	bl_label = 'Object Tools'
-	bl_idname = 'VIEW3D_PT_commotion_object_tools'
 
 	def draw(self, context):
 		layout = self.layout

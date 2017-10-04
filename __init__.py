@@ -38,9 +38,9 @@ else:
 
 
 classes = (
-	preferences.Commotion_Preferences,
-	preferences.Commotion_Scene_Props,
-	preferences.Commotion_SK_Collection,
+	preferences.PREFS_Commotion_Props,
+	preferences.SCENE_Commotion_Props,
+	preferences.WM_Commotion_SK_Collection,
 
 	ui.VIEW3D_PT_Commotion_Shape_Key_Tools,
 	ui.VIEW3D_PT_Commotion_Object_Tools,
@@ -81,8 +81,8 @@ def register():
 	for cls in classes:
 		bpy.utils.register_class(cls)
 
-	bpy.types.Scene.commotion = PointerProperty(type=preferences.Commotion_Scene_Props)
-	bpy.types.Scene.commotion_skcoll = CollectionProperty(type=preferences.Commotion_SK_Collection)
+	bpy.types.Scene.commotion = PointerProperty(type=preferences.SCENE_Commotion_Props)
+	bpy.types.WindowManager.commotion_skcoll = CollectionProperty(type=preferences.WM_Commotion_SK_Collection)
 
 
 def unregister():
@@ -92,7 +92,7 @@ def unregister():
 		bpy.utils.unregister_class(cls)
 
 	del bpy.types.Scene.commotion
-	del bpy.types.Scene.commotion_skcoll
+	del bpy.types.WindowManager.commotion_skcoll
 
 
 if __name__ == '__main__':

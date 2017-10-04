@@ -51,7 +51,7 @@ class VIEW3D_PT_Commotion_Shape_Key_Tools(Panel, Setup):
 		row.prop(props, 'sk_shapekeys', icon=icon_tria(props.sk_shapekeys), icon_only=True, emboss=False)
 		row.label(text='Shape Keys', icon='SHAPEKEY_DATA')
 		if props.sk_shapekeys:
-			skcoll = context.scene.commotion_skcoll
+			skcoll = context.window_manager.commotion_skcoll
 			col = box.column(align=True)
 
 			if sk:

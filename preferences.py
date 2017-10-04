@@ -5,7 +5,11 @@ from bpy.props import StringProperty, BoolProperty, IntProperty, FloatProperty, 
 from . import addon_updater_ops
 
 
-class Commotion_Preferences(AddonPreferences):
+# Add-on preferences
+# -----------------------------------
+
+
+class PREFS_Commotion_Props(AddonPreferences):
 	bl_idname = __package__
 
 	# Updater settings
@@ -47,12 +51,15 @@ class Commotion_Preferences(AddonPreferences):
 		addon_updater_ops.update_settings_ui(self, context)
 
 
+# Scene properties
+# -----------------------------------
+
+
 def sk_value_update(self, context):
-	scene = context.scene
-	props = scene.commotion
+	props = context.scene.commotion
 	sk = context.active_object.data.shape_keys
 
-	for kb in scene.commotion_skcoll:
+	for kb in context.window_manager.commotion_skcoll:
 		if kb.selected:
 			sk.key_blocks[kb.index].value = props.sk_value
 
@@ -84,7 +91,7 @@ def generateprops(self):
 
 
 @generateprops
-class Commotion_Scene_Props(PropertyGroup):
+class SCENE_Commotion_Props(PropertyGroup):
 	sk_shapekeys = BoolProperty()
 	sk_value = FloatProperty(name='Value', min=0.0, max=1.0, update=sk_value_update)
 	sk_drivers = BoolProperty()
@@ -94,7 +101,11 @@ class Commotion_Scene_Props(PropertyGroup):
 	ob_slow_parent_offset = FloatProperty(name='Offset Factor', description='Offset step for slow parent offset', default=1, min=0, step=10, precision=1)
 
 
-class Commotion_SK_Collection(PropertyGroup):
+# Shape Key collection properties
+# -----------------------------------
+
+
+class WM_Commotion_SK_Collection(PropertyGroup):
 	selected = BoolProperty(description='Affect referenced shape key')
 	index = IntProperty()
 	name = StringProperty()

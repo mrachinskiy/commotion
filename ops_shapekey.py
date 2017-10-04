@@ -9,7 +9,7 @@ class OBJECT_OT_Commotion_SK_Coll_Refresh(Operator):
 	bl_options = {'INTERNAL'}
 
 	def execute(self, context):
-		skcoll = context.scene.commotion_skcoll
+		skcoll = context.window_manager.commotion_skcoll
 		skcoll.clear()
 		i = 0
 
@@ -31,7 +31,7 @@ class OBJECT_OT_Commotion_SK_Interpolation_Set(Operator):
 	intr = StringProperty(options={'HIDDEN', 'SKIP_SAVE'})
 
 	def execute(self, context):
-		skcoll = context.scene.commotion_skcoll
+		skcoll = context.window_manager.commotion_skcoll
 
 		for ob in context.selected_objects:
 

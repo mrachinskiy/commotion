@@ -1,9 +1,9 @@
 Commotion—is a Blender add-on for motion graphics, made specifically for easy handling Shape Keys, F-Curves, NLA strips, Drivers and object relations between number of objects, in order to easily create awesome motion graphics.
 
-Watch:
+Video:
 
 * [Demo][2]
-* [Tutorial][3]
+* [Tutorial: Simple Motiongraphics][3]
 * [Update 1.4 Overview][4]
 
 

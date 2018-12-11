@@ -99,7 +99,7 @@ class CommotionPropertiesScene(PropertyGroup):
         default="CURSOR",
     )
     offset_threshold = IntProperty(name="Threshold", description="Number of objects to animate per frame step", default=1, min=1)
-    offset_seed = IntProperty(name="Seed", description="Random seed", default=1, min=1)
+    offset_seed = IntProperty(name="Seed", description="Seed value for randomizer to get different offset patterns", min=0)
     offset_offset = FloatProperty(name="Frame Offset", description="Frame step for animation offset", default=1, min=0, step=10, precision=3)
     offset_proxy_radius = FloatProperty(name="Effector Radius", description="Effective range at which effectors can influence animated objects", soft_min=0.0, default=5.0)
     offset_use_reverse = BoolProperty(name="Reverse", description="Reverse animation offset")

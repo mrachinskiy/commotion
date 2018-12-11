@@ -41,7 +41,7 @@ class OBJECT_OT_commotion_preset_apply(Operator):
             "offset": 1.0,
             "proxy_radius": 5.0,
             "threshold": 1,
-            "seed": 1,
+            "seed": 0,
             "use_reverse": False,
             "use_proxy": False,
             "sort_option": "CURSOR",

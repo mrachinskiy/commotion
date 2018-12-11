@@ -2,9 +2,9 @@ Commotion—is a Blender add-on for motion graphics, made specifically for easy 
 
 Video:
 
-* [Demo][2]
-* [Tutorial: Simple Motiongraphics][3]
-* [Update 1.4 Overview][4]
+* [Demo](http://youtu.be/gLj4PvHbm4s)
+* [Tutorial: Simple Motiongraphics](http://youtu.be/qbJMTOUdxRY)
+* [Update 1.4 Overview](https://youtu.be/YNtaR00sA40)
 
 
 How to install
@@ -30,6 +30,3 @@ How to install
 
 
 [1]: https://github.com/mrachinskiy/commotion/archive/master.zip
-[2]: http://youtu.be/gLj4PvHbm4s
-[3]: http://youtu.be/qbJMTOUdxRY
-[4]: https://youtu.be/YNtaR00sA40

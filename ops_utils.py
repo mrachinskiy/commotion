@@ -1,6 +1,6 @@
 # ##### BEGIN GPL LICENSE BLOCK #####
 #
-#  JewelCraft jewelry design toolkit for Blender.
+#  Commotion motion graphics add-on for Blender.
 #  Copyright (C) 2014-2018  Mikhail Rachinskiy
 #
 #  This program is free software: you can redistribute it and/or modify
@@ -24,13 +24,11 @@ from bpy.types import Operator
 from bpy.props import StringProperty
 
 
-class VIEW3D_OT_commotion_preset_apply(Operator):
+class OBJECT_OT_commotion_preset_apply(Operator):
     bl_label = "Apply Preset"
     bl_description = "Apply preset from active object"
-    bl_idname = "view3d.commotion_preset_apply"
+    bl_idname = "object.commotion_preset_apply"
     bl_options = {"REGISTER", "UNDO", "INTERNAL"}
-
-    prop_pfx = StringProperty(options={"HIDDEN", "SKIP_SAVE"})
 
     def execute(self, context):
         ob = context.active_object
@@ -41,21 +39,23 @@ class VIEW3D_OT_commotion_preset_apply(Operator):
 
         settings = {
             "offset": 1.0,
+            "proxy_radius": 5.0,
             "threshold": 1,
-            "reverse": False,
-            "sort_options": "CURSOR",
-            "group_objects": "",
-            "group_targets": "",
+            "seed": 1,
+            "use_reverse": False,
+            "use_proxy": False,
+            "sort_option": "CURSOR",
+            "group_animated": "",
+            "group_effectors": "",
         }
-        settings.update(ob["commotion_preset"])
+
+        ob_preset = {k: v for k, v in ob["commotion_preset"].items() if k in settings.keys()}
+        settings.update(ob_preset)
 
         props = context.scene.commotion
-        setattr(props, self.prop_pfx + "_offset", settings["offset"])
-        setattr(props, self.prop_pfx + "_threshold", settings["threshold"])
-        setattr(props, self.prop_pfx + "_reverse", settings["reverse"])
-        setattr(props, self.prop_pfx + "_sort_options", settings["sort_options"])
-        setattr(props, self.prop_pfx + "_group_objects", settings["group_objects"])
-        setattr(props, self.prop_pfx + "_group_targets", settings["group_targets"])
+
+        for k, v in settings.items():
+            setattr(props, "offset_" + k, v)
 
         return {"FINISHED"}
 
@@ -67,24 +67,33 @@ class AddToGroup:
     prop_pfx = StringProperty(options={"HIDDEN", "SKIP_SAVE"})
 
     def execute(self, context):
-        group_name = bpy.data.groups.new(self.group).name
-        bpy.ops.object.group_link(group=group_name)
-        bpy.ops.group.objects_add_active()
+        obs = context.selected_objects
 
-        setattr(context.scene.commotion, self.prop_pfx + self.prop_suf, group_name)
+        if not obs:
+            self.report({"WARNING"}, "No objects selected")
+            return {"CANCELLED"}
+
+        group = bpy.data.groups.new(self.group_name)
+
+        for ob in obs:
+            group.objects.link(ob)
+
+        setattr(context.scene.commotion, self.prop_pfx + self.prop_suf, group.name)
 
         return {"FINISHED"}
 
 
-class OBJECT_OT_commotion_add_to_group_objects(Operator, AddToGroup):
-    bl_description = "Add selected objects to Objects group for multi-offset"
-    bl_idname = "object.commotion_add_to_group_objects"
-    group = "Objects"
-    prop_suf = "_group_objects"
+class OBJECT_OT_commotion_add_to_group_animated(Operator, AddToGroup):
+    bl_description = "Add selected objects to Animated group"
+    bl_idname = "object.commotion_add_to_group_animated"
+
+    group_name = "Animated"
+    prop_suf = "_group_animated"
 
 
-class OBJECT_OT_commotion_add_to_group_targets(Operator, AddToGroup):
-    bl_description = "Add selected objects to Targets group for multi-offset"
-    bl_idname = "object.commotion_add_to_group_objects_targets"
-    group = "Targets"
-    prop_suf = "_group_targets"
+class OBJECT_OT_commotion_add_to_group_effector(Operator, AddToGroup):
+    bl_description = "Add selected objects to Effectors group"
+    bl_idname = "object.commotion_add_to_group_objects_effector"
+
+    group_name = "Effectors"
+    prop_suf = "_group_effectors"

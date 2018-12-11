@@ -1,6 +1,6 @@
 # ##### BEGIN GPL LICENSE BLOCK #####
 #
-#  JewelCraft jewelry design toolkit for Blender.
+#  Commotion motion graphics add-on for Blender.
 #  Copyright (C) 2014-2018  Mikhail Rachinskiy
 #
 #  This program is free software: you can redistribute it and/or modify
@@ -30,20 +30,17 @@ class OBJECT_OT_commotion_sk_coll_refresh(Operator):
     bl_options = {"REGISTER", "UNDO", "INTERNAL"}
 
     def execute(self, context):
-        skcoll = context.window_manager.commotion_skcoll
+        skcoll = context.window_manager.commotion.skcoll
         skcoll.clear()
-        i = 0
 
-        for kb in context.active_object.data.shape_keys.key_blocks:
+        for i, kb in enumerate(context.active_object.data.shape_keys.key_blocks):
             skcoll.add()
             skcoll[i].name = kb.name
             skcoll[i].index = i
-            i += 1
 
         return {"FINISHED"}
 
     def invoke(self, context, event):
-
         try:
             sk = context.active_object.data.shape_keys
         except:
@@ -65,7 +62,7 @@ class OBJECT_OT_commotion_sk_interpolation_set(Operator):
     intr = StringProperty(options={"HIDDEN", "SKIP_SAVE"})
 
     def execute(self, context):
-        skcoll = context.window_manager.commotion_skcoll
+        skcoll = context.window_manager.commotion.skcoll
 
         for ob in context.selected_objects:
 
@@ -82,13 +79,13 @@ class OBJECT_OT_commotion_sk_interpolation_set(Operator):
 
 
 class ANIM_OT_commotion_sk_auto_keyframes(Operator):
-    bl_label = "Auto Keyframes"
+    bl_label = "Commotion Shape Key Auto Keyframes"
     bl_description = (
         "Create keyframes for absolute shape keys on selected objects, "
         "based on the current frame and shape keys timings"
     )
     bl_idname = "anim.commotion_sk_auto_keyframes"
-    bl_options = {"REGISTER", "UNDO", "INTERNAL"}
+    bl_options = {"REGISTER", "UNDO"}
 
     def execute(self, context):
         frame = context.scene.frame_current

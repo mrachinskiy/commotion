@@ -1,6 +1,6 @@
 # ##### BEGIN GPL LICENSE BLOCK #####
 #
-#  JewelCraft jewelry design toolkit for Blender.
+#  Commotion motion graphics add-on for Blender.
 #  Copyright (C) 2014-2018  Mikhail Rachinskiy
 #
 #  This program is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@
 bl_info = {
     "name": "Commotion",
     "author": "Mikhail Rachinskiy",
-    "version": (1, 6, 0),
+    "version": (1, 7, 0),
     "blender": (2, 77, 0),
     "location": "3D View > Tool Shelf",
     "description": "Animation offset tools for motion graphics.",
@@ -33,65 +33,64 @@ bl_info = {
 
 
 if "bpy" in locals():
+    import os
     import importlib
 
-    importlib.reload(preferences)
-    importlib.reload(ui)
-    importlib.reload(ops_anim)
-    importlib.reload(ops_driver)
-    importlib.reload(ops_shapekey)
-    importlib.reload(ops_slow_parent)
-    importlib.reload(ops_utils)
+    for entry in os.scandir(os.path.dirname(__file__)):
+
+        if entry.is_file() and entry.name.endswith(".py") and not entry.name.startswith("__"):
+            module = os.path.splitext(entry.name)[0]
+            importlib.reload(eval(module))
+
+        elif entry.is_dir() and not entry.name.startswith((".", "__")) and not entry.name.endswith("updater"):
+
+            for subentry in os.scandir(entry.path):
+
+                if subentry.name.endswith(".py"):
+                    module = "{}.{}".format(entry.name, os.path.splitext(subentry.name)[0])
+                    importlib.reload(eval(module))
 else:
     import bpy
     from bpy.props import PointerProperty, CollectionProperty
     from . import (
-        preferences,
+        proxy_effector,
+        settings,
         ui,
         ops_anim,
-        ops_driver,
+        ops_proxy,
         ops_shapekey,
         ops_slow_parent,
         ops_utils,
         addon_updater_ops,
     )
+    from .op_offset import offset_op
 
 
 classes = (
-    preferences.CommotionShapeKeyCollection,
-    preferences.CommotionPreferences,
-    preferences.CommotionPropertiesScene,
+    settings.CommotionShapeKeyCollection,
+    settings.CommotionPreferences,
+    settings.CommotionPropertiesScene,
+    settings.CommotionPropertiesWm,
     ui.VIEW3D_PT_commotion_update,
     ui.VIEW3D_PT_commotion_shape_keys,
-    ui.VIEW3D_PT_commotion_sk_fcurves,
-    ui.VIEW3D_PT_commotion_sk_nla,
-    ui.VIEW3D_PT_commotion_sk_drivers,
-    ui.VIEW3D_PT_commotion_ob_fcurves,
-    ui.VIEW3D_PT_commotion_ob_nla,
+    ui.VIEW3D_PT_commotion_animation_offset,
     ui.VIEW3D_PT_commotion_slow_parent,
+    ui.VIEW3D_PT_commotion_proxy_effector,
+    offset_op.ANIM_OT_commotion_animation_offset,
     ops_shapekey.OBJECT_OT_commotion_sk_coll_refresh,
     ops_shapekey.OBJECT_OT_commotion_sk_interpolation_set,
     ops_shapekey.ANIM_OT_commotion_sk_auto_keyframes,
-    ops_anim.ANIM_OT_commotion_animation_link,
     ops_anim.ANIM_OT_commotion_animation_copy,
-    ops_anim.ANIM_OT_commotion_fcurves_to_nla,
-    ops_anim.ANIM_OT_commotion_nla_to_fcurves,
+    ops_anim.ANIM_OT_commotion_animation_link,
+    ops_anim.ANIM_OT_commotion_animation_convert,
     ops_anim.NLA_OT_commotion_sync_length,
-    ops_anim.ANIM_OT_commotion_offset_cursor,
-    ops_anim.ANIM_OT_commotion_offset_multitarget,
-    ops_anim.ANIM_OT_commotion_offset_name,
-    ops_driver.ANIM_OT_commotion_sk_driver_distance_set,
-    ops_driver.ANIM_OT_commotion_sk_driver_expression_copy,
-    ops_driver.ANIM_OT_commotion_sk_driver_target_remap,
-    ops_driver.ANIM_OT_commotion_sk_driver_function_register,
-    ops_driver.OBJECT_OT_commotion_sk_reset_eval_time,
-    ops_driver.ANIM_OT_commotion_sk_driver_func_expression_get,
-    ops_driver.ANIM_OT_commotion_sk_driver_func_expression_set,
+    ops_proxy.ANIM_OT_commotion_bake,
+    ops_proxy.ANIM_OT_commotion_bake_remove,
     ops_slow_parent.OBJECT_OT_commotion_slow_parent_offset,
     ops_slow_parent.OBJECT_OT_commotion_slow_parent_toggle,
-    ops_utils.VIEW3D_OT_commotion_preset_apply,
-    ops_utils.OBJECT_OT_commotion_add_to_group_objects,
-    ops_utils.OBJECT_OT_commotion_add_to_group_targets,
+    ops_utils.OBJECT_OT_commotion_preset_apply,
+    ops_utils.OBJECT_OT_commotion_add_to_group_animated,
+    ops_utils.OBJECT_OT_commotion_add_to_group_effector,
 )
 
 
@@ -101,8 +100,8 @@ def register():
     for cls in classes:
         bpy.utils.register_class(cls)
 
-    bpy.types.Scene.commotion = PointerProperty(type=preferences.CommotionPropertiesScene)
-    bpy.types.WindowManager.commotion_skcoll = CollectionProperty(type=preferences.CommotionShapeKeyCollection)
+    bpy.types.Scene.commotion = PointerProperty(type=settings.CommotionPropertiesScene)
+    bpy.types.WindowManager.commotion = PointerProperty(type=settings.CommotionPropertiesWm)
 
 
 def unregister():
@@ -112,7 +111,8 @@ def unregister():
         bpy.utils.unregister_class(cls)
 
     del bpy.types.Scene.commotion
-    del bpy.types.WindowManager.commotion_skcoll
+    del bpy.types.WindowManager.commotion
+    proxy_effector.handler_del()
 
 
 if __name__ == "__main__":

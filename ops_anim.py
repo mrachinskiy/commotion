@@ -169,12 +169,12 @@ class ANIM_OT_commotion_animation_convert(Operator, AdSetup):
         description="Animation data type",
         items=(
             ("FCURVES", "F-Curves", "", "IPO_BEZIER", 0),
-            ("NLA", "Strips", "", "NLA", 1),
+            ("STRIPS", "Strips", "", "NLA", 1),
         ),
     )
 
     def execute(self, context):
-        is_nla = self.ad_type == "NLA"
+        use_to_strips = self.ad_type == "STRIPS"
 
         for ob in context.selected_objects:
             try:
@@ -184,18 +184,22 @@ class ANIM_OT_commotion_animation_convert(Operator, AdSetup):
                 else:
                     ad = ob.data.shape_keys.animation_data
 
-                if is_nla:
+                if use_to_strips:
+                    nla_tracks = ad.nla_tracks
+
+                    if not nla_tracks:
+                        nla_tracks.new()
+
                     frame_start = ad.action.frame_range[0]
-
-                    if not ad.nla_tracks:
-                        ad.nla_tracks.new()
-
-                    ad.nla_tracks[0].strips.new("name", frame_start, ad.action)
+                    nla_tracks[0].strips.new("name", frame_start, ad.action)
                     ad.action = None
+
                 else:
-                    trks = ad.nla_tracks
-                    ad.action = trks[0].strips[0].action
-                    trks.remove(trks[0])
+                    nla_tracks = ad.nla_tracks
+                    ad.action = nla_tracks[0].strips[0].action
+
+                    for track in nla_tracks:
+                        nla_tracks.remove(track)
 
             except:
                 continue

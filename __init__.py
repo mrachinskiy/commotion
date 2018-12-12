@@ -83,7 +83,6 @@ classes = (
     ops_anim.ANIM_OT_commotion_animation_copy,
     ops_anim.ANIM_OT_commotion_animation_link,
     ops_anim.ANIM_OT_commotion_animation_convert,
-    ops_anim.NLA_OT_commotion_sync_length,
     ops_proxy.ANIM_OT_commotion_bake,
     ops_proxy.ANIM_OT_commotion_bake_remove,
     ops_slow_parent.OBJECT_OT_commotion_slow_parent_offset,

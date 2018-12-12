@@ -193,7 +193,6 @@ class ANIM_OT_commotion_animation_convert(Operator, AdSetup):
                     frame_start = ad.action.frame_range[0]
                     nla_tracks[0].strips.new("name", frame_start, ad.action)
                     ad.action = None
-
                 else:
                     nla_tracks = ad.nla_tracks
                     ad.action = nla_tracks[0].strips[0].action
@@ -201,29 +200,6 @@ class ANIM_OT_commotion_animation_convert(Operator, AdSetup):
                     for track in nla_tracks:
                         nla_tracks.remove(track)
 
-            except:
-                continue
-
-        return {"FINISHED"}
-
-
-class NLA_OT_commotion_sync_length(Operator, AdSetup):
-    bl_label = "Commotion Sync Length"
-    bl_description = "Synchronize strip length for selected objects"
-    bl_idname = "nla.commotion_sync_length"
-    bl_options = {"REGISTER", "UNDO"}
-
-    def execute(self, context):
-        for ob in context.selected_objects:
-            try:
-                if self.is_ob:
-                    tracks = ob.animation_data.nla_tracks
-                else:
-                    tracks = ob.data.shape_keys.animation_data.nla_tracks
-
-                for track in tracks:
-                    for strip in track.strips:
-                        strip.action_frame_end = strip.action_frame_start + strip.action.frame_range[1] - 1
             except:
                 continue
 

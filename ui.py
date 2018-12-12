@@ -116,12 +116,11 @@ class VIEW3D_PT_commotion_animation_offset(Panel, Setup):
         # ------------------------------
 
         col = layout.column()
-        sub = col.column(align=True)
-        row = sub.row(align=True)
+        row = col.row(align=True)
         row.operator("anim.commotion_animation_link", text="Link", icon="LINKED")
         row.operator("anim.commotion_animation_copy", text="Copy", icon="COPYDOWN")
+
         if props.offset_ad_type == "NLA":
-            sub.operator("nla.commotion_sync_length", text="Sync Length", icon="TIME")
             col.operator_menu_enum("anim.commotion_animation_convert", "ad_type", text="Convert to")
 
         # Offset properties

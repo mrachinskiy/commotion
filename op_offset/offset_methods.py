@@ -92,7 +92,6 @@ class OffsetMethods:
         self.frame = 0
         frame = scene.frame_start
         scene.frame_set(frame)
-        self.ad_mute(self.animated, mute=False)
         obs = [[i, ob, False] for i, ob in enumerate(self.animated)]
 
         while frame <= scene.frame_end:

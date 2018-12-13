@@ -120,6 +120,7 @@ class AdCopy:
         for track in nla_tracks:
             track_new = ob_nla_tracks.new()
             track_new.name = track.name
+            track_new.select = False
 
             for strip in track.strips:
                 if self.use_link:
@@ -129,15 +130,26 @@ class AdCopy:
 
                 strip_new.name = strip.name
                 strip_new.select = False
-                strip_new.scale = strip.scale
+
+                strip_new.frame_start = strip.frame_start
                 strip_new.frame_end = strip.frame_end
                 strip_new.extrapolation = strip.extrapolation
                 strip_new.blend_type = strip.blend_type
+                strip_new.use_auto_blend = strip.use_auto_blend
                 strip_new.blend_in = strip.blend_in
                 strip_new.blend_out = strip.blend_out
-                strip_new.use_auto_blend = strip.use_auto_blend
                 strip_new.mute = strip.mute
                 strip_new.use_reverse = strip.use_reverse
+
+                strip_new.action_frame_start = strip.action_frame_start
+                strip_new.action_frame_end = strip.action_frame_end
+                strip_new.use_sync_length = strip.use_sync_length
+                strip_new.repeat = strip.repeat
+
+                strip_new.use_animated_influence = strip.use_animated_influence
+                strip_new.influence = strip.influence
+                strip_new.use_animated_time_cyclic = strip.use_animated_time_cyclic
+                strip_new.strip_time = strip.strip_time
 
 
 class ANIM_OT_commotion_animation_copy(Operator, AdCheck, AdCopy):

@@ -85,6 +85,7 @@ class AdOffset:
                         if use_rev:
                             strip.frame_end += strip_offset
                             strip.frame_start += strip_offset
+                            strip.frame_end = strip.frame_end  # Trigger update for strip scale value
                         else:
                             strip.frame_start += strip_offset
                             strip.frame_end += strip_offset

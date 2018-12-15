@@ -21,6 +21,8 @@
 
 import random
 
+import bpy
+
 
 class OffsetMethods:
 
@@ -56,10 +58,12 @@ class OffsetMethods:
         self.offset_simple(obs)
 
     def offset_from_multi(self, context):
-        obs = [[] for x in self.effectors]
-        effector_loc = [(i, x.matrix_world.translation) for i, x in enumerate(self.effectors)]
+        animated = bpy.data.groups[self.group_animated].objects
+        effectors = bpy.data.groups[self.group_effectors].objects
+        obs = [[] for x in effectors]
+        effector_loc = [(i, x.matrix_world.translation) for i, x in enumerate(effectors)]
 
-        for ob in self.animated:
+        for ob in animated:
             ob_loc = ob.matrix_world.translation
             eff_to_ob_dist = []
 
@@ -88,15 +92,17 @@ class OffsetMethods:
                     i = 1
 
     def offset_from_multi_proxy(self, context):
+        animated = bpy.data.groups[self.group_animated].objects
+        effectors = bpy.data.groups[self.group_effectors].objects
         scene = context.scene
         self.frame = 0
         frame = scene.frame_start
         scene.frame_set(frame)
-        obs = [[i, ob, False] for i, ob in enumerate(self.animated)]
+        obs = [[i, ob, False] for i, ob in enumerate(animated)]
 
         while frame <= scene.frame_end:
 
-            effector_loc = [x.matrix_world.translation for x in self.effectors]
+            effector_loc = [x.matrix_world.translation for x in effectors]
 
             for i, ob, flag in obs:
                 if not flag:
@@ -121,7 +127,7 @@ class OffsetMethods:
             if self.ad_offset(ob, frame_end) is False:
                 continue
 
-        for ob in self.animated:
+        for ob in animated:
             self.preset_add(ob)
 
         scene.frame_set(scene.frame_start)

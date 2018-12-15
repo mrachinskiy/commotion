@@ -87,9 +87,6 @@ class ANIM_OT_commotion_animation_offset(Operator, AdOffset, OffsetMethods):
                 self.report({"ERROR"}, "Object or Effector object groups are not specified")
                 return {"CANCELLED"}
 
-            self.animated = bpy.data.groups[self.group_animated].objects
-            self.effectors = bpy.data.groups[self.group_effectors].objects
-
         return self.execute(context)
 
     def preset_add(self, ob):

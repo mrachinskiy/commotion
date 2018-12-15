@@ -32,17 +32,19 @@ class OBJECT_OT_commotion_slow_parent_offset(Operator):
     offset = FloatProperty(name="Offset Factor", default=1, min=0, step=10, precision=3)
 
     def execute(self, context):
-        obs = {}
+        obs = []
+        app = obs.append
+        offset = 1.0
 
         for ob in context.selected_objects:
             if ob.parent:
-                obs[ob] = (ob.parent.matrix_world.translation - ob.matrix_world.translation).length
+                distance = (ob.parent.matrix_world.translation - ob.matrix_world.translation).length
+                app((ob, distance))
 
-        obs = sorted(obs, key=obs.get)
-
-        for i, ob in enumerate(obs):
+        for ob, _ in sorted(obs, key=lambda x: x[1]):
             ob.use_slow_parent = True
-            ob.slow_parent_offset = self.offset * (i + 1)
+            ob.slow_parent_offset = offset
+            offset += self.offset
 
         return {"FINISHED"}
 
@@ -59,18 +61,11 @@ class OBJECT_OT_commotion_slow_parent_toggle(Operator):
     bl_idname = "object.commotion_slow_parent_toggle"
     bl_options = {"REGISTER", "UNDO"}
 
-    off = BoolProperty(name="Off", options={"SKIP_SAVE"})
+    enable = BoolProperty(name="Enable", options={"SKIP_SAVE"})
 
     def execute(self, context):
-        obs = context.selected_objects
-
-        if self.off:
-            for ob in obs:
-                if ob.parent:
-                    ob.use_slow_parent = False
-        else:
-            for ob in obs:
-                if ob.parent:
-                    ob.use_slow_parent = True
+        for ob in context.selected_objects:
+            if ob.parent:
+                ob.use_slow_parent = self.enable
 
         return {"FINISHED"}

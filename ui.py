@@ -132,8 +132,8 @@ class VIEW3D_PT_commotion_animation_offset(Panel, Setup):
         col_l.scale_x = 0.8
         col_l.label("Offset")
         col_l.label("Threshold")
-        col_l.label("Sort")
         col_l.label("Reverse")
+        col_l.label("Sort")
 
         if rand:
             col_l.label("Seed")
@@ -147,10 +147,12 @@ class VIEW3D_PT_commotion_animation_offset(Panel, Setup):
                 col_l.label("Radius")
 
         col_r = row.column(align=True)
-        col_r.prop(props, "offset_offset", text="")
-        col_r.prop(props, "offset_threshold", text="")
+        sub = col_r.column(align=True)
+        sub.active = not (multi and multi_use_proxy)
+        sub.prop(props, "offset_offset", text="")
+        sub.prop(props, "offset_threshold", text="")
+        sub.prop(props, "offset_use_reverse", text="")
         col_r.prop(props, "offset_sort_method", text="")
-        col_r.prop(props, "offset_use_reverse", text="")
 
         if rand:
             col_r.prop(props, "offset_seed", text="")
@@ -182,8 +184,8 @@ class VIEW3D_PT_commotion_slow_parent(Panel, Setup):
         props = context.scene.commotion
 
         row = layout.row(align=True)
-        row.operator("object.commotion_slow_parent_toggle", text="On")
-        row.operator("object.commotion_slow_parent_toggle", text="Off").off = True
+        row.operator("object.commotion_slow_parent_toggle", text="On").enable = True
+        row.operator("object.commotion_slow_parent_toggle", text="Off")
 
         row = layout.row(align=True)
         col_l = row.column(align=True)

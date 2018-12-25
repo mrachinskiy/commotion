@@ -22,7 +22,7 @@
 bl_info = {
     "name": "Commotion",
     "author": "Mikhail Rachinskiy",
-    "version": (1, 7, 2),
+    "version": (1, 7, 3),
     "blender": (2, 77, 0),
     "location": "3D View > Tool Shelf",
     "description": "Animation offset tools for motion graphics.",

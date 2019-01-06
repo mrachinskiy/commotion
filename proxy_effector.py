@@ -1,7 +1,7 @@
 # ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  Commotion motion graphics add-on for Blender.
-#  Copyright (C) 2014-2018  Mikhail Rachinskiy
+#  Copyright (C) 2014-2019  Mikhail Rachinskiy
 #
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -53,18 +53,16 @@ def proxy_handler(scene):
     use_rot = props.proxy_use_rot
     use_sca = props.proxy_use_sca
     use_sk = props.proxy_use_sk
-
-    if not (use_loc or use_rot or use_sca or use_sk):
-        return
-
-    gr_obs = props.proxy_group_animated
-    gr_eff = props.proxy_group_effectors
-
-    if not (gr_obs and gr_eff):
-        return
-
-    objects = bpy.data.groups[gr_obs].objects
+    obs_animated = props.proxy_coll_animated.objects
+    obs_effectors = props.proxy_coll_effectors.objects
     radius = props.proxy_radius
+
+    if (
+        not (use_loc or use_rot or use_sca or use_sk or radius) or
+        not (obs_animated and obs_effectors)
+    ):
+        return
+
     falloff = props.proxy_falloff
     fade_factor = props.proxy_trail_fade
     use_trail = props.proxy_use_trail and fade_factor < 1.0
@@ -86,9 +84,9 @@ def proxy_handler(scene):
 
     use_reset = use_trail and scene.frame_current <= scene.frame_start
     fac = 1.0 / radius
-    effector_loc = [x.matrix_world.translation for x in bpy.data.groups[gr_eff].objects]
+    effector_loc = [x.matrix_world.translation for x in obs_effectors]
 
-    for ob in objects:
+    for ob in obs_animated:
         ob_loc = ob.matrix_world.translation - ob.delta_location
         distance = radius + 1.0
 
@@ -118,8 +116,12 @@ def proxy_handler(scene):
                 if use_sk: ob_sk.eval_time = start_sk
             continue
 
-        factor = fac * distance - (falloff / (distance / radius))
-        factor = min(max(factor, 0.0), 1.0)
+        if distance:
+            factor = fac * distance - (falloff / (distance / radius))
+            factor = min(max(factor, 0.0), 1.0)
+        else:
+            factor = 0
+
         if use_loc: vec_loc = final_loc.lerp(start_loc, factor)
         if use_rot: vec_rot = final_rot.to_quaternion().slerp(start_rot.to_quaternion(), factor).to_euler()
         if use_sca: vec_sca = final_sca.lerp(start_sca, factor)
@@ -162,38 +164,38 @@ def proxy_handler(scene):
 
 
 def update_proxy_use_loc(self, context):
-    if not self.proxy_group_animated:
+    if not self.proxy_coll_animated:
         return
 
     if not self.proxy_use_loc:
-        for ob in bpy.data.groups[self.proxy_group_animated].objects:
+        for ob in self.proxy_coll_animated.objects:
             ob.delta_location = (0.0, 0.0, 0.0)
 
 
 def update_proxy_use_rot(self, context):
-    if not self.proxy_group_animated:
+    if not self.proxy_coll_animated:
         return
 
     if not self.proxy_use_rot:
-        for ob in bpy.data.groups[self.proxy_group_animated].objects:
+        for ob in self.proxy_coll_animated.objects:
             ob.delta_rotation_euler = (0.0, 0.0, 0.0)
 
 
 def update_proxy_use_sca(self, context):
-    if not self.proxy_group_animated:
+    if not self.proxy_coll_animated:
         return
 
     if not self.proxy_use_sca:
-        for ob in bpy.data.groups[self.proxy_group_animated].objects:
+        for ob in self.proxy_coll_animated.objects:
             ob.delta_scale = (1.0, 1.0, 1.0)
 
 
 def update_proxy_use_sk(self, context):
-    if not self.proxy_group_animated:
+    if not self.proxy_coll_animated:
         return
 
     if not self.proxy_use_sk:
-        for ob in bpy.data.groups[self.proxy_group_animated].objects:
+        for ob in self.proxy_coll_animated.objects:
             try:
                 ob.data.shape_keys.eval_time = 0.0
             except:

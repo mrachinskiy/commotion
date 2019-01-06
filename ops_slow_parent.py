@@ -1,7 +1,7 @@
 # ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  Commotion motion graphics add-on for Blender.
-#  Copyright (C) 2014-2018  Mikhail Rachinskiy
+#  Copyright (C) 2014-2019  Mikhail Rachinskiy
 #
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ class OBJECT_OT_commotion_slow_parent_offset(Operator):
     bl_idname = "object.commotion_slow_parent_offset"
     bl_options = {"REGISTER", "UNDO"}
 
-    offset = FloatProperty(name="Offset Factor", default=1, min=0, step=10, precision=3)
+    offset: FloatProperty(name="Offset Factor", default=1, min=0, step=10, precision=3)
 
     def execute(self, context):
         obs = []
@@ -61,7 +61,7 @@ class OBJECT_OT_commotion_slow_parent_toggle(Operator):
     bl_idname = "object.commotion_slow_parent_toggle"
     bl_options = {"REGISTER", "UNDO"}
 
-    enable = BoolProperty(name="Enable", options={"SKIP_SAVE"})
+    enable: BoolProperty(name="Enable", options={"SKIP_SAVE"})
 
     def execute(self, context):
         for ob in context.selected_objects:

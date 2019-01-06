@@ -1,7 +1,7 @@
 # ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  Commotion motion graphics add-on for Blender.
-#  Copyright (C) 2014-2018  Mikhail Rachinskiy
+#  Copyright (C) 2014-2019  Mikhail Rachinskiy
 #
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -22,49 +22,67 @@
 from bpy.types import Operator
 from bpy.props import EnumProperty
 
-
-class AdSetup:
-
-    def invoke(self, context, event):
-        props = context.scene.commotion
-        self.is_ob = props.offset_id_type == "OBJECT"
-        self.is_fcurves = props.offset_ad_type == "FCURVES"
-
-        return self.execute(context)
+from . import lib
 
 
-class AdCheck:
+def anim_get(ob):
+    action_ob = None
+    action_data = None
+    action_sk = None
+    action_mat = {}
+    action_node = {}
 
-    def invoke(self, context, event):
-        props = context.scene.commotion
-        self.is_ob = props.offset_id_type == "OBJECT"
-        self.is_fcurves = props.offset_ad_type == "FCURVES"
+    nla_tracks_ob = None
+    nla_tracks_data = None
+    nla_tracks_sk = None
+    nla_tracks_mat = {}
+    nla_tracks_node = {}
 
-        # Get animation data
-        # ----------------------------
+    ad = ob.animation_data
+    if ad:
+        action_ob = ob.animation_data.action
+        nla_tracks_ob = ob.animation_data.nla_tracks
 
-        if self.is_ob:
-            ad = context.active_object.animation_data
-        else:
-            try:
-                sk = context.active_object.data.shape_keys
-                ad = sk.animation_data
-            except:
-                self.report({"ERROR"}, "Object has no Shape Keys")
-                return {"CANCELLED"}
+    if ob.data:
+        ad = ob.data.animation_data
+        if ad:
+            action_data = ad.action
+            nla_tracks_data = ad.nla_tracks
 
-        # Check
-        # ----------------------------
+        try:
+            ad = ob.data.shape_keys.animation_data
+            if ad:
+                action_sk = ad.action
+                nla_tracks_sk = ad.nla_tracks
+        except:
+            pass
 
-        if self.is_fcurves and not (ad and ad.action):
-            self.report({"ERROR"}, "Object has no animation")
-            return {"CANCELLED"}
+    if ob.material_slots:
+        for i, slot in enumerate(ob.material_slots):
 
-        elif not self.is_fcurves and not (ad and ad.nla_tracks and ad.nla_tracks[0].strips):
-            self.report({"ERROR"}, "Object NLA tracks are empty")
-            return {"CANCELLED"}
+            ad = slot.material.animation_data
+            if ad:
+                action_mat[i] = ad.action
+                nla_tracks_mat[i] = ad.nla_tracks
 
-        return self.execute(context)
+            if slot.material.node_tree:
+                ad = slot.material.node_tree.animation_data
+                if ad:
+                    action_node[i] = ad.action
+                    nla_tracks_node[i] = ad.nla_tracks
+
+    return (
+        action_ob,
+        action_data,
+        action_sk,
+        action_mat,
+        action_node,
+        nla_tracks_ob,
+        nla_tracks_data,
+        nla_tracks_sk,
+        nla_tracks_mat,
+        nla_tracks_node,
+    )
 
 
 class AdCopy:
@@ -73,42 +91,72 @@ class AdCopy:
         ob_active = context.active_object
         obs = list(context.selected_objects)
 
-        if ob_active.select:
+        if ob_active.select_get():
             obs.remove(ob_active)
 
-        if self.is_fcurves:
+        (action_ob,
+         action_data,
+         action_sk,
+         action_mat,
+         action_node,
+         nla_tracks_ob,
+         nla_tracks_data,
+         nla_tracks_sk,
+         nla_tracks_mat,
+         nla_tracks_node) = anim_get(ob_active)
 
-            if self.is_ob:
-                action = ob_active.animation_data.action
-                for ob in obs:
-                    if not ob.animation_data:
-                        ob.animation_data_create()
-                    ob.animation_data.action = action if self.use_link else action.copy()
-            else:
-                action = ob_active.data.shape_keys.animation_data.action
-                for ob in obs:
-                    if ob.data and ob.data.shape_keys:
-                        sk = ob.data.shape_keys
-                        if not sk.animation_data:
-                            sk.animation_data_create()
-                        sk.animation_data.action = action if self.use_link else action.copy()
+        is_action_mat = bool(action_mat) or bool(action_node)
+        is_nla_tracks_mat = bool(nla_tracks_mat) or bool(nla_tracks_node)
 
-        else:
+        for ob in obs:
 
-            if self.is_ob:
-                nla_tracks = ob_active.animation_data.nla_tracks
-                for ob in obs:
-                    if not ob.animation_data:
-                        ob.animation_data_create()
-                    self.nla_copy(ob.animation_data.nla_tracks, nla_tracks)
-            else:
-                nla_tracks = ob_active.data.shape_keys.animation_data.nla_tracks
-                for ob in obs:
-                    if ob.data and ob.data.shape_keys:
-                        sk = ob.data.shape_keys
-                        if not sk.animation_data:
-                            sk.animation_data_create()
-                        self.nla_copy(sk.animation_data.nla_tracks, nla_tracks)
+            act_data = []
+            nla_data = []
+
+            if action_ob:
+                act_data.append((action_ob, ob))
+
+            if nla_tracks_ob:
+                nla_data.append((nla_tracks_ob, ob))
+
+            if ob.data:
+                if action_data:
+                    act_data.append((action_data, ob.data))
+                if nla_tracks_data:
+                    nla_data.append((nla_tracks_data, ob.data))
+
+                try:
+                    if action_sk:
+                        act_data.append((action_sk, ob.data.shape_keys))
+                    if nla_tracks_sk:
+                        nla_data.append((nla_tracks_sk, ob.data.shape_keys))
+                except:
+                    pass
+
+            if (is_action_mat or is_nla_tracks_mat) and ob.material_slots:
+                for i, slot in enumerate(ob.material_slots):
+
+                    if i in action_mat:
+                        act_data.append((action_mat[i], slot.material))
+                    if i in nla_tracks_mat:
+                        nla_data.append((nla_tracks_mat[i], slot.material))
+
+                    if i in action_node:
+                        act_data.append((action_node[i], slot.material.node_tree))
+                    if i in nla_tracks_node:
+                        nla_data.append((nla_tracks_node[i], slot.material.node_tree))
+
+            if act_data:
+                for action, data in act_data:
+                    if not data.animation_data:
+                        data.animation_data_create()
+                    data.animation_data.action = action if self.use_link else action.copy()
+
+            if nla_data:
+                for nla_tracks, data in nla_data:
+                    if not data.animation_data:
+                        data.animation_data_create()
+                    self.nla_copy(data.animation_data.nla_tracks, nla_tracks)
 
         return {"FINISHED"}
 
@@ -152,7 +200,7 @@ class AdCopy:
                 strip_new.strip_time = strip.strip_time
 
 
-class ANIM_OT_commotion_animation_copy(Operator, AdCheck, AdCopy):
+class ANIM_OT_commotion_animation_copy(Operator, AdCopy):
     bl_label = "Commotion Copy"
     bl_description = "Copy animation from active to selected objects (can also use this to unlink animation)"
     bl_idname = "anim.commotion_animation_copy"
@@ -161,7 +209,7 @@ class ANIM_OT_commotion_animation_copy(Operator, AdCheck, AdCopy):
     use_link = False
 
 
-class ANIM_OT_commotion_animation_link(Operator, AdCheck, AdCopy):
+class ANIM_OT_commotion_animation_link(Operator, AdCopy):
     bl_label = "Commotion Link"
     bl_description = "Link animation from active to selected objects"
     bl_idname = "anim.commotion_animation_link"
@@ -170,13 +218,13 @@ class ANIM_OT_commotion_animation_link(Operator, AdCheck, AdCopy):
     use_link = True
 
 
-class ANIM_OT_commotion_animation_convert(Operator, AdSetup):
+class ANIM_OT_commotion_animation_convert(Operator):
     bl_label = "Commotion Convert To"
     bl_description = "Convert action to another type for selected objects"
     bl_idname = "anim.commotion_animation_convert"
     bl_options = {"REGISTER", "UNDO"}
 
-    ad_type = EnumProperty(
+    ad_type: EnumProperty(
         name="Animation Data",
         description="Animation data type",
         items=(
@@ -189,30 +237,28 @@ class ANIM_OT_commotion_animation_convert(Operator, AdSetup):
         use_to_strips = self.ad_type == "STRIPS"
 
         for ob in context.selected_objects:
-            try:
+            ads = lib.ad_get(ob)
 
-                if self.is_ob:
-                    ad = ob.animation_data
-                else:
-                    ad = ob.data.shape_keys.animation_data
+            if ads:
+                for ad in ads:
 
-                if use_to_strips:
-                    nla_tracks = ad.nla_tracks
+                    if use_to_strips:
 
-                    if not nla_tracks:
-                        nla_tracks.new()
+                        nla_tracks = ad.nla_tracks
 
-                    frame_start = ad.action.frame_range[0]
-                    nla_tracks[0].strips.new("name", frame_start, ad.action)
-                    ad.action = None
-                else:
-                    nla_tracks = ad.nla_tracks
-                    ad.action = nla_tracks[0].strips[0].action
+                        if not nla_tracks:
+                            nla_tracks.new()
 
-                    for track in nla_tracks:
-                        nla_tracks.remove(track)
+                        frame_start = ad.action.frame_range[0]
+                        nla_tracks[0].strips.new("name", frame_start, ad.action)
+                        ad.action = None
 
-            except:
-                continue
+                    else:
+
+                        nla_tracks = ad.nla_tracks
+                        ad.action = nla_tracks[0].strips[0].action
+
+                        for track in nla_tracks:
+                            nla_tracks.remove(track)
 
         return {"FINISHED"}

@@ -1,7 +1,7 @@
 # ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  Commotion motion graphics add-on for Blender.
-#  Copyright (C) 2014-2018  Mikhail Rachinskiy
+#  Copyright (C) 2014-2019  Mikhail Rachinskiy
 #
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -19,10 +19,13 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
-import bpy
 from bpy.types import Operator
+from bpy.props import (
+    BoolProperty,
+    IntProperty,
+    FloatProperty,
+)
 
-from .. import settings
 from .offset_methods import OffsetMethods
 from .offset_ad import AdOffset
 
@@ -33,40 +36,34 @@ class ANIM_OT_commotion_animation_offset(Operator, AdOffset, OffsetMethods):
     bl_idname = "anim.commotion_animation_offset"
     bl_options = {"REGISTER", "UNDO"}
 
-    offset = settings.CommotionPropertiesScene.offset_offset
-    threshold = settings.CommotionPropertiesScene.offset_threshold
-    use_reverse = settings.CommotionPropertiesScene.offset_use_reverse
-    seed = settings.CommotionPropertiesScene.offset_seed
+    offset: FloatProperty(name="Frame Offset", description="Frame step for animation offset", default=1, min=0, step=10, precision=3)
+    threshold: IntProperty(name="Threshold", description="Number of objects to animate per frame step", default=1, min=1)
+    use_reverse: BoolProperty(name="Reverse", description="Reverse animation offset")
+    seed: IntProperty(name="Seed", description="Seed value for randomizer to get different offset patterns", min=0)
 
     def draw(self, context):
         if self.sort_method == "MULTI" and self.use_proxy:
             return
 
         layout = self.layout
+        layout.use_property_split = True
 
-        split = layout.split()
-        split.label("Frame Offset")
-        split.prop(self, "offset", text="")
-
-        split = layout.split()
-        split.label("Threshold")
-        split.prop(self, "threshold", text="")
-
-        split = layout.split()
-        split.row()
-        split.prop(self, "use_reverse")
+        col = layout.column()
+        col.prop(self, "offset")
+        col.prop(self, "threshold")
+        col.prop(self, "use_reverse")
 
         if self.sort_method == "RANDOM":
-            split = layout.split()
-            split.label("Seed")
-            split.prop(self, "seed", text="")
+            col.prop(self, "seed")
 
     def invoke(self, context, event):
         scene = context.scene
         props = scene.commotion
 
-        self.is_ob = props.offset_id_type == "OBJECT"
-        self.is_fcurves = props.offset_ad_type == "FCURVES"
+        self.use_ob = props.offset_id_type in {"OBJECT", "ALL"}
+        self.use_data = props.offset_id_type in {"OBJECT_DATA", "ALL"}
+        self.use_sk = props.offset_id_type in {"SHAPE_KEYS", "ALL"}
+        self.use_mat = props.offset_id_type in {"MATERIAL", "ALL"}
         self.frame = scene.frame_current
         self.cursor = scene.cursor_location
         self.offset = props.offset_offset
@@ -74,22 +71,25 @@ class ANIM_OT_commotion_animation_offset(Operator, AdOffset, OffsetMethods):
         self.seed = props.offset_seed
         self.use_reverse = props.offset_use_reverse
         self.sort_method = props.offset_sort_method
-        self.group_animated = ""
-        self.group_effectors = ""
         self.radius = props.offset_proxy_radius
         self.use_proxy = props.offset_use_proxy
+        self.coll_animated_name = ""
+        self.coll_effectors_name = ""
 
         if self.sort_method == "MULTI":
-            self.group_animated = props.offset_group_animated
-            self.group_effectors = props.offset_group_effectors
+            self.coll_animated = props.offset_coll_animated
+            self.coll_effectors = props.offset_coll_effectors
+            self.coll_animated_name = self.coll_animated.name
+            self.coll_effectors_name = self.coll_effectors.name
 
-            if not (self.group_animated and self.group_effectors):
-                self.report({"ERROR"}, "Object or Effector object groups are not specified")
+            if not (self.coll_animated and self.coll_effectors):
+                self.report({"ERROR"}, "Animated or Effector collections are not specified")
                 return {"CANCELLED"}
 
         return self.execute(context)
 
     def preset_add(self, ob):
+        return
         ob["commotion_preset"] = self.preset
 
     def execute(self, context):
@@ -101,8 +101,8 @@ class ANIM_OT_commotion_animation_offset(Operator, AdOffset, OffsetMethods):
             "use_reverse": self.use_reverse,
             "use_proxy": self.use_proxy,
             "sort_option": self.sort_method,
-            "group_animated": self.group_animated,
-            "group_effectors": self.group_effectors,
+            "coll_animated": self.coll_animated_name,
+            "coll_effectors": self.coll_effectors_name,
         }
 
         if self.sort_method == "CURSOR":

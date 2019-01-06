@@ -1,7 +1,7 @@
 # ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  Commotion motion graphics add-on for Blender.
-#  Copyright (C) 2014-2018  Mikhail Rachinskiy
+#  Copyright (C) 2014-2019  Mikhail Rachinskiy
 #
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -21,7 +21,6 @@
 
 import bpy
 from bpy.types import Operator
-from bpy.props import StringProperty
 
 
 class OBJECT_OT_commotion_preset_apply(Operator):
@@ -45,12 +44,17 @@ class OBJECT_OT_commotion_preset_apply(Operator):
             "use_reverse": False,
             "use_proxy": False,
             "sort_option": "CURSOR",
-            "group_animated": "",
-            "group_effectors": "",
+            "coll_animated": "",
+            "coll_effectors": "",
         }
 
         ob_preset = {k: v for k, v in ob["commotion_preset"].items() if k in settings.keys()}
         settings.update(ob_preset)
+
+        if settings["coll_animated"]:
+            settings["coll_animated"] = bpy.data.collections.get(settings["coll_animated"], None)
+        if settings["coll_effectors"]:
+            settings["coll_effectors"] = bpy.data.collections.get(settings["coll_effectors"], None)
 
         props = context.scene.commotion
 
@@ -58,42 +62,3 @@ class OBJECT_OT_commotion_preset_apply(Operator):
             setattr(props, "offset_" + k, v)
 
         return {"FINISHED"}
-
-
-class AddToGroup:
-    bl_label = "Add to group"
-    bl_options = {"REGISTER", "UNDO", "INTERNAL"}
-
-    prop_pfx = StringProperty(options={"HIDDEN", "SKIP_SAVE"})
-
-    def execute(self, context):
-        obs = context.selected_objects
-
-        if not obs:
-            self.report({"WARNING"}, "No objects selected")
-            return {"CANCELLED"}
-
-        group = bpy.data.groups.new(self.group_name)
-
-        for ob in obs:
-            group.objects.link(ob)
-
-        setattr(context.scene.commotion, self.prop_pfx + self.prop_suf, group.name)
-
-        return {"FINISHED"}
-
-
-class OBJECT_OT_commotion_add_to_group_animated(Operator, AddToGroup):
-    bl_description = "Add selected objects to Animated group"
-    bl_idname = "object.commotion_add_to_group_animated"
-
-    group_name = "Animated"
-    prop_suf = "_group_animated"
-
-
-class OBJECT_OT_commotion_add_to_group_effector(Operator, AddToGroup):
-    bl_description = "Add selected objects to Effectors group"
-    bl_idname = "object.commotion_add_to_group_objects_effector"
-
-    group_name = "Effectors"
-    prop_suf = "_group_effectors"

@@ -1,7 +1,7 @@
 # ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  Commotion motion graphics add-on for Blender.
-#  Copyright (C) 2014-2018  Mikhail Rachinskiy
+#  Copyright (C) 2014-2019  Mikhail Rachinskiy
 #
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -36,9 +36,10 @@ class ANIM_OT_commotion_bake(Operator):
 
         elif event.type == "TIMER":
             scene = context.scene
+            props = scene.commotion
 
             if self.frame <= scene.frame_end:
-                for ob in self.obs:
+                for ob in props.proxy_coll_animated.objects:
 
                     for dp in self.dpaths:
                         ob.keyframe_insert(data_path=dp)
@@ -64,7 +65,7 @@ class ANIM_OT_commotion_bake(Operator):
 
     def execute(self, context):
         wm = context.window_manager
-        self._timer = wm.event_timer_add(1 / 60, context.window)
+        self._timer = wm.event_timer_add(1 / 60, window=context.window)
         wm.modal_handler_add(self)
         return {"RUNNING_MODAL"}
 
@@ -73,12 +74,11 @@ class ANIM_OT_commotion_bake(Operator):
         props = scene.commotion
 
         if (
-            not (props.proxy_group_animated and props.proxy_group_effectors) or
-            not (props.proxy_use_loc or props.proxy_use_rot or props.proxy_use_sca or props.proxy_use_sk)
+            not (props.proxy_coll_animated and props.proxy_coll_effectors) or
+            not (props.proxy_use_loc or props.proxy_use_rot or props.proxy_use_sca or props.proxy_use_sk or props.proxy_radius)
         ):
             return {"CANCELLED"}
 
-        self.obs = bpy.data.groups[props.proxy_group_animated].objects
         self.frame = scene.frame_start
         scene.frame_set(self.frame)
 
@@ -105,17 +105,9 @@ class ANIM_OT_commotion_bake_remove(Operator):
     def execute(self, context):
         scene = context.scene
         props = scene.commotion
-        gr_obs = props.proxy_group_animated
 
-        if not gr_obs:
+        if not props.proxy_coll_animated:
             return {"CANCELLED"}
-
-        obs = bpy.data.groups[gr_obs].objects
-        dpaths = {
-            "delta_location",
-            "delta_rotation_euler",
-            "delta_scale",
-        }
 
         reset_loc = props.proxy_start_loc if props.proxy_use_loc else (0.0, 0.0, 0.0)
         reset_rot = props.proxy_start_rot if props.proxy_use_rot else (0.0, 0.0, 0.0)
@@ -123,28 +115,26 @@ class ANIM_OT_commotion_bake_remove(Operator):
         reset_sk = props.proxy_start_sk if props.proxy_use_sk else 0.0
         ob_data_prev = None
 
-        for ob in obs:
+        for ob in props.proxy_coll_animated.objects:
             try:
-                fcus = ob.animation_data.action.fcurves
-                for fcu in fcus:
-                    if fcu.data_path in dpaths:
-                        fcus.remove(fcu)
+                action = ob.animation_data.action
+                bpy.data.actions.remove(action)
             except:
                 pass
+
             ob.delta_location = reset_loc
             ob.delta_rotation_euler = reset_rot
             ob.delta_scale = reset_sca
 
-            if ob.data != ob_data_prev:
+            if ob.data is not ob_data_prev:
                 try:
-                    ob_sk = ob.data.shape_keys
-                    fcus = ob_sk.animation_data.action.fcurves
-                    for fcu in fcus:
-                        if fcu.data_path == "eval_time":
-                            fcus.remove(fcu)
-                    ob_sk.eval_time = reset_sk
+                    sk = ob.data.shape_keys
+                    action = sk.animation_data.action
+                    bpy.data.actions.remove(action)
+                    sk.eval_time = reset_sk
                 except:
                     pass
+
                 ob_data_prev = ob.data
 
         return {"FINISHED"}

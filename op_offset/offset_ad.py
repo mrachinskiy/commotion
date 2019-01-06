@@ -1,7 +1,7 @@
 # ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  Commotion motion graphics add-on for Blender.
-#  Copyright (C) 2014-2018  Mikhail Rachinskiy
+#  Copyright (C) 2014-2019  Mikhail Rachinskiy
 #
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -17,6 +17,9 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 # ##### END GPL LICENSE BLOCK #####
+
+
+from .. import lib
 
 
 class AdOffset:
@@ -39,48 +42,48 @@ class AdOffset:
                 i = 1
 
     def ad_offset(self, ob, offset):
-        try:
+        ads = lib.ad_get(ob, self.use_ob, self.use_data, self.use_sk, self.use_mat)
 
-            if self.is_fcurves:
+        # F-Curves
 
-                if self.is_ob:
-                    fcus = ob.animation_data.action.fcurves
-                else:
-                    fcus = ob.data.shape_keys.animation_data.action.fcurves
+        fcus_frame_start = []
 
-                fcus_frame_start = []
-
+        for ad in ads:
+            if ad.action:
+                fcus = ad.action.fcurves
                 for fcu in fcus:
                     fcus_frame_start.append(fcu.range()[0])
 
-                fcu_offset = self.frame - min(fcus_frame_start) + offset
+        if fcus_frame_start:
+            fcu_offset = self.frame - min(fcus_frame_start) + offset
 
+            for ad in ads:
+                fcus = ad.action.fcurves
                 for fcu in fcus:
                     for kp in fcu.keyframe_points:
                         kp.co[0] += fcu_offset
                         kp.handle_left[0] += fcu_offset
                         kp.handle_right[0] += fcu_offset
 
-            else:
+        # NLA
 
-                if self.is_ob:
-                    tracks = ob.animation_data.nla_tracks
-                else:
-                    tracks = ob.data.shape_keys.animation_data.nla_tracks
+        strips_frame_start = []
 
-                strips_frame_start = []
+        for ad in ads:
+            tracks = ad.nla_tracks
+            for track in tracks:
+                for strip in track.strips:
+                    strips_frame_start.append(strip.frame_start)
 
-                for track in tracks:
-                    for strip in track.strips:
-                        strips_frame_start.append(strip.frame_start)
+        if strips_frame_start:
+            min_frame_start = min(strips_frame_start)
+            strip_offset = self.frame - min_frame_start + offset
+            use_rev = min_frame_start < self.frame + strip_offset
 
-                min_frame_start = min(strips_frame_start)
-                strip_offset = self.frame - min_frame_start + offset
-                use_rev = min_frame_start < self.frame + strip_offset
-
+            for ad in ads:
+                tracks = ad.nla_tracks
                 for track in tracks:
                     strips = reversed(track.strips) if use_rev else track.strips
-
                     for strip in strips:
                         if use_rev:
                             strip.frame_end += strip_offset
@@ -90,5 +93,4 @@ class AdOffset:
                             strip.frame_start += strip_offset
                             strip.frame_end += strip_offset
 
-        except:
-            return False
+        return bool(fcus_frame_start) or bool(strips_frame_start)

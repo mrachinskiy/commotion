@@ -1,7 +1,7 @@
 # ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  Commotion motion graphics add-on for Blender.
-#  Copyright (C) 2014-2018  Mikhail Rachinskiy
+#  Copyright (C) 2014-2019  Mikhail Rachinskiy
 #
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -23,8 +23,8 @@ bl_info = {
     "name": "Commotion",
     "author": "Mikhail Rachinskiy",
     "version": (1, 7, 3),
-    "blender": (2, 77, 0),
-    "location": "3D View > Tool Shelf",
+    "blender": (2, 80, 0),
+    "location": "3D View > Sidebar",
     "description": "Animation offset tools for motion graphics.",
     "wiki_url": "https://github.com/mrachinskiy/commotion#readme",
     "tracker_url": "https://github.com/mrachinskiy/commotion/issues",
@@ -42,26 +42,26 @@ if "bpy" in locals():
             module = os.path.splitext(entry.name)[0]
             importlib.reload(eval(module))
 
-        elif entry.is_dir() and not entry.name.startswith((".", "__")) and not entry.name.endswith("updater"):
-
+        elif entry.is_dir() and not (entry.name.startswith((".", "__")) and entry.name.endswith("updater")):
             for subentry in os.scandir(entry.path):
-
-                if subentry.name.endswith(".py"):
-                    module = "{}.{}".format(entry.name, os.path.splitext(subentry.name)[0])
+                if subentry.is_file() and subentry.name.endswith(".py"):
+                    module = entry.name + "." + os.path.splitext(subentry.name)[0]
                     importlib.reload(eval(module))
 else:
     import bpy
     from bpy.props import PointerProperty, CollectionProperty
     from . import (
-        proxy_effector,
+        var,
         settings,
-        ui,
+        lib,
+        proxy_effector,
         ops_anim,
         ops_proxy,
         ops_shapekey,
         ops_slow_parent,
         ops_utils,
         addon_updater_ops,
+        ui,
     )
     from .op_offset import offset_op
 
@@ -72,14 +72,15 @@ classes = (
     settings.CommotionPropertiesScene,
     settings.CommotionPropertiesWm,
     ui.VIEW3D_PT_commotion_update,
-    ui.VIEW3D_PT_commotion_shape_keys,
     ui.VIEW3D_PT_commotion_animation_offset,
-    ui.VIEW3D_PT_commotion_slow_parent,
+    ui.VIEW3D_PT_commotion_animation_utils,
+    ui.VIEW3D_PT_commotion_shape_keys,
+    # ui.VIEW3D_PT_commotion_slow_parent,
     ui.VIEW3D_PT_commotion_proxy_effector,
     offset_op.ANIM_OT_commotion_animation_offset,
     ops_shapekey.OBJECT_OT_commotion_sk_coll_refresh,
     ops_shapekey.OBJECT_OT_commotion_sk_interpolation_set,
-    ops_shapekey.ANIM_OT_commotion_sk_auto_keyframes,
+    ops_shapekey.ANIM_OT_commotion_sk_generate_keyframes,
     ops_anim.ANIM_OT_commotion_animation_copy,
     ops_anim.ANIM_OT_commotion_animation_link,
     ops_anim.ANIM_OT_commotion_animation_convert,
@@ -88,8 +89,6 @@ classes = (
     ops_slow_parent.OBJECT_OT_commotion_slow_parent_offset,
     ops_slow_parent.OBJECT_OT_commotion_slow_parent_toggle,
     ops_utils.OBJECT_OT_commotion_preset_apply,
-    ops_utils.OBJECT_OT_commotion_add_to_group_animated,
-    ops_utils.OBJECT_OT_commotion_add_to_group_effector,
 )
 
 

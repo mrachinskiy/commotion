@@ -1,7 +1,7 @@
 # ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  Commotion motion graphics add-on for Blender.
-#  Copyright (C) 2014-2018  Mikhail Rachinskiy
+#  Copyright (C) 2014-2019  Mikhail Rachinskiy
 #
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
-import bpy
 from bpy.types import Panel
 
 from . import addon_updater_ops
@@ -32,7 +31,7 @@ from . import addon_updater_ops
 class Setup:
     bl_category = "Commotion"
     bl_space_type = "VIEW_3D"
-    bl_region_type = "TOOLS"
+    bl_region_type = "UI"
     bl_context = "objectmode"
 
 
@@ -59,6 +58,8 @@ class VIEW3D_PT_commotion_shape_keys(Panel, Setup):
         addon_updater_ops.check_for_update_background()
 
         layout = self.layout
+        layout.use_property_decorate = False
+
         layout.operator("object.commotion_sk_coll_refresh")
 
         try:
@@ -88,91 +89,71 @@ class VIEW3D_PT_commotion_shape_keys(Panel, Setup):
 
             if not sk.use_relative:
                 row = layout.row(align=True)
-                row.operator("object.commotion_sk_interpolation_set", text=" ", icon="LINCURVE").intr = "KEY_LINEAR"
-                row.operator("object.commotion_sk_interpolation_set", text=" ", icon="SMOOTHCURVE").intr = "KEY_CARDINAL"
-                row.operator("object.commotion_sk_interpolation_set", text=" ", icon="ROOTCURVE").intr = "KEY_CATMULL_ROM"
-                row.operator("object.commotion_sk_interpolation_set", text=" ", icon="SPHERECURVE").intr = "KEY_BSPLINE"
+                row.operator("object.commotion_sk_interpolation_set", text=" ", icon="LINCURVE").interp = "KEY_LINEAR"
+                row.operator("object.commotion_sk_interpolation_set", text=" ", icon="SMOOTHCURVE").interp = "KEY_CARDINAL"
+                row.operator("object.commotion_sk_interpolation_set", text=" ", icon="ROOTCURVE").interp = "KEY_CATMULL_ROM"
+                row.operator("object.commotion_sk_interpolation_set", text=" ", icon="SPHERECURVE").interp = "KEY_BSPLINE"
 
-                col = layout.column(align=True)
-                col.prop(sk, "eval_time")
-                col.operator("anim.commotion_sk_auto_keyframes", text="Auto Keyframes", icon="IPO_BEZIER")
+                col = layout.column()
+                col.use_property_split = True
+                col.prop(sk, "eval_time", text="Time")
+
+                layout.operator("anim.commotion_sk_generate_keyframes", text="Generate Keyframes", icon="IPO_BEZIER")
 
 
 class VIEW3D_PT_commotion_animation_offset(Panel, Setup):
     bl_label = "Animation Offset"
 
     def draw(self, context):
+        addon_updater_ops.check_for_update_background()
+
         layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
         props = context.scene.commotion
-        rand = props.offset_sort_method == "RANDOM"
         multi = props.offset_sort_method == "MULTI"
         multi_use_proxy = props.offset_use_proxy
 
         col = layout.column()
-        col.row().prop(props, "offset_id_type", expand=True)
-        col.row().prop(props, "offset_ad_type", expand=True)
+        col.prop(props, "offset_id_type")
 
-        # F-Curves/NLA operators
-        # ------------------------------
-
-        col = layout.column()
-        row = col.row(align=True)
-        row.operator("anim.commotion_animation_link", text="Link", icon="LINKED")
-        row.operator("anim.commotion_animation_copy", text="Copy", icon="COPYDOWN")
-
-        if props.offset_ad_type == "NLA":
-            col.operator_menu_enum("anim.commotion_animation_convert", "ad_type", text="Convert to")
-
-        # Offset properties
-        # ------------------------------
-
-        row = layout.row(align=True)
-        col_l = row.column(align=True)
-        col_l.alignment = "RIGHT"
-        col_l.scale_x = 0.8
-        col_l.label("Offset")
-        col_l.label("Threshold")
-        col_l.label("Reverse")
-        col_l.label("Sort")
-
-        if rand:
-            col_l.label("Seed")
-
-        if multi:
-            col_l.label("Animated")
-            col_l.label("Effectors")
-            col_l.label("Proximity")
-
-            if multi_use_proxy:
-                col_l.label("Radius")
-
-        col_r = row.column(align=True)
-        sub = col_r.column(align=True)
+        sub = col.column()
         sub.active = not (multi and multi_use_proxy)
-        sub.prop(props, "offset_offset", text="")
-        sub.prop(props, "offset_threshold", text="")
-        sub.prop(props, "offset_use_reverse", text="")
-        col_r.prop(props, "offset_sort_method", text="")
+        sub.prop(props, "offset_offset")
+        sub.prop(props, "offset_threshold")
+        sub.prop(props, "offset_use_reverse")
 
-        if rand:
-            col_r.prop(props, "offset_seed", text="")
+        col.prop(props, "offset_sort_method")
+
+        if props.offset_sort_method == "RANDOM":
+            col.prop(props, "offset_seed")
 
         if multi:
-            row = col_r.row(align=True)
-            row.prop_search(props, "offset_group_animated", bpy.data, "groups", text="")
-            row.operator("object.commotion_add_to_group_animated", text="", icon="ZOOMIN").prop_pfx = "offset"
-            row = col_r.row(align=True)
-            row.prop_search(props, "offset_group_effectors", bpy.data, "groups", text="")
-            row.operator("object.commotion_add_to_group_objects_effector", text="", icon="ZOOMIN").prop_pfx = "offset"
-
-            col_r.prop(props, "offset_use_proxy", text="")
+            col.prop(props, "offset_coll_animated")
+            col.prop(props, "offset_coll_effectors")
+            col.prop(props, "offset_use_proxy")
 
             if multi_use_proxy:
-                col_r.prop(props, "offset_proxy_radius", text="")
+                col.prop(props, "offset_proxy_radius")
 
         row = layout.row(align=True)
         row.operator("anim.commotion_animation_offset", text="Offset Animation", icon="FORCE_HARMONIC")
-        row.operator("object.commotion_preset_apply", text="", icon="EYEDROPPER")
+        # row.operator("object.commotion_preset_apply", text="", icon="EYEDROPPER")
+
+
+class VIEW3D_PT_commotion_animation_utils(Panel, Setup):
+    bl_label = "Animation Utils"
+    bl_options = {"DEFAULT_CLOSED"}
+
+    def draw(self, context):
+        addon_updater_ops.check_for_update_background()
+
+        layout = self.layout
+        col = layout.column()
+        row = col.row(align=True)
+        row.operator("anim.commotion_animation_copy", text="Copy", icon="COPYDOWN")
+        row.operator("anim.commotion_animation_link", text="Link", icon="LINKED")
+        col.operator_menu_enum("anim.commotion_animation_convert", "ad_type", text="Convert to")
 
 
 class VIEW3D_PT_commotion_slow_parent(Panel, Setup):
@@ -180,20 +161,18 @@ class VIEW3D_PT_commotion_slow_parent(Panel, Setup):
     bl_options = {"DEFAULT_CLOSED"}
 
     def draw(self, context):
+        addon_updater_ops.check_for_update_background()
+
         layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
         props = context.scene.commotion
 
         row = layout.row(align=True)
         row.operator("object.commotion_slow_parent_toggle", text="On").enable = True
         row.operator("object.commotion_slow_parent_toggle", text="Off")
 
-        row = layout.row(align=True)
-        col_l = row.column(align=True)
-        col_l.alignment = "RIGHT"
-        col_l.label("Offset")
-        col_r = row.column(align=True)
-        col_r.prop(props, "slow_parent_offset", text="")
-
+        layout.prop(props, "slow_parent_offset")
         layout.operator("object.commotion_slow_parent_offset", text="Offset Slow Parent", icon="FORCE_DRAG")
 
 
@@ -206,62 +185,50 @@ class VIEW3D_PT_commotion_proxy_effector(Panel, Setup):
         layout.prop(context.window_manager.commotion, "use_proxy", text="")
 
     def draw(self, context):
+        addon_updater_ops.check_for_update_background()
+
         layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
         layout.active = context.window_manager.commotion.use_proxy
         props = context.scene.commotion
 
-        row = layout.row(align=True)
-        col_l = row.column(align=True)
-        col_l.alignment = "RIGHT"
-        col_l.scale_x = 0.8
-        col_l.label("Animated")
-        col_l.label("Effectors")
-        col_l.label("Radius")
-        col_l.label("Falloff")
-        col_l.label("Trail")
-        if props.proxy_use_trail:
-            col_l.label("Fade")
-
-        col_r = row.column(align=True)
-        row = col_r.row(align=True)
-        row.prop_search(props, "proxy_group_animated", bpy.data, "groups", text="")
-        row.operator("object.commotion_add_to_group_animated", text="", icon="ZOOMIN").prop_pfx = "proxy"
-        row = col_r.row(align=True)
-        row.prop_search(props, "proxy_group_effectors", bpy.data, "groups", text="")
-        row.operator("object.commotion_add_to_group_objects_effector", text="", icon="ZOOMIN").prop_pfx = "proxy"
-        col_r.prop(props, "proxy_radius", text="")
-        col_r.prop(props, "proxy_falloff", text="")
-        col_r.prop(props, "proxy_use_trail", text="")
-        if props.proxy_use_trail:
-            col_r.prop(props, "proxy_trail_fade", text="")
-
         col = layout.column()
+        col.prop(props, "proxy_coll_animated")
+        col.prop(props, "proxy_coll_effectors")
+        col.prop(props, "proxy_radius")
+        col.prop(props, "proxy_falloff")
+        col.prop(props, "proxy_use_trail")
+
+        if props.proxy_use_trail:
+            col.prop(props, "proxy_trail_fade")
+
+        col = col.column()
+        col.use_property_split = False
+
         col.prop(props, "proxy_use_loc")
         if props.proxy_use_loc:
             row = col.row()
             row.column().prop(props, "proxy_start_loc", text="")
             row.column().prop(props, "proxy_final_loc", text="")
 
-        col = layout.column()
         col.prop(props, "proxy_use_rot")
         if props.proxy_use_rot:
             row = col.row()
             row.column().prop(props, "proxy_start_rot", text="")
             row.column().prop(props, "proxy_final_rot", text="")
 
-        col = layout.column()
         col.prop(props, "proxy_use_sca")
         if props.proxy_use_sca:
             row = col.row()
             row.column().prop(props, "proxy_start_sca", text="")
             row.column().prop(props, "proxy_final_sca", text="")
 
-        col = layout.column()
         col.prop(props, "proxy_use_sk")
         if props.proxy_use_sk:
             row = col.row()
-            row.column().prop(props, "proxy_start_sk")
-            row.column().prop(props, "proxy_final_sk")
+            row.column().prop(props, "proxy_start_sk", text="")
+            row.column().prop(props, "proxy_final_sk", text="")
 
         row = layout.row(align=True)
         row.operator("anim.commotion_bake", text="Bake")

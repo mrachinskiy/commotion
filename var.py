@@ -19,6 +19,17 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
+import os
+
+
+ADDON_ID = __package__
+ADDON_DIR = os.path.dirname(__file__)
+
+
+# Updater
+# -----------------------------------
+
+
 engine = "Github"
 private_token = None
 include_branches = True

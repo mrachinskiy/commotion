@@ -20,7 +20,7 @@
 
 
 from bpy.types import Operator
-from bpy.props import StringProperty
+from bpy.props import EnumProperty
 
 
 class OBJECT_OT_commotion_sk_coll_refresh(Operator):
@@ -33,10 +33,8 @@ class OBJECT_OT_commotion_sk_coll_refresh(Operator):
         skcoll = context.window_manager.commotion.skcoll
         skcoll.clear()
 
-        for i, kb in enumerate(context.active_object.data.shape_keys.key_blocks):
-            sk = skcoll.add()
-            sk.index = i
-            sk.name = kb.name
+        for kb in context.active_object.data.shape_keys.key_blocks:
+            skcoll.add()
 
         return {"FINISHED"}
 
@@ -55,11 +53,20 @@ class OBJECT_OT_commotion_sk_coll_refresh(Operator):
 
 class OBJECT_OT_commotion_sk_interpolation_set(Operator):
     bl_label = "Set Interpolation"
-    bl_description = "Set interpolation type for selected shape keys (Linear, Cardinal, Catmull-Rom, BSpline)"
+    bl_description = "Set interpolation type for selected shape keys"
     bl_idname = "object.commotion_sk_interpolation_set"
     bl_options = {"REGISTER", "UNDO", "INTERNAL"}
 
-    interp: StringProperty(options={"HIDDEN", "SKIP_SAVE"})
+    interp: EnumProperty(
+        name="Interpolation",
+        description="Interpolation type for absolute shape keys",
+        items=(
+            ("KEY_LINEAR", "Linear", ""),
+            ("KEY_CARDINAL", "Cardinal", ""),
+            ("KEY_CATMULL_ROM", "Catmull-Rom", ""),
+            ("KEY_BSPLINE", "BSpline", ""),
+        ),
+    )
 
     def execute(self, context):
         skcoll = context.window_manager.commotion.skcoll
@@ -71,9 +78,9 @@ class OBJECT_OT_commotion_sk_interpolation_set(Operator):
             except:
                 continue
 
-            for kb in skcoll:
+            for i, kb in enumerate(skcoll):
                 if kb.selected:
-                    sk.key_blocks[kb.index].interpolation = self.interp
+                    sk.key_blocks[i].interpolation = self.interp
 
         return {"FINISHED"}
 

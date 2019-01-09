@@ -58,6 +58,7 @@ class VIEW3D_PT_commotion_shape_keys(Panel, Setup):
         addon_updater_ops.check_for_update_background()
 
         layout = self.layout
+        layout.use_property_split = True
         layout.use_property_decorate = False
 
         layout.operator("object.commotion_sk_coll_refresh")
@@ -71,33 +72,24 @@ class VIEW3D_PT_commotion_shape_keys(Panel, Setup):
         skcoll = context.window_manager.commotion.skcoll
 
         if len(kbs) == len(skcoll):
-            split = layout.split()
-
-            col = split.column(align=True)
-
-            for kb in skcoll:
-                col.prop(kb, "selected", icon="SHAPEKEY_DATA", text=kb.name)
-
-            col = split.column(align=True)
             prop_name = "value" if sk.use_relative else "interpolation"
 
+            col = layout.column(align=True)
+            col.use_property_split = False
+
             for i, kb in enumerate(kbs):
-                if skcoll[i].selected:
-                    col.prop(kb, prop_name, text="")
+                kb_sel = skcoll[i]
+                row = col.row()
+                row.prop(kb_sel, "selected", text=kb.name)
+
+                if kb_sel.selected:
+                    row.prop(kb, prop_name, text="")
                 else:
-                    col.label()
+                    row.label()
 
             if not sk.use_relative:
-                row = layout.row(align=True)
-                row.operator("object.commotion_sk_interpolation_set", text=" ", icon="LINCURVE").interp = "KEY_LINEAR"
-                row.operator("object.commotion_sk_interpolation_set", text=" ", icon="SMOOTHCURVE").interp = "KEY_CARDINAL"
-                row.operator("object.commotion_sk_interpolation_set", text=" ", icon="ROOTCURVE").interp = "KEY_CATMULL_ROM"
-                row.operator("object.commotion_sk_interpolation_set", text=" ", icon="SPHERECURVE").interp = "KEY_BSPLINE"
-
-                col = layout.column()
-                col.use_property_split = True
-                col.prop(sk, "eval_time", text="Time")
-
+                layout.operator_menu_enum("object.commotion_sk_interpolation_set", "interp", text="Set Interpolation")
+                layout.prop(sk, "eval_time", text="Time")
                 layout.operator("anim.commotion_sk_generate_keyframes", text="Generate Keyframes", icon="IPO_BEZIER")
 
 

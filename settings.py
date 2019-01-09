@@ -39,8 +39,6 @@ from . import proxy_effector, addon_updater_ops
 
 
 class CommotionShapeKeyCollection(PropertyGroup):
-    index: IntProperty()
-    name: StringProperty()
     selected: BoolProperty(description="Affect referenced shape key")
 
 
@@ -56,7 +54,11 @@ class CommotionPreferences(AddonPreferences):
             ("UPDATER", "Update", ""),
         ),
     )
-    update_auto_check: BoolProperty(name="Automatically check for updates", description="Automatically check for updates with specified interval", default=True)
+    update_auto_check: BoolProperty(
+        name="Automatically check for updates",
+        description="Automatically check for updates with specified interval",
+        default=True,
+    )
     update_interval: EnumProperty(
         name="Interval",
         description="Interval",
@@ -108,35 +110,138 @@ class CommotionPropertiesScene(PropertyGroup):
         ),
         default="CURSOR",
     )
-    offset_threshold: IntProperty(name="Threshold", description="Number of objects to animate per frame step", default=1, min=1)
-    offset_seed: IntProperty(name="Seed", description="Seed value for randomizer to get different offset patterns", min=0)
-    offset_offset: FloatProperty(name="Offset", description="Frame step for animation offset", default=1, min=0, step=10, precision=3)
-    offset_proxy_radius: FloatProperty(name="Radius", description="Effective range at which effectors can influence animated objects", soft_min=0.0, default=5.0)
-    offset_use_reverse: BoolProperty(name="Reverse", description="Reverse sort order")
-    offset_use_proxy: BoolProperty(name="Proxymity", description="Enable offset by proximity from effector")
-    offset_coll_animated: PointerProperty(type=Collection, name="Animated", description="Collection for animated objects")
-    offset_coll_effectors: PointerProperty(type=Collection, name="Effectors", description="Collection for effector objects (to affect objects from animated collection)")
+    offset_threshold: IntProperty(
+        name="Threshold",
+        description="Number of objects to animate per frame step",
+        default=1,
+        min=1,
+    )
+    offset_seed: IntProperty(
+        name="Seed",
+        description="Seed value for randomizer to get different offset patterns",
+        min=0,
+    )
+    offset_offset: FloatProperty(
+        name="Offset",
+        description="Frame step for animation offset",
+        default=1,
+        min=0,
+        step=10,
+        precision=3,
+    )
+    offset_proxy_radius: FloatProperty(
+        name="Radius",
+        description="Effective range at which effectors can influence animated objects",
+        soft_min=0.0,
+        default=5.0,
+    )
+    offset_use_reverse: BoolProperty(
+        name="Reverse",
+        description="Reverse sort order",
+    )
+    offset_use_proxy: BoolProperty(
+        name="Proxymity",
+        description="Enable offset by proximity from effector",
+    )
+    offset_coll_animated: PointerProperty(
+        name="Animated",
+        description="Collection for animated objects",
+        type=Collection,
+    )
+    offset_coll_effectors: PointerProperty(
+        name="Effectors",
+        description="Collection for effector objects (to affect objects from animated collection)",
+        type=Collection,
+    )
 
-    slow_parent_offset: FloatProperty(name="Offset", description="Offset step for slow parent offset", default=1, min=0, step=10, precision=3)
+    slow_parent_offset: FloatProperty(
+        name="Offset",
+        description="Offset step for slow parent offset",
+        default=1,
+        min=0,
+        step=10,
+        precision=3,
+    )
 
     proxy_use_loc: BoolProperty(name="Location", update=proxy_effector.update_proxy_use_loc)
     proxy_use_rot: BoolProperty(name="Rotation", update=proxy_effector.update_proxy_use_rot)
     proxy_use_sca: BoolProperty(name="Scale", update=proxy_effector.update_proxy_use_sca)
     proxy_use_sk: BoolProperty(name="Absolute Shape Keys", update=proxy_effector.update_proxy_use_sk)
-    proxy_use_trail: BoolProperty(name="Trail", description="Leave permanent trail after effector left the effective range")
-    proxy_start_loc: FloatVectorProperty(description="Start location", subtype="TRANSLATION", unit="LENGTH")
-    proxy_final_loc: FloatVectorProperty(description="Final location", subtype="TRANSLATION", unit="LENGTH")
-    proxy_start_rot: FloatVectorProperty(description="Start rotation", subtype="EULER", unit="ROTATION")
-    proxy_final_rot: FloatVectorProperty(description="Final rotation", subtype="EULER", unit="ROTATION")
-    proxy_start_sca: FloatVectorProperty(description="Start scale", subtype="TRANSLATION", default=(1.0, 1.0, 1.0))
-    proxy_final_sca: FloatVectorProperty(description="Final scale", subtype="TRANSLATION", default=(1.0, 1.0, 1.0))
-    proxy_radius: FloatProperty(name="Radius", description="Effective range at which effectors can influence animated objects", soft_min=0.0, default=5.0)
-    proxy_start_sk: FloatProperty(name="Evaluation Time", description="Start evaluation time", min=0.0)
-    proxy_final_sk: FloatProperty(name="Evaluation Time", description="Final evaluation time", min=0.0)
-    proxy_falloff: FloatProperty(name="Falloff", description="Effector radius falloff", min=0.0, max=1.0, subtype="FACTOR")
-    proxy_trail_fade: FloatProperty(name="Fade", description="Fade trail over time", min=0.0, max=1.0, precision=3, subtype="FACTOR")
-    proxy_coll_animated: PointerProperty(type=Collection, name="Animated", description="Collection for animated objects")
-    proxy_coll_effectors: PointerProperty(type=Collection, name="Effectors", description="Collection for effector objects (to affect objects from animated collection)")
+    proxy_use_trail: BoolProperty(
+        name="Trail",
+        description="Leave permanent trail after effector left the effective range",
+    )
+    proxy_start_loc: FloatVectorProperty(
+        description="Start location",
+        subtype="TRANSLATION",
+        unit="LENGTH",
+    )
+    proxy_final_loc: FloatVectorProperty(
+        description="Final location",
+        subtype="TRANSLATION",
+        unit="LENGTH",
+    )
+    proxy_start_rot: FloatVectorProperty(
+        description="Start rotation",
+        subtype="EULER",
+        unit="ROTATION",
+    )
+    proxy_final_rot: FloatVectorProperty(
+        description="Final rotation",
+        subtype="EULER",
+        unit="ROTATION",
+    )
+    proxy_start_sca: FloatVectorProperty(
+        description="Start scale",
+        subtype="TRANSLATION",
+        default=(1.0, 1.0, 1.0),
+    )
+    proxy_final_sca: FloatVectorProperty(
+        description="Final scale",
+        subtype="TRANSLATION",
+        default=(1.0, 1.0, 1.0),
+    )
+    proxy_radius: FloatProperty(
+        name="Radius",
+        description="Effective range at which effectors can influence animated objects",
+        soft_min=0.0,
+        default=5.0,
+    )
+    proxy_start_sk: FloatProperty(
+        name="Evaluation Time",
+        description="Start evaluation time",
+        min=0.0,
+    )
+    proxy_final_sk: FloatProperty(
+        name="Evaluation Time",
+        description="Final evaluation time",
+        min=0.0,
+    )
+    proxy_falloff: FloatProperty(
+        name="Falloff",
+        description="Effector radius falloff",
+        min=0.0,
+        max=1.0,
+        subtype="FACTOR",
+    )
+    proxy_trail_fade: FloatProperty(
+        name="Fade",
+        description="Fade trail over time",
+        min=0.0,
+        max=1.0,
+        precision=3,
+        subtype="FACTOR",
+    )
+    proxy_coll_animated: PointerProperty(
+        type=Collection,
+        name="Animated",
+        description="Collection for animated objects",
+    )
+    proxy_coll_effectors: PointerProperty(
+        type=Collection,
+        name="Effectors",
+        description="Collection for effector objects (to affect objects from animated collection)",
+    )
 
 
 # Window manager properties
@@ -145,4 +250,7 @@ class CommotionPropertiesScene(PropertyGroup):
 
 class CommotionPropertiesWm(PropertyGroup):
     skcoll: CollectionProperty(type=CommotionShapeKeyCollection)
-    use_proxy: BoolProperty(description="Enable proxymity effector\nWARNING: works only on animation playback", update=proxy_effector.handler_toggle)
+    use_proxy: BoolProperty(
+        description="Enable proxymity effector\nWARNING: works only on animation playback",
+        update=proxy_effector.handler_toggle,
+    )

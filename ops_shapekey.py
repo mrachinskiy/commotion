@@ -78,9 +78,9 @@ class OBJECT_OT_commotion_sk_interpolation_set(Operator):
             except:
                 continue
 
-            for i, kb in enumerate(skcoll):
-                if kb.selected:
-                    sk.key_blocks[i].interpolation = self.interp
+            for i, kb in enumerate(sk.key_blocks):
+                if skcoll[i].selected:
+                    kb.interpolation = self.interp
 
         return {"FINISHED"}
 
@@ -95,7 +95,7 @@ class ANIM_OT_commotion_sk_generate_keyframes(Operator):
     bl_options = {"REGISTER", "UNDO"}
 
     def execute(self, context):
-        frame = context.scene.frame_current
+        frame_start = context.scene.frame_current
 
         for ob in context.selected_objects:
 
@@ -106,9 +106,11 @@ class ANIM_OT_commotion_sk_generate_keyframes(Operator):
 
             if not sk.use_relative:
                 sk.eval_time = int(sk.key_blocks[1].frame)
-                sk.keyframe_insert(data_path="eval_time", frame=frame)
-                sk.eval_time = int(sk.key_blocks[-1].frame)
-                sk.keyframe_insert(data_path="eval_time", frame=frame + 20)
+                sk.keyframe_insert(data_path="eval_time", frame=frame_start)
+
+                frame_end = int(sk.key_blocks[-1].frame)
+                sk.eval_time = frame_end
+                sk.keyframe_insert(data_path="eval_time", frame=frame_start + frame_end)
 
                 for fcu in sk.animation_data.action.fcurves:
                     fcu.color_mode = "AUTO_RAINBOW"

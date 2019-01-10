@@ -1,12 +1,12 @@
-Commotion—is a Blender add-on for motion graphics.
+Commotion—Blender add-on for motion graphics.
 
 Features:
 
 * Copy and link animation between objects.
-* Offset animation for number of objects.
+* Offset animation for number of objects using different sorting methods.
 * Works both with F-Curves and NLA strips.
 * Proximity Effector lets you change object properties by distance to other objects.
-* Handle shape key properties for multiple objects.
+* Easily manage properties of absolute shape keys.
 
 Video:
 

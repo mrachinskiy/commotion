@@ -19,7 +19,6 @@
 import os
 
 import bpy
-from bpy.app.handlers import persistent
 
 from . import var
 
@@ -526,8 +525,7 @@ ran_update_sucess_popup = False
 ran_background_check = False
 
 
-@persistent
-def updater_run_success_popup_handler(scene):
+def updater_run_success_popup_handler():
     global ran_update_sucess_popup
     ran_update_sucess_popup = True
 
@@ -535,28 +533,17 @@ def updater_run_success_popup_handler(scene):
     if updater.invalidupdater == True:
         return
 
-    try:
-        bpy.app.handlers.scene_update_post.remove(updater_run_success_popup_handler)
-    except:
-        pass
-
     atr = addon_updater_updated_successful.bl_idname.split(".")
     getattr(getattr(bpy.ops, atr[0]), atr[1])("INVOKE_DEFAULT")
 
 
-@persistent
-def updater_run_install_popup_handler(scene):
+def updater_run_install_popup_handler():
     global ran_autocheck_install_popup
     ran_autocheck_install_popup = True
 
     # in case of error importing updater
     if updater.invalidupdater == True:
         return
-
-    try:
-        bpy.app.handlers.scene_update_post.remove(updater_run_install_popup_handler)
-    except:
-        pass
 
     if "ignore" in updater.json and updater.json["ignore"] == True:
         return  # don't do popup if ignore pressed
@@ -571,8 +558,15 @@ def updater_run_install_popup_handler(scene):
                 print("{} updater: appears user updated, clearing flag".format(updater.addon))
             updater.json_reset_restore()
             return
-    atr = addon_updater_install_popup.bl_idname.split(".")
-    getattr(getattr(bpy.ops, atr[0]), atr[1])("INVOKE_DEFAULT")
+
+    for window in bpy.context.window_manager.windows:
+        screen = window.screen
+        for area in screen.areas:
+            if area.type == 'VIEW_3D':
+                override = {'window': window, 'screen': screen, 'area': area}
+                atr = addon_updater_install_popup.bl_idname.split(".")
+                getattr(getattr(bpy.ops, atr[0]), atr[1])(override, "INVOKE_DEFAULT")
+                break
 
 
 # passed into the updater, background thread updater
@@ -589,12 +583,8 @@ def background_update_callback(update_ready):
     if update_ready != True:
         return
 
-    if (
-        updater_run_install_popup_handler not in bpy.app.handlers.scene_update_post
-        and ran_autocheck_install_popup == False
-    ):
-        bpy.app.handlers.scene_update_post.append(updater_run_install_popup_handler)
-
+    if not ran_autocheck_install_popup:
+        bpy.app.timers.register(updater_run_install_popup_handler, first_interval=5)
         ran_autocheck_install_popup = True
 
 
@@ -612,7 +602,6 @@ def post_update_callback(res=None):
         # ie if "auto_reload_post_update" == True, comment out this code
         if updater.verbose:
             print("{} updater: Running post update callback".format(updater.addon))
-        # bpy.app.handlers.scene_update_post.append(updater_run_success_popup_handler)
 
         atr = addon_updater_updated_successful.bl_idname.split(".")
         getattr(getattr(bpy.ops, atr[0]), atr[1])("INVOKE_DEFAULT")
@@ -716,11 +705,8 @@ def showReloadPopup():
         if updater.auto_reload_post_update == False:
             return
 
-        if (
-            updater_run_success_popup_handler not in bpy.app.handlers.scene_update_post
-            and ran_update_sucess_popup == False
-        ):
-            bpy.app.handlers.scene_update_post.append(updater_run_success_popup_handler)
+        if not ran_update_sucess_popup:
+            bpy.app.timers.register(updater_run_success_popup_handler, first_interval=1)
             ran_update_sucess_popup = True
 
 

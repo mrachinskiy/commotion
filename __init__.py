@@ -101,6 +101,8 @@ def register():
     bpy.types.Scene.commotion = PointerProperty(type=settings.CommotionPropertiesScene)
     bpy.types.WindowManager.commotion = PointerProperty(type=settings.CommotionPropertiesWm)
 
+    addon_updater_ops.check_for_update_background()
+
 
 def unregister():
     addon_updater_ops.unregister()

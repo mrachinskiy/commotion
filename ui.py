@@ -55,8 +55,6 @@ class VIEW3D_PT_commotion_shape_keys(Panel, Setup):
     bl_options = {"DEFAULT_CLOSED"}
 
     def draw(self, context):
-        addon_updater_ops.check_for_update_background()
-
         layout = self.layout
         layout.use_property_split = True
         layout.use_property_decorate = False
@@ -97,8 +95,6 @@ class VIEW3D_PT_commotion_animation_offset(Panel, Setup):
     bl_label = "Animation Offset"
 
     def draw(self, context):
-        addon_updater_ops.check_for_update_background()
-
         layout = self.layout
         layout.use_property_split = True
         layout.use_property_decorate = False
@@ -138,8 +134,6 @@ class VIEW3D_PT_commotion_animation_utils(Panel, Setup):
     bl_options = {"DEFAULT_CLOSED"}
 
     def draw(self, context):
-        addon_updater_ops.check_for_update_background()
-
         layout = self.layout
         col = layout.column()
         row = col.row(align=True)
@@ -153,8 +147,6 @@ class VIEW3D_PT_commotion_slow_parent(Panel, Setup):
     bl_options = {"DEFAULT_CLOSED"}
 
     def draw(self, context):
-        addon_updater_ops.check_for_update_background()
-
         layout = self.layout
         layout.use_property_split = True
         layout.use_property_decorate = False
@@ -177,8 +169,6 @@ class VIEW3D_PT_commotion_proxy_effector(Panel, Setup):
         layout.prop(context.window_manager.commotion, "use_proxy", text="")
 
     def draw(self, context):
-        addon_updater_ops.check_for_update_background()
-
         layout = self.layout
         layout.use_property_split = True
         layout.use_property_decorate = False

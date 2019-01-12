@@ -90,7 +90,8 @@ class ANIM_OT_commotion_animation_offset(Operator, AdOffset, OffsetMethods):
 
     def preset_add(self, ob):
         return
-        ob["commotion_preset"] = self.preset
+        # TODO remove preset system
+        # ob["commotion_preset"] = self.preset
 
     def execute(self, context):
         self.preset = {

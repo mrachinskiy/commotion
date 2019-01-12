@@ -126,6 +126,7 @@ class VIEW3D_PT_commotion_animation_offset(Panel, Setup):
 
         row = layout.row(align=True)
         row.operator("anim.commotion_animation_offset", text="Offset Animation", icon="FORCE_HARMONIC")
+        # TODO remove preset system
         # row.operator("object.commotion_preset_apply", text="", icon="EYEDROPPER")
 
 

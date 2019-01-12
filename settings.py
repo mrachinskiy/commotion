@@ -39,7 +39,7 @@ from . import proxy_effector, addon_updater_ops
 
 
 class CommotionShapeKeyCollection(PropertyGroup):
-    selected: BoolProperty(description="Affect referenced shape key")
+    selected: BoolProperty(description="Affect referenced shape key", default=True)
 
 
 # Add-on preferences

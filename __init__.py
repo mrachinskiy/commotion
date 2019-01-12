@@ -50,6 +50,7 @@ if "bpy" in locals():
 else:
     import bpy
     from bpy.props import PointerProperty, CollectionProperty
+
     from . import (
         var,
         settings,
@@ -75,6 +76,7 @@ classes = (
     ui.VIEW3D_PT_commotion_animation_offset,
     ui.VIEW3D_PT_commotion_animation_utils,
     ui.VIEW3D_PT_commotion_shape_keys,
+    # TODO 2.8 slow parent support
     # ui.VIEW3D_PT_commotion_slow_parent,
     ui.VIEW3D_PT_commotion_proxy_effector,
     offset_op.ANIM_OT_commotion_animation_offset,

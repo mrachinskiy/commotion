@@ -33,14 +33,14 @@ class OBJECT_OT_commotion_sk_coll_refresh(Operator):
         skcoll = context.window_manager.commotion.skcoll
         skcoll.clear()
 
-        for kb in context.active_object.data.shape_keys.key_blocks:
+        for kb in context.object.data.shape_keys.key_blocks:
             skcoll.add()
 
         return {"FINISHED"}
 
     def invoke(self, context, event):
         try:
-            sk = context.active_object.data.shape_keys
+            sk = context.object.data.shape_keys
         except:
             sk = False
 

@@ -30,7 +30,7 @@ class OBJECT_OT_commotion_preset_apply(Operator):
     bl_options = {"REGISTER", "UNDO", "INTERNAL"}
 
     def execute(self, context):
-        ob = context.active_object
+        ob = context.object
 
         if "commotion_preset" not in ob:
             self.report({"WARNING"}, "No presets on active object")

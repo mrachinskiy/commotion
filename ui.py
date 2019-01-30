@@ -62,7 +62,7 @@ class VIEW3D_PT_commotion_shape_keys(Panel, Setup):
         layout.operator("object.commotion_sk_coll_refresh")
 
         try:
-            sk = context.active_object.data.shape_keys
+            sk = context.object.data.shape_keys
             kbs = sk.key_blocks
         except:
             return

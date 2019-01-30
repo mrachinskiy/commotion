@@ -88,7 +88,7 @@ def anim_get(ob):
 class AdCopy:
 
     def execute(self, context):
-        ob_active = context.active_object
+        ob_active = context.object
         obs = list(context.selected_objects)
 
         if ob_active.select_get():

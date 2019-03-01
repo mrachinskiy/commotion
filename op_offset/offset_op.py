@@ -65,7 +65,7 @@ class ANIM_OT_commotion_animation_offset(Operator, AdOffset, OffsetMethods):
         self.use_sk = props.offset_id_type in {"SHAPE_KEYS", "ALL"}
         self.use_mat = props.offset_id_type in {"MATERIAL", "ALL"}
         self.frame = scene.frame_current
-        self.cursor = scene.cursor_location
+        self.cursor = scene.cursor.location
         self.offset = props.offset_offset
         self.threshold = props.offset_threshold
         self.seed = props.offset_seed

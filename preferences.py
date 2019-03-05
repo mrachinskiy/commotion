@@ -31,7 +31,8 @@ from bpy.props import (
     PointerProperty,
 )
 
-from . import proxy_effector, addon_updater_ops
+from . import proxy_effector
+from .mod_update import update_ui
 
 
 # Custom properties
@@ -51,17 +52,17 @@ class CommotionPreferences(AddonPreferences):
 
     active_section: EnumProperty(
         items=(
-            ("UPDATER", "Update", ""),
+            ("UPDATES", "Updates", ""),
         ),
     )
-    update_auto_check: BoolProperty(
+    update_use_auto_check: BoolProperty(
         name="Automatically check for updates",
         description="Automatically check for updates with specified interval",
         default=True,
     )
     update_interval: EnumProperty(
-        name="Interval",
-        description="Interval",
+        name="Auto-check Interval",
+        description="Auto-check interval",
         items=(
             ("1", "Once a day", ""),
             ("7", "Once a week", ""),
@@ -69,18 +70,24 @@ class CommotionPreferences(AddonPreferences):
         ),
         default="7",
     )
+    update_use_prerelease: BoolProperty(
+        name="Update to pre-release",
+        description="Update add-on to pre-release version if available",
+    )
 
     def draw(self, context):
         layout = self.layout
-        split = layout.split(factor=0.25)
+        layout.use_property_split = True
+        layout.use_property_decorate = False
 
+        split = layout.split(factor=0.25)
         col = split.column()
+        col.use_property_split = False
         col.scale_y = 1.3
         col.prop(self, "active_section", expand=True)
 
-        col = split.box().column()
-
-        addon_updater_ops.update_settings_ui(self, context, element=col)
+        box = split.box()
+        update_ui.prefs_ui(self, box)
 
 
 # Scene properties

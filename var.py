@@ -26,31 +26,19 @@ ADDON_ID = __package__
 ADDON_DIR = os.path.dirname(__file__)
 
 
-# Updater
-# -----------------------------------
+# mod_update
+# --------------------------------
 
 
-engine = "Github"
-private_token = None
-include_branches = True
-use_releases = False
-include_branch_list = None
+UPDATE_SAVE_STATE_FILEPATH = os.path.join(ADDON_DIR, "update_state.json")
+UPDATE_RELEASES_URL = "https://api.github.com/repos/mrachinskiy/commotion/releases"
+UPDATE_MAX_VERSION = None
+UPDATE_CURRENT_VERSION = None
 
-user = "mrachinskiy"
-repo = "commotion"
-website = "https://github.com/mrachinskiy/commotion#how-to-install"
-
-subfolder_path = ""
-
-version_min_update = None
-version_max_update = None
-
-manual_only = False
-fake_install = False
-verbose = False
-showpopups = True
-
-backup_current = True
-backup_ignore_patterns = ["__pycache__"]
-overwrite_patterns = ["*"]
-remove_pre_update_patterns = ["*"]
+update_available = False
+update_in_progress = False
+update_completed = False
+update_days_passed = None
+update_version = ""
+update_download_url = ""
+update_html_url = ""

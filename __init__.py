@@ -22,7 +22,7 @@
 bl_info = {
     "name": "Commotion",
     "author": "Mikhail Rachinskiy",
-    "version": (1, 7, 3),
+    "version": (2, 0, 0),
     "blender": (2, 80, 0),
     "location": "3D View > Sidebar",
     "description": "Animation offset tools for motion graphics.",
@@ -53,7 +53,7 @@ else:
 
     from . import (
         var,
-        settings,
+        preferences,
         lib,
         proxy_effector,
         ops_anim,
@@ -61,17 +61,18 @@ else:
         ops_shapekey,
         ops_slow_parent,
         ops_utils,
-        addon_updater_ops,
         ui,
     )
     from .op_offset import offset_op
+    from .mod_update import update_lib, update_ops
 
 
+var.UPDATE_CURRENT_VERSION = bl_info["version"]
 classes = (
-    settings.CommotionShapeKeyCollection,
-    settings.CommotionPreferences,
-    settings.CommotionPropertiesScene,
-    settings.CommotionPropertiesWm,
+    preferences.CommotionShapeKeyCollection,
+    preferences.CommotionPreferences,
+    preferences.CommotionPropertiesScene,
+    preferences.CommotionPropertiesWm,
     ui.VIEW3D_PT_commotion_update,
     ui.VIEW3D_PT_commotion_animation_offset,
     ui.VIEW3D_PT_commotion_animation_utils,
@@ -91,24 +92,23 @@ classes = (
     ops_slow_parent.OBJECT_OT_commotion_slow_parent_offset,
     ops_slow_parent.OBJECT_OT_commotion_slow_parent_toggle,
     ops_utils.OBJECT_OT_commotion_preset_apply,
+    update_ops.WM_OT_commotion_update_check,
+    update_ops.WM_OT_commotion_update_download,
+    update_ops.WM_OT_commotion_update_whats_new,
 )
 
 
 def register():
-    addon_updater_ops.register(bl_info)
-
     for cls in classes:
         bpy.utils.register_class(cls)
 
-    bpy.types.Scene.commotion = PointerProperty(type=settings.CommotionPropertiesScene)
-    bpy.types.WindowManager.commotion = PointerProperty(type=settings.CommotionPropertiesWm)
+    bpy.types.Scene.commotion = PointerProperty(type=preferences.CommotionPropertiesScene)
+    bpy.types.WindowManager.commotion = PointerProperty(type=preferences.CommotionPropertiesWm)
 
-    addon_updater_ops.check_for_update_background()
+    update_lib.update_init_check()
 
 
 def unregister():
-    addon_updater_ops.unregister()
-
     for cls in classes:
         bpy.utils.unregister_class(cls)
 

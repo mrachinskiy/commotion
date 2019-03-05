@@ -21,7 +21,7 @@
 
 from bpy.types import Panel
 
-from . import addon_updater_ops
+from .mod_update import update_ui
 
 
 # Utils
@@ -44,10 +44,10 @@ class VIEW3D_PT_commotion_update(Panel, Setup):
 
     @classmethod
     def poll(cls, context):
-        return addon_updater_ops.updater.update_ready
+        return var.update_available
 
     def draw(self, context):
-        addon_updater_ops.update_notice_box_ui(self, context)
+        update_ui.sidebar_ui(self, context)
 
 
 class VIEW3D_PT_commotion_shape_keys(Panel, Setup):

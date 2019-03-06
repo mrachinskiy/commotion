@@ -88,24 +88,7 @@ class ANIM_OT_commotion_animation_offset(Operator, AdOffset, OffsetMethods):
 
         return self.execute(context)
 
-    def preset_add(self, ob):
-        return
-        # TODO remove preset system
-        # ob["commotion_preset"] = self.preset
-
     def execute(self, context):
-        self.preset = {
-            "offset": self.offset,
-            "proxy_radius": self.radius,
-            "threshold": self.threshold,
-            "seed": self.seed,
-            "use_reverse": self.use_reverse,
-            "use_proxy": self.use_proxy,
-            "sort_option": self.sort_method,
-            "coll_animated": self.coll_animated_name,
-            "coll_effectors": self.coll_effectors_name,
-        }
-
         if self.sort_method == "CURSOR":
             self.offset_from_cursor(context)
         elif self.sort_method == "NAME":

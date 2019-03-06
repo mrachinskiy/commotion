@@ -59,8 +59,6 @@ else:
         ops_anim,
         ops_proxy,
         ops_shapekey,
-        ops_slow_parent,
-        ops_utils,
         ui,
     )
     from .op_offset import offset_op
@@ -77,8 +75,6 @@ classes = (
     ui.VIEW3D_PT_commotion_animation_offset,
     ui.VIEW3D_PT_commotion_animation_utils,
     ui.VIEW3D_PT_commotion_shape_keys,
-    # TODO 2.8 slow parent support
-    # ui.VIEW3D_PT_commotion_slow_parent,
     ui.VIEW3D_PT_commotion_proxy_effector,
     offset_op.ANIM_OT_commotion_animation_offset,
     ops_shapekey.OBJECT_OT_commotion_sk_coll_refresh,
@@ -89,9 +85,6 @@ classes = (
     ops_anim.ANIM_OT_commotion_animation_convert,
     ops_proxy.ANIM_OT_commotion_bake,
     ops_proxy.ANIM_OT_commotion_bake_remove,
-    ops_slow_parent.OBJECT_OT_commotion_slow_parent_offset,
-    ops_slow_parent.OBJECT_OT_commotion_slow_parent_toggle,
-    ops_utils.OBJECT_OT_commotion_preset_apply,
     update_ops.WM_OT_commotion_update_check,
     update_ops.WM_OT_commotion_update_download,
     update_ops.WM_OT_commotion_update_whats_new,

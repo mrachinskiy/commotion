@@ -21,6 +21,7 @@
 
 from bpy.types import Panel
 
+from . import var
 from .mod_update import update_ui
 
 
@@ -126,8 +127,6 @@ class VIEW3D_PT_commotion_animation_offset(Panel, Setup):
 
         row = layout.row(align=True)
         row.operator("anim.commotion_animation_offset", text="Offset Animation", icon="FORCE_HARMONIC")
-        # TODO remove preset system
-        # row.operator("object.commotion_preset_apply", text="", icon="EYEDROPPER")
 
 
 class VIEW3D_PT_commotion_animation_utils(Panel, Setup):
@@ -141,24 +140,6 @@ class VIEW3D_PT_commotion_animation_utils(Panel, Setup):
         row.operator("anim.commotion_animation_copy", text="Copy", icon="COPYDOWN")
         row.operator("anim.commotion_animation_link", text="Link", icon="LINKED")
         col.operator_menu_enum("anim.commotion_animation_convert", "ad_type", text="Convert to")
-
-
-class VIEW3D_PT_commotion_slow_parent(Panel, Setup):
-    bl_label = "Slow Parent"
-    bl_options = {"DEFAULT_CLOSED"}
-
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = True
-        layout.use_property_decorate = False
-        props = context.scene.commotion
-
-        row = layout.row(align=True)
-        row.operator("object.commotion_slow_parent_toggle", text="On").enable = True
-        row.operator("object.commotion_slow_parent_toggle", text="Off")
-
-        layout.prop(props, "slow_parent_offset")
-        layout.operator("object.commotion_slow_parent_offset", text="Offset Slow Parent", icon="FORCE_DRAG")
 
 
 class VIEW3D_PT_commotion_proxy_effector(Panel, Setup):

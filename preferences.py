@@ -21,7 +21,6 @@
 
 from bpy.types import PropertyGroup, AddonPreferences, Collection
 from bpy.props import (
-    StringProperty,
     BoolProperty,
     IntProperty,
     FloatProperty,
@@ -159,15 +158,6 @@ class CommotionPropertiesScene(PropertyGroup):
         name="Effectors",
         description="Collection for effector objects (to affect objects from animated collection)",
         type=Collection,
-    )
-
-    slow_parent_offset: FloatProperty(
-        name="Offset",
-        description="Offset step for slow parent offset",
-        default=1,
-        min=0,
-        step=10,
-        precision=3,
     )
 
     proxy_use_loc: BoolProperty(name="Location", update=proxy_effector.update_proxy_use_loc)

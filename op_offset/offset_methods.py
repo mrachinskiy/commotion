@@ -79,8 +79,6 @@ class OffsetMethods:
                 if self.ad_offset(ob, offset) is False:
                     continue
 
-                self.preset_add(ob)
-
                 if i < self.threshold:
                     i += 1
                 else:
@@ -122,8 +120,5 @@ class OffsetMethods:
         for ob in (ob for i, ob, flag in obs if not flag):
             if self.ad_offset(ob, frame_end) is False:
                 continue
-
-        for ob in animated:
-            self.preset_add(ob)
 
         scene.frame_set(scene.frame_start)

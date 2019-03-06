@@ -33,8 +33,6 @@ class AdOffset:
             if self.ad_offset(ob, offset) is False:
                 continue
 
-            self.preset_add(ob)
-
             if i < self.threshold:
                 i += 1
             else:

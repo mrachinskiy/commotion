@@ -21,8 +21,7 @@
 
 from bpy.types import Panel
 
-from . import var
-from .mod_update import update_ui
+from . import var, mod_update
 
 
 # Utils
@@ -48,7 +47,7 @@ class VIEW3D_PT_commotion_update(Panel, Setup):
         return var.update_available
 
     def draw(self, context):
-        update_ui.sidebar_ui(self, context)
+        mod_update.sidebar_ui(self, context)
 
 
 class VIEW3D_PT_commotion_shape_keys(Panel, Setup):

@@ -20,7 +20,7 @@ How to install
 
 ### Blender 2.80
 
-1. [Download Commotion v2.0.0 (pre-release).][v2_0_0]<sup>1</sup>
+1. [Download Commotion v2.0.0 (March 18 pre-release).][v2_0_0]<sup>1</sup>
 2. Open `Edit` → `Preferences` → `Add-ons` category.
 3. Use `Install` to install add-on from downloaded zip archive.
 
@@ -38,7 +38,7 @@ How to install
 
 ### Blender 2.80
 
-1. [Загрузите Commotion v2.0.0 (пре-релиз).][v2_0_0]<sup>1</sup>
+1. [Загрузите Commotion v2.0.0 (пре-релиз от 18-03).][v2_0_0]<sup>1</sup>
 2. Откройте `Edit` → `Preferences` → `Add-ons`.
 3. Воспользуйтесь `Install` чтобы установить аддон из загруженного архива.
 
@@ -51,5 +51,17 @@ How to install
 <sup>1</sup> Примечание для пользователей mac: браузер Safari автоматически распаковывает скачиваемые zip архивы, поэтому, чтобы установить аддон, необходимо запаковать папку с файлами аддона обратно в zip архив. Или используйте другой браузер для скачивания аддона.
 
 
+Contributing
+==========================
+
+### Did you find a bug?
+
+* Ensure the bug can be reproduced in the latest add-on version.
+* If error occurs on add-on installation or activation, check [how to install][install_guide] guide.
+* [Open new issue][new_issue], be sure to include Blender and add-on versions, and screenshot showing the error message.
+
+
 [v2_0_0]: https://github.com/mrachinskiy/commotion/releases/download/v2.0.0/commotion-2_0_0.zip
 [v1_7_3]: https://github.com/mrachinskiy/commotion/releases/download/v1.7.3/commotion-1_7_3.zip
+[install_guide]: https://github.com/mrachinskiy/commotion#how-to-install
+[new_issue]: https://github.com/mrachinskiy/commotion/issues/new

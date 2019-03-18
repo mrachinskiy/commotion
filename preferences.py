@@ -30,8 +30,7 @@ from bpy.props import (
     PointerProperty,
 )
 
-from . import proxy_effector
-from .mod_update import update_ui
+from . import proxy_effector, mod_update
 
 
 # Custom properties
@@ -86,7 +85,7 @@ class CommotionPreferences(AddonPreferences):
         col.prop(self, "active_section", expand=True)
 
         box = split.box()
-        update_ui.prefs_ui(self, box)
+        mod_update.prefs_ui(self, box)
 
 
 # Scene properties

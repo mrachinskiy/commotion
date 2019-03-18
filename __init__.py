@@ -43,9 +43,13 @@ if "bpy" in locals():
             importlib.reload(eval(module))
 
         elif entry.is_dir() and not entry.name.startswith((".", "__")):
+
             for subentry in os.scandir(entry.path):
                 if subentry.is_file() and subentry.name.endswith(".py"):
-                    module = entry.name + "." + os.path.splitext(subentry.name)[0]
+                    if subentry.name == "__init__.py":
+                        module = os.path.splitext(entry.name)[0]
+                    else:
+                        module = entry.name + "." + os.path.splitext(subentry.name)[0]
                     importlib.reload(eval(module))
 else:
     import bpy
@@ -56,16 +60,17 @@ else:
         preferences,
         lib,
         proxy_effector,
+        op_offset,
         ops_anim,
         ops_proxy,
         ops_shapekey,
         ui,
+        mod_update,
     )
-    from .op_offset import offset_op
-    from .mod_update import update_lib, update_ops
 
 
 var.UPDATE_CURRENT_VERSION = bl_info["version"]
+
 classes = (
     preferences.CommotionShapeKeyCollection,
     preferences.CommotionPreferences,
@@ -76,7 +81,7 @@ classes = (
     ui.VIEW3D_PT_commotion_animation_utils,
     ui.VIEW3D_PT_commotion_shape_keys,
     ui.VIEW3D_PT_commotion_proxy_effector,
-    offset_op.ANIM_OT_commotion_animation_offset,
+    op_offset.ANIM_OT_commotion_animation_offset,
     ops_shapekey.OBJECT_OT_commotion_sk_coll_refresh,
     ops_shapekey.OBJECT_OT_commotion_sk_interpolation_set,
     ops_shapekey.ANIM_OT_commotion_sk_generate_keyframes,
@@ -85,9 +90,9 @@ classes = (
     ops_anim.ANIM_OT_commotion_animation_convert,
     ops_proxy.ANIM_OT_commotion_bake,
     ops_proxy.ANIM_OT_commotion_bake_remove,
-    update_ops.WM_OT_commotion_update_check,
-    update_ops.WM_OT_commotion_update_download,
-    update_ops.WM_OT_commotion_update_whats_new,
+    mod_update.WM_OT_commotion_update_check,
+    mod_update.WM_OT_commotion_update_download,
+    mod_update.WM_OT_commotion_update_whats_new,
 )
 
 
@@ -98,7 +103,7 @@ def register():
     bpy.types.Scene.commotion = PointerProperty(type=preferences.CommotionPropertiesScene)
     bpy.types.WindowManager.commotion = PointerProperty(type=preferences.CommotionPropertiesWm)
 
-    update_lib.update_init_check()
+    mod_update.update_init_check()
 
 
 def unregister():

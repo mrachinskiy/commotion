@@ -23,7 +23,7 @@ from bpy.types import Operator
 from bpy.props import EnumProperty
 
 
-class OBJECT_OT_commotion_sk_coll_refresh(Operator):
+class OBJECT_OT_sk_coll_refresh(Operator):
     bl_label = "Refresh List"
     bl_description = "Refresh shape key list for active object"
     bl_idname = "object.commotion_sk_coll_refresh"
@@ -51,7 +51,7 @@ class OBJECT_OT_commotion_sk_coll_refresh(Operator):
         return self.execute(context)
 
 
-class OBJECT_OT_commotion_sk_interpolation_set(Operator):
+class OBJECT_OT_sk_interpolation_set(Operator):
     bl_label = "Set Interpolation"
     bl_description = "Set interpolation type for selected shape keys"
     bl_idname = "object.commotion_sk_interpolation_set"
@@ -85,7 +85,7 @@ class OBJECT_OT_commotion_sk_interpolation_set(Operator):
         return {"FINISHED"}
 
 
-class ANIM_OT_commotion_sk_generate_keyframes(Operator):
+class ANIM_OT_sk_generate_keyframes(Operator):
     bl_label = "Commotion Shape Key Generate Keyframes"
     bl_description = (
         "Create keyframes for absolute shape keys on selected objects, "

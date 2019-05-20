@@ -74,25 +74,25 @@ var.UPDATE_CURRENT_VERSION = bl_info["version"]
 classes = (
     preferences.CommotionShapeKeyCollection,
     preferences.CommotionPreferences,
-    preferences.CommotionPropertiesScene,
-    preferences.CommotionPropertiesWm,
+    preferences.SceneProperties,
+    preferences.WmProperties,
     ui.VIEW3D_PT_commotion_update,
     ui.VIEW3D_PT_commotion_animation_offset,
     ui.VIEW3D_PT_commotion_animation_utils,
     ui.VIEW3D_PT_commotion_shape_keys,
     ui.VIEW3D_PT_commotion_proxy_effector,
-    op_offset.ANIM_OT_commotion_animation_offset,
-    ops_shapekey.OBJECT_OT_commotion_sk_coll_refresh,
-    ops_shapekey.OBJECT_OT_commotion_sk_interpolation_set,
-    ops_shapekey.ANIM_OT_commotion_sk_generate_keyframes,
-    ops_anim.ANIM_OT_commotion_animation_copy,
-    ops_anim.ANIM_OT_commotion_animation_link,
-    ops_anim.ANIM_OT_commotion_animation_convert,
-    ops_proxy.ANIM_OT_commotion_bake,
-    ops_proxy.ANIM_OT_commotion_bake_remove,
-    mod_update.WM_OT_commotion_update_check,
-    mod_update.WM_OT_commotion_update_download,
-    mod_update.WM_OT_commotion_update_whats_new,
+    op_offset.ANIM_OT_animation_offset,
+    ops_shapekey.OBJECT_OT_sk_coll_refresh,
+    ops_shapekey.OBJECT_OT_sk_interpolation_set,
+    ops_shapekey.ANIM_OT_sk_generate_keyframes,
+    ops_anim.ANIM_OT_animation_copy,
+    ops_anim.ANIM_OT_animation_link,
+    ops_anim.ANIM_OT_animation_convert,
+    ops_proxy.ANIM_OT_bake,
+    ops_proxy.ANIM_OT_bake_remove,
+    mod_update.WM_OT_update_check,
+    mod_update.WM_OT_update_download,
+    mod_update.WM_OT_update_whats_new,
 )
 
 
@@ -100,8 +100,8 @@ def register():
     for cls in classes:
         bpy.utils.register_class(cls)
 
-    bpy.types.Scene.commotion = PointerProperty(type=preferences.CommotionPropertiesScene)
-    bpy.types.WindowManager.commotion = PointerProperty(type=preferences.CommotionPropertiesWm)
+    bpy.types.Scene.commotion = PointerProperty(type=preferences.SceneProperties)
+    bpy.types.WindowManager.commotion = PointerProperty(type=preferences.WmProperties)
 
     mod_update.update_init_check()
 

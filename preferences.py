@@ -48,18 +48,13 @@ class CommotionShapeKeyCollection(PropertyGroup):
 class CommotionPreferences(AddonPreferences):
     bl_idname = __package__
 
-    active_section: EnumProperty(
-        items=(
-            ("UPDATES", "Updates", ""),
-        ),
-    )
     update_use_auto_check: BoolProperty(
         name="Automatically check for updates",
         description="Automatically check for updates with specified interval",
         default=True,
     )
     update_interval: EnumProperty(
-        name="Auto-check Interval",
+        name="Auto-check interval",
         description="Auto-check interval",
         items=(
             ("1", "Once a day", ""),
@@ -74,6 +69,8 @@ class CommotionPreferences(AddonPreferences):
     )
 
     def draw(self, context):
+        props_wm = context.window_manager.commotion
+
         layout = self.layout
         layout.use_property_split = True
         layout.use_property_decorate = False
@@ -82,7 +79,7 @@ class CommotionPreferences(AddonPreferences):
         col = split.column()
         col.use_property_split = False
         col.scale_y = 1.3
-        col.prop(self, "active_section", expand=True)
+        col.prop(props_wm, "prefs_active_tab", expand=True)
 
         box = split.box()
         mod_update.prefs_ui(self, box)
@@ -92,7 +89,7 @@ class CommotionPreferences(AddonPreferences):
 # -----------------------------------
 
 
-class CommotionPropertiesScene(PropertyGroup):
+class SceneProperties(PropertyGroup):
     offset_id_type: EnumProperty(
         name="Data",
         description="Animation data type",
@@ -244,7 +241,12 @@ class CommotionPropertiesScene(PropertyGroup):
 # ------------------------------------------
 
 
-class CommotionPropertiesWm(PropertyGroup):
+class WmProperties(PropertyGroup):
+    prefs_active_tab: EnumProperty(
+        items=(
+            ("UPDATES", "Updates", ""),
+        ),
+    )
     skcoll: CollectionProperty(type=CommotionShapeKeyCollection)
     use_proxy: BoolProperty(
         description="Enable proxymity effector\nWARNING: works only on animation playback",

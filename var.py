@@ -30,6 +30,7 @@ ADDON_DIR = os.path.dirname(__file__)
 # --------------------------------
 
 
+UPDATE_OPERATOR_ID_AFFIX = "commotion"
 UPDATE_SAVE_STATE_FILEPATH = os.path.join(ADDON_DIR, "update_state.json")
 UPDATE_RELEASES_URL = "https://api.github.com/repos/mrachinskiy/commotion/releases"
 UPDATE_MAX_VERSION = None

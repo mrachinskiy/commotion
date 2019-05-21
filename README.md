@@ -20,7 +20,7 @@ How to install
 
 ### Blender 2.80
 
-1. [Download Commotion v2.0.0 (March 18 pre-release).][v2_0_0]<sup>1</sup>
+1. [Download Commotion v2.0.0.][v2_0_0]<sup>1</sup>
 2. Open `Edit` → `Preferences` → `Add-ons` category.
 3. Use `Install` to install add-on from downloaded zip archive.
 
@@ -38,7 +38,7 @@ How to install
 
 ### Blender 2.80
 
-1. [Загрузите Commotion v2.0.0 (пре-релиз от 18-03).][v2_0_0]<sup>1</sup>
+1. [Загрузите Commotion v2.0.0.][v2_0_0]<sup>1</sup>
 2. Откройте `Edit` → `Preferences` → `Add-ons`.
 3. Воспользуйтесь `Install` чтобы установить аддон из загруженного архива.
 

@@ -22,6 +22,13 @@
 import random
 
 
+def effector_radius(ob):
+    if ob.type == "EMPTY":
+        return ob.empty_display_size * ob.matrix_world.to_scale()[0]
+
+    return ob.dimensions[0] / 2
+
+
 class OffsetMethods:
 
     def offset_from_cursor(self, context):
@@ -86,39 +93,34 @@ class OffsetMethods:
                     i = 1
 
     def offset_from_multi_proxy(self, context):
-        animated = self.coll_animated.objects
-        effectors = self.coll_effectors.objects
-        scene = context.scene
         self.frame = 0
+        scene = context.scene
         frame = scene.frame_start
         scene.frame_set(frame)
-        obs = [[i, ob, False] for i, ob in enumerate(animated)]
+        obs = [[i, ob, False] for i, ob in enumerate(self.coll_animated.objects)]
+        effectors = self.coll_effectors.objects
 
         while frame <= scene.frame_end:
 
-            effector_loc = [x.matrix_world.translation for x in effectors]
+            effector_data = [(x.matrix_world.translation, effector_radius(x)) for x in effectors]
 
-            for i, ob, flag in obs:
-                if not flag:
+            for i, ob, is_animated in obs:
+                if not is_animated:
                     ob_loc = ob.matrix_world.translation
-                    distance = self.radius + 1.0
 
-                    for loc in effector_loc:
-                        distance = min((loc - ob_loc).length, distance)
-
-                    if distance < self.radius:
-                        obs[i][2] = True
-
-                        if self.ad_offset(ob, frame) is False:
-                            continue
+                    for loc, rad in effector_data:
+                        if (loc - ob_loc).length < rad:
+                            self.ad_offset(ob, frame)
+                            obs[i][2] = True
+                            break
 
             frame += 1
             scene.frame_set(frame)
 
         frame_end = scene.frame_end + 1
 
-        for ob in (ob for i, ob, flag in obs if not flag):
-            if self.ad_offset(ob, frame_end) is False:
-                continue
+        for i, ob, is_animated in obs:
+            if not is_animated:
+                self.ad_offset(ob, frame_end)
 
         scene.frame_set(scene.frame_start)

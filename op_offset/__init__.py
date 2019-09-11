@@ -71,7 +71,6 @@ class ANIM_OT_animation_offset(Operator, AdOffset, OffsetMethods):
         self.seed = props.offset_seed
         self.use_reverse = props.offset_use_reverse
         self.sort_method = props.offset_sort_method
-        self.radius = props.offset_proxy_radius
         self.use_proxy = props.offset_use_proxy
         self.coll_animated_name = ""
         self.coll_effectors_name = ""

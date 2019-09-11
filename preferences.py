@@ -131,19 +131,13 @@ class SceneProperties(PropertyGroup):
         step=10,
         precision=3,
     )
-    offset_proxy_radius: FloatProperty(
-        name="Radius",
-        description="Effective range at which effectors can influence animated objects",
-        soft_min=0.0,
-        default=5.0,
-    )
     offset_use_reverse: BoolProperty(
         name="Reverse",
         description="Reverse sort order",
     )
     offset_use_proxy: BoolProperty(
         name="Proxymity",
-        description="Enable offset by proximity from effector",
+        description="Enable offset by proximity from effector (effector range controlled by object size)",
     )
     offset_coll_animated: PointerProperty(
         name="Animated",

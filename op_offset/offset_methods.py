@@ -21,12 +21,7 @@
 
 import random
 
-
-def effector_radius(ob):
-    if ob.type == "EMPTY":
-        return ob.empty_display_size * ob.matrix_world.to_scale()[0]
-
-    return ob.dimensions[0] / 2
+from ..lib import effector_radius
 
 
 class OffsetMethods:

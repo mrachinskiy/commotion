@@ -46,3 +46,10 @@ def ad_get(ob, use_ob=True, use_data=True, use_sk=True, use_mat=True):
                 ads.append(slot.material.node_tree.animation_data)
 
     return ads
+
+
+def effector_radius(ob):
+    if ob.type == "EMPTY":
+        return ob.empty_display_size * ob.matrix_world.to_scale()[0]
+
+    return ob.dimensions[0] / 2

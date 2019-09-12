@@ -188,12 +188,6 @@ class SceneProperties(PropertyGroup):
         subtype="TRANSLATION",
         default=(1.0, 1.0, 1.0),
     )
-    proxy_radius: FloatProperty(
-        name="Radius",
-        description="Effective range at which effectors can influence animated objects",
-        soft_min=0.0,
-        default=5.0,
-    )
     proxy_start_sk: FloatProperty(
         name="Evaluation Time",
         description="Start evaluation time",
@@ -243,6 +237,10 @@ class WmProperties(PropertyGroup):
     )
     skcoll: CollectionProperty(type=CommotionShapeKeyCollection)
     use_proxy: BoolProperty(
-        description="Enable proxymity effector\nWARNING: works only on animation playback",
+        name="Proximity Effector",
+        description=(
+            "Enable proxymity effector (effector range controlled by object size)"
+            "\nWARNING: works only on animation playback"
+        ),
         update=proxy_effector.handler_toggle,
     )

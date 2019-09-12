@@ -75,7 +75,7 @@ class ANIM_OT_bake(Operator):
 
         if (
             not (props.proxy_coll_animated and props.proxy_coll_effectors) or
-            not (props.proxy_use_loc or props.proxy_use_rot or props.proxy_use_sca or props.proxy_use_sk or props.proxy_radius)
+            not (props.proxy_use_loc or props.proxy_use_rot or props.proxy_use_sca or props.proxy_use_sk)
         ):
             return {"CANCELLED"}
 

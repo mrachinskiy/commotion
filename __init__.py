@@ -22,7 +22,7 @@
 bl_info = {
     "name": "Commotion",
     "author": "Mikhail Rachinskiy",
-    "version": (2, 0, 1),
+    "version": (2, 1, 0),
     "blender": (2, 80, 0),
     "location": "3D View > Sidebar",
     "description": "Animation offset tools for motion graphics.",
@@ -61,12 +61,11 @@ if "bpy" in locals():
 
 else:
     import bpy
-    from bpy.props import PointerProperty, CollectionProperty
+    from bpy.props import PointerProperty
 
     from . import (
         var,
         preferences,
-        lib,
         proxy_effector,
         op_offset,
         ops_anim,

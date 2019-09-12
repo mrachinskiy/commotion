@@ -23,6 +23,8 @@ import bpy
 from bpy.app.handlers import persistent
 from mathutils import Vector
 
+from .lib import effector_radius
+
 
 def handler_add():
     if proxy_handler not in bpy.app.handlers.frame_change_post:
@@ -55,10 +57,9 @@ def proxy_handler(scene):
     use_sk = props.proxy_use_sk
     obs_animated = props.proxy_coll_animated.objects
     obs_effectors = props.proxy_coll_effectors.objects
-    radius = props.proxy_radius
 
     if (
-        not (use_loc or use_rot or use_sca or use_sk or radius) or
+        not (use_loc or use_rot or use_sca or use_sk) or
         not (obs_animated and obs_effectors)
     ):
         return
@@ -83,12 +84,10 @@ def proxy_handler(scene):
     is_neg_sk = start_sk > final_sk
 
     use_reset = use_trail and scene.frame_current <= scene.frame_start
-    fac = 1.0 / radius
-    effector_loc = [x.matrix_world.translation for x in obs_effectors]
+    effector_data = [(x.matrix_world.translation, effector_radius(x)) for x in obs_effectors]
 
     for ob in obs_animated:
         ob_loc = ob.matrix_world.translation - ob.delta_location
-        distance = radius + 1.0
 
         if use_sk:
             ob_sk = ob.data.shape_keys
@@ -99,8 +98,14 @@ def proxy_handler(scene):
             if use_sca: ob.delta_scale = start_sca
             if use_sk: ob_sk.eval_time = start_sk
 
-        for loc in effector_loc:
-            distance = min((loc - ob_loc).length, distance)
+        distance_fac = []
+
+        for loc, rad in effector_data:
+            distance = (loc - ob_loc).length
+            fac = distance / rad
+            distance_fac.append((distance, rad, fac))
+
+        distance, radius, _ = min(distance_fac, key=lambda x: x[2])
 
         if distance > radius:
             if use_trail:
@@ -117,7 +122,7 @@ def proxy_handler(scene):
             continue
 
         if distance:
-            factor = fac * distance - (falloff / (distance / radius))
+            factor = 1.0 / radius * distance - (falloff / (distance / radius))
             factor = min(max(factor, 0.0), 1.0)
         else:
             factor = 0

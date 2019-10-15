@@ -30,7 +30,7 @@ from .offset_methods import OffsetMethods
 from .offset_ad import AdOffset
 
 
-class ANIM_OT_animation_offset(Operator, AdOffset, OffsetMethods):
+class ANIM_OT_animation_offset(AdOffset, OffsetMethods, Operator):
     bl_label = "Commotion Offset Animation"
     bl_description = "Offset animation"
     bl_idname = "anim.commotion_animation_offset"

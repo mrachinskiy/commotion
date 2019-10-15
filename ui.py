@@ -39,7 +39,7 @@ class Setup:
 # ---------------------------
 
 
-class VIEW3D_PT_commotion_update(Panel, Setup):
+class VIEW3D_PT_commotion_update(Setup, Panel):
     bl_label = "Update"
 
     @classmethod
@@ -50,7 +50,7 @@ class VIEW3D_PT_commotion_update(Panel, Setup):
         mod_update.sidebar_ui(self, context)
 
 
-class VIEW3D_PT_commotion_shape_keys(Panel, Setup):
+class VIEW3D_PT_commotion_shape_keys(Setup, Panel):
     bl_label = "Shape Keys"
     bl_options = {"DEFAULT_CLOSED"}
 
@@ -91,7 +91,7 @@ class VIEW3D_PT_commotion_shape_keys(Panel, Setup):
                 layout.operator("anim.commotion_sk_generate_keyframes", text="Generate Keyframes", icon="IPO_BEZIER")
 
 
-class VIEW3D_PT_commotion_animation_offset(Panel, Setup):
+class VIEW3D_PT_commotion_animation_offset(Setup, Panel):
     bl_label = "Animation Offset"
 
     def draw(self, context):
@@ -125,7 +125,7 @@ class VIEW3D_PT_commotion_animation_offset(Panel, Setup):
         row.operator("anim.commotion_animation_offset", text="Offset Animation", icon="FORCE_HARMONIC")
 
 
-class VIEW3D_PT_commotion_animation_utils(Panel, Setup):
+class VIEW3D_PT_commotion_animation_utils(Setup, Panel):
     bl_label = "Animation Utils"
     bl_options = {"DEFAULT_CLOSED"}
 
@@ -138,7 +138,7 @@ class VIEW3D_PT_commotion_animation_utils(Panel, Setup):
         col.operator_menu_enum("anim.commotion_animation_convert", "ad_type", text="Convert to")
 
 
-class VIEW3D_PT_commotion_proxy_effector(Panel, Setup):
+class VIEW3D_PT_commotion_proxy_effector(Setup, Panel):
     bl_label = "Proximity Effector"
     bl_options = {"DEFAULT_CLOSED"}
 

@@ -200,7 +200,7 @@ class AdCopy:
                 strip_new.strip_time = strip.strip_time
 
 
-class ANIM_OT_animation_copy(Operator, AdCopy):
+class ANIM_OT_animation_copy(AdCopy, Operator):
     bl_label = "Commotion Copy"
     bl_description = "Copy animation from active to selected objects (can also use this to unlink animation)"
     bl_idname = "anim.commotion_animation_copy"
@@ -209,7 +209,7 @@ class ANIM_OT_animation_copy(Operator, AdCopy):
     use_link = False
 
 
-class ANIM_OT_animation_link(Operator, AdCopy):
+class ANIM_OT_animation_link(AdCopy, Operator):
     bl_label = "Commotion Link"
     bl_description = "Link animation from active to selected objects"
     bl_idname = "anim.commotion_animation_link"

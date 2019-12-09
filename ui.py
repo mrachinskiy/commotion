@@ -77,7 +77,7 @@ class VIEW3D_PT_commotion_shape_keys(Setup, Panel):
 
             for i, kb in enumerate(kbs):
                 kb_sel = skcoll[i]
-                row = col.row()
+                row = col.column().row(align=True)  # Additional column to prevent vertical align
                 row.prop(kb_sel, "selected", text=kb.name)
 
                 if kb_sel.selected:
@@ -86,8 +86,8 @@ class VIEW3D_PT_commotion_shape_keys(Setup, Panel):
                     row.label()
 
             if not sk.use_relative:
-                layout.operator_menu_enum("object.commotion_sk_interpolation_set", "interp", text="Set Interpolation")
                 layout.prop(sk, "eval_time", text="Time")
+                layout.operator_menu_enum("object.commotion_sk_interpolation_set", "interp")
                 layout.operator("anim.commotion_sk_generate_keyframes", text="Generate Keyframes", icon="IPO_BEZIER")
 
 

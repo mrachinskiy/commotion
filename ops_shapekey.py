@@ -24,7 +24,7 @@ from bpy.props import EnumProperty
 
 
 class OBJECT_OT_sk_coll_refresh(Operator):
-    bl_label = "Refresh List"
+    bl_label = "Refresh"
     bl_description = "Refresh shape key list for active object"
     bl_idname = "object.commotion_sk_coll_refresh"
     bl_options = {"REGISTER", "UNDO", "INTERNAL"}
@@ -40,11 +40,8 @@ class OBJECT_OT_sk_coll_refresh(Operator):
 
     def invoke(self, context, event):
         try:
-            sk = context.object.data.shape_keys
-        except:
-            sk = False
-
-        if not sk:
+            context.object.data.shape_keys
+        except AttributeError:
             self.report({"ERROR"}, "Object has no Shape Keys")
             return {"CANCELLED"}
 

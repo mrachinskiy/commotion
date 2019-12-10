@@ -40,7 +40,7 @@ class OBJECT_OT_sk_coll_refresh(Operator):
 
     def invoke(self, context, event):
         try:
-            context.object.data.shape_keys
+            context.object.data.shape_keys.key_blocks
         except AttributeError:
             self.report({"ERROR"}, "Object has no Shape Keys")
             return {"CANCELLED"}

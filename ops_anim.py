@@ -239,26 +239,35 @@ class ANIM_OT_animation_convert(Operator):
         for ob in context.selected_objects:
             ads = lib.ad_get(ob)
 
-            if ads:
-                for ad in ads:
+            if not ads:
+                continue
 
-                    if use_to_strips:
+            for ad in ads:
 
-                        nla_tracks = ad.nla_tracks
+                if use_to_strips:
 
-                        if not nla_tracks:
-                            nla_tracks.new()
+                    if not (ad and ad.action):
+                        continue
 
-                        frame_start = ad.action.frame_range[0]
-                        nla_tracks[0].strips.new("name", frame_start, ad.action)
-                        ad.action = None
+                    nla_tracks = ad.nla_tracks
 
-                    else:
+                    if not nla_tracks:
+                        nla_tracks.new()
 
-                        nla_tracks = ad.nla_tracks
-                        ad.action = nla_tracks[0].strips[0].action
+                    frame_start = ad.action.frame_range[0]
+                    nla_tracks[0].strips.new("name", frame_start, ad.action)
+                    ad.action = None
 
-                        for track in nla_tracks:
-                            nla_tracks.remove(track)
+                else:
+
+                    nla_tracks = ad.nla_tracks
+
+                    if not nla_tracks:
+                        continue
+
+                    ad.action = nla_tracks[0].strips[0].action
+
+                    for track in nla_tracks:
+                        nla_tracks.remove(track)
 
         return {"FINISHED"}

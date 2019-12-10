@@ -203,5 +203,5 @@ def update_proxy_use_sk(self, context):
         for ob in self.proxy_coll_animated.objects:
             try:
                 ob.data.shape_keys.eval_time = 0.0
-            except:
+            except AttributeError:
                 continue

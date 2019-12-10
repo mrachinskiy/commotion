@@ -48,7 +48,7 @@ class ANIM_OT_bake(Operator):
                         try:
                             ob_sk = ob.data.shape_keys
                             ob_sk.keyframe_insert(data_path="eval_time")
-                        except:
+                        except AttributeError:
                             pass
 
                 self.frame += 1
@@ -119,7 +119,7 @@ class ANIM_OT_bake_remove(Operator):
             try:
                 action = ob.animation_data.action
                 bpy.data.actions.remove(action)
-            except:
+            except AttributeError:
                 pass
 
             ob.delta_location = reset_loc
@@ -132,7 +132,7 @@ class ANIM_OT_bake_remove(Operator):
                     action = sk.animation_data.action
                     bpy.data.actions.remove(action)
                     sk.eval_time = reset_sk
-                except:
+                except AttributeError:
                     pass
 
                 ob_data_prev = ob.data

@@ -54,7 +54,7 @@ def anim_get(ob):
             if ad:
                 action_sk = ad.action
                 nla_tracks_sk = ad.nla_tracks
-        except:
+        except AttributeError:
             pass
 
     if ob.material_slots:
@@ -130,7 +130,7 @@ class AdCopy:
                         act_data.append((action_sk, ob.data.shape_keys))
                     if nla_tracks_sk:
                         nla_data.append((nla_tracks_sk, ob.data.shape_keys))
-                except:
+                except AttributeError:
                     pass
 
             if (is_action_mat or is_nla_tracks_mat) and ob.material_slots:

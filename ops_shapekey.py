@@ -71,11 +71,11 @@ class OBJECT_OT_sk_interpolation_set(Operator):
         for ob in context.selected_objects:
 
             try:
-                sk = ob.data.shape_keys
-            except:
+                kbs = ob.data.shape_keys.key_blocks
+            except AttributeError:
                 continue
 
-            for i, kb in enumerate(sk.key_blocks):
+            for i, kb in enumerate(kbs):
                 if skcoll[i].selected:
                     kb.interpolation = self.interp
 
@@ -98,14 +98,15 @@ class ANIM_OT_sk_generate_keyframes(Operator):
 
             try:
                 sk = ob.data.shape_keys
-            except:
+                kbs = sk.key_blocks
+            except AttributeError:
                 continue
 
             if not sk.use_relative:
-                sk.eval_time = int(sk.key_blocks[1].frame)
+                sk.eval_time = int(kbs[1].frame)
                 sk.keyframe_insert(data_path="eval_time", frame=frame_start)
 
-                frame_end = int(sk.key_blocks[-1].frame)
+                frame_end = int(kbs[-1].frame)
                 sk.eval_time = frame_end
                 sk.keyframe_insert(data_path="eval_time", frame=frame_start + frame_end)
 

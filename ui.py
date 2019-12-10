@@ -64,7 +64,7 @@ class VIEW3D_PT_commotion_shape_keys(Setup, Panel):
         try:
             sk = context.object.data.shape_keys
             kbs = sk.key_blocks
-        except:
+        except AttributeError:
             return
 
         skcoll = context.window_manager.commotion.skcoll

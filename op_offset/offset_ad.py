@@ -42,6 +42,9 @@ class AdOffset:
     def ad_offset(self, ob, offset):
         ads = lib.ad_get(ob, self.use_ob, self.use_data, self.use_sk, self.use_mat)
 
+        if not ads:
+            return False
+
         # F-Curves
 
         fcus_frame_start = []

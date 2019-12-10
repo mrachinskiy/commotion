@@ -19,30 +19,34 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
+def ad_check(ad):
+    return ad and (ad.action or ad.nla_tracks)
+
+
 def ad_get(ob, use_ob=True, use_data=True, use_sk=True, use_mat=True):
     ads = []
 
-    if use_ob and ob.animation_data:
+    if use_ob and ad_check(ob.animation_data):
         ads.append(ob.animation_data)
 
     if ob.data:
 
-        if use_data and ob.data.animation_data:
+        if use_data and ad_check(ob.data.animation_data):
             ads.append(ob.data.animation_data)
 
         if use_sk:
             try:
                 ad = ob.data.shape_keys.animation_data
-                if ad:
+                if ad_check(ad):
                     ads.append(ad)
-            except:
+            except AttributeError:
                 pass
 
     if use_mat and ob.material_slots:
         for slot in ob.material_slots:
-            if slot.material.animation_data:
+            if ad_check(slot.material.animation_data):
                 ads.append(slot.material.animation_data)
-            if slot.material.node_tree and slot.material.node_tree.animation_data:
+            if slot.material.node_tree and ad_check(slot.material.node_tree.animation_data):
                 ads.append(slot.material.node_tree.animation_data)
 
     return ads

@@ -2,9 +2,9 @@ Commotion—Blender add-on for motion graphics.
 
 Features:
 
-* Copy and link animation between objects.
-* Offset animation for number of objects using different sorting methods.
+* Offset animation for multiple objects using different sorting methods.
 * Works both with F-Curves and NLA strips.
+* Copy and link animation between objects.
 * Proximity Effector lets you change object properties by distance to other objects.
 * Easily manage properties of absolute shape keys.
 
@@ -19,8 +19,8 @@ How to install
 ==========================
 
 1. Download the add-on:<sup>1</sup>
-    * [**Blender 2.80** Commotion v2.1.0][v2_1_0]
-    * [**Blender 2.79** Commotion v1.7.3][v1_7_3]
+    * [**Blender 2.80** Commotion v2.1.1][v_latest]
+    * [**Blender 2.79** Commotion v1.7.3][v_legacy]
 2. Open `Preferences` → `Add-ons` category.
 3. Use `Install` to install add-on from downloaded zip archive.
 
@@ -31,8 +31,8 @@ How to install
 ==========================
 
 1. Загрузите аддон:<sup>1</sup>
-    * [**Blender 2.80** Commotion v2.1.0][v2_1_0]
-    * [**Blender 2.79** Commotion v1.7.3][v1_7_3]
+    * [**Blender 2.80** Commotion v2.1.1][v_latest]
+    * [**Blender 2.79** Commotion v1.7.3][v_legacy]
 2. Откройте `Preferences` → `Add-ons`.
 3. Воспользуйтесь `Install` чтобы установить аддон из загруженного архива.
 
@@ -49,6 +49,6 @@ Contributing
 * [Open new issue][new_issue], be sure to include Blender and add-on versions, and screenshot showing the error message.
 
 
-[v2_1_0]: https://github.com/mrachinskiy/commotion/releases/download/v2.1.0/commotion-2_1_0.zip
-[v1_7_3]: https://github.com/mrachinskiy/commotion/releases/download/v1.7.3/commotion-1_7_3.zip
+[v_latest]: https://github.com/mrachinskiy/commotion/releases/download/v2.1.1/commotion-2_1_1.zip
+[v_legacy]: https://github.com/mrachinskiy/commotion/releases/download/v1.7.3/commotion-1_7_3.zip
 [new_issue]: https://github.com/mrachinskiy/commotion/issues/new

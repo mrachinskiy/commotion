@@ -22,7 +22,7 @@
 from bpy.app.translations import pgettext_iface as _
 
 from .. import var
-from . import operators
+from . import state, operators
 
 
 def prefs_ui(self, layout):
@@ -38,7 +38,7 @@ def prefs_ui(self, layout):
     row = layout.row(align=True)
     row.alignment = "CENTER"
 
-    if var.update_completed:
+    if state.status is state.COMPLETED:
         row.label(text="Update completed")
         row.operator(operators.OP_IDNAME_WHATS_NEW)
 
@@ -46,31 +46,34 @@ def prefs_ui(self, layout):
         row.alignment = "CENTER"
         row.label(text="Close Blender to complete the installation", icon="ERROR")
 
-    elif var.update_in_progress:
-        if var.update_available:
-            row.label(text="Installing...")
-        else:
-            row.label(text="Checking...")
+    elif state.status is state.CHECKING:
+        row.label(text="Checking...")
+
+    elif state.status is state.INSTALLING:
+        row.label(text="Installing...")
+
+    elif state.status is state.ERROR:
+        row.label(text=state.error_msg)
 
     elif var.update_available:
-        row.label(text=_("Update {} is available").format(var.update_version))
+        row.label(text=_("Update {} is available").format(state.version_new))
 
     else:
-        if var.update_days_passed is None:
+        if state.days_passed is None:
             msg_date = _("never")
-        elif var.update_days_passed == 0:
+        elif state.days_passed == 0:
             msg_date = _("today")
-        elif var.update_days_passed == 1:
+        elif state.days_passed == 1:
             msg_date = _("yesterday")
         else:
-            msg_date = "{} {}".format(var.update_days_passed, _("days ago"))
+            msg_date = "{} {}".format(state.days_passed, _("days ago"))
 
         row.label(text="{} {}".format(_("Last checked"), msg_date))
 
     col = layout.row()
     col.alignment = "CENTER"
     col.scale_y = 1.5
-    col.enabled = not var.update_in_progress and not var.update_completed
+    col.enabled = state.status is None or state.status is state.ERROR
 
     if var.update_available:
         col.operator(operators.OP_IDNAME_DOWNLOAD)
@@ -86,7 +89,7 @@ def sidebar_ui(self, context):
     row = layout.row(align=True)
     row.alignment = "CENTER"
 
-    if var.update_completed:
+    if state.status is state.COMPLETED:
         row.label(text="Update completed")
         row.operator(operators.OP_IDNAME_WHATS_NEW)
 
@@ -94,14 +97,17 @@ def sidebar_ui(self, context):
         row.alignment = "CENTER"
         row.label(text="Close Blender to complete the installation", icon="ERROR")
 
-    elif var.update_in_progress:
+    elif state.status is state.INSTALLING:
         row.label(text="Installing...")
 
-    elif var.update_available:
-        row.label(text=_("Update {} is available").format(var.update_version))
+    elif state.status is state.ERROR:
+        row.label(text=state.error_msg)
+
+    else:
+        row.label(text=_("Update {} is available").format(state.version_new))
 
     col = layout.row()
     col.alignment = "CENTER"
     col.scale_y = 1.5
-    col.enabled = not var.update_in_progress and not var.update_completed
+    col.enabled = state.status is None or state.status is state.ERROR
     col.operator(operators.OP_IDNAME_DOWNLOAD)

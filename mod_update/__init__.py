@@ -20,5 +20,5 @@
 
 
 from .lib import update_init_check, update_init_download
+from .operators import WM_OT_update_check, WM_OT_update_download, WM_OT_update_whats_new
 from .ui import prefs_ui, sidebar_ui
-from .operators import *

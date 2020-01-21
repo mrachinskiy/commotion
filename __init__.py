@@ -76,7 +76,7 @@ else:
     )
 
 
-var.UPDATE_CURRENT_VERSION = bl_info["version"]
+var.UPDATE_VERSION_CURRENT = bl_info["version"]
 
 classes = (
     preferences.CommotionShapeKeyCollection,

@@ -1,7 +1,7 @@
 # ##### BEGIN GPL LICENSE BLOCK #####
 #
-#  Commotion motion graphics add-on for Blender.
-#  Copyright (C) 2014-2019  Mikhail Rachinskiy
+#  mod_update automatic add-on updates.
+#  Copyright (C) 2019  Mikhail Rachinskiy
 #
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -19,22 +19,14 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
-import os
+CHECKING = 0
+INSTALLING = 1
+COMPLETED = 2
+ERROR = 3
 
-
-ADDON_ID = __package__
-ADDON_DIR = os.path.dirname(__file__)
-ADDON_CONFIG_DIR = ADDON_DIR
-
-
-# mod_update
-# --------------------------------
-
-
-UPDATE_OPERATOR_ID_AFFIX = "commotion"
-UPDATE_SAVE_STATE_FILEPATH = os.path.join(ADDON_CONFIG_DIR, "update_state.json")
-UPDATE_URL_RELEASES = "https://api.github.com/repos/mrachinskiy/commotion/releases"
-UPDATE_VERSION_CURRENT = None
-UPDATE_VERSION_MAX = None
-
-update_available = False
+status = None
+days_passed = None
+version_new = None
+url_download = None
+url_changelog = None
+error_msg = None

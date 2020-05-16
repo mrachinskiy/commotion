@@ -24,7 +24,7 @@ import os
 
 ADDON_ID = __package__
 ADDON_DIR = os.path.dirname(__file__)
-ADDON_CONFIG_DIR = ADDON_DIR
+CONFIG_DIR = os.path.join(ADDON_DIR, ".config")
 
 
 # mod_update
@@ -32,9 +32,12 @@ ADDON_CONFIG_DIR = ADDON_DIR
 
 
 UPDATE_OPERATOR_ID_AFFIX = "commotion"
-UPDATE_SAVE_STATE_FILEPATH = os.path.join(ADDON_CONFIG_DIR, "update_state.json")
+UPDATE_SAVE_STATE_FILEPATH = os.path.join(CONFIG_DIR, "update_state.json")
 UPDATE_URL_RELEASES = "https://api.github.com/repos/mrachinskiy/commotion/releases"
 UPDATE_VERSION_CURRENT = None
-UPDATE_VERSION_MAX = None
 
 update_available = False
+
+
+def update_block(version_new):
+    return False

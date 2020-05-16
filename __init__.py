@@ -26,7 +26,8 @@ bl_info = {
     "blender": (2, 80, 0),
     "location": "3D View > Sidebar",
     "description": "Animation offset tools for motion graphics.",
-    "wiki_url": "https://github.com/mrachinskiy/commotion#readme",
+    "wiki_url": "https://github.com/mrachinskiy/commotion#readme",  # NOTE 2.82 compatibility
+    "doc_url": "https://github.com/mrachinskiy/commotion#readme",
     "tracker_url": "https://github.com/mrachinskiy/commotion/issues",
     "category": "Animation",
 }

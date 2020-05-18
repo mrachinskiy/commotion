@@ -10,7 +10,7 @@ Features:
 
 Video:
 
-* [Demo v1](http://youtu.be/gLj4PvHbm4s)
+* [Demo v1.0](http://youtu.be/gLj4PvHbm4s)
 * [Overview v1.4](https://youtu.be/YNtaR00sA40)
 * [Tutorial: Simple Motiongraphics](http://youtu.be/qbJMTOUdxRY)
 
@@ -18,11 +18,10 @@ Video:
 How to install
 ==========================
 
-1. Download the add-on:<sup>1</sup>
-    * [**Blender 2.80** Commotion v2.1.2][v_latest]
-    * [**Blender 2.79** Commotion v1.7.3][v_legacy]
-2. Open `Preferences` → `Add-ons` category.
-3. Use `Install` to install add-on from downloaded zip archive.
+1. Download [Commotion 2.1.2][v_latest].<sup>1</sup>
+2. Make sure you have Blender 2.80 or newer.
+3. Open `Preferences` → `Add-ons` category.
+4. Use `Install` to install add-on from downloaded zip archive.
 
 <sup>1</sup> Note for mac users: Safari browser will automatically unpack downloaded zip archive, so in order to install the add-on, you have to pack folder with add-on files back into zip archive. Or use a different browser to download add-on.
 
@@ -30,11 +29,10 @@ How to install
 Установка
 ==========================
 
-1. Загрузите аддон:<sup>1</sup>
-    * [**Blender 2.80** Commotion v2.1.2][v_latest]
-    * [**Blender 2.79** Commotion v1.7.3][v_legacy]
-2. Откройте `Preferences` → `Add-ons`.
-3. Воспользуйтесь `Install` чтобы установить аддон из загруженного архива.
+1. Загрузите [Commotion 2.1.2][v_latest].<sup>1</sup>
+2. Убедитесь, что у вас установлен Blender 2.80 или новее.
+3. Откройте `Preferences` → `Add-ons`.
+4. Воспользуйтесь `Install` чтобы установить аддон из загруженного архива.
 
 <sup>1</sup> Примечание для пользователей mac: браузер Safari автоматически распаковывает скачиваемые zip архивы, поэтому, чтобы установить аддон, необходимо запаковать папку с файлами аддона обратно в zip архив. Или используйте другой браузер для скачивания аддона.
 
@@ -50,5 +48,4 @@ Contributing
 
 
 [v_latest]: https://github.com/mrachinskiy/commotion/releases/download/v2.1.2/commotion-2_1_2.zip
-[v_legacy]: https://github.com/mrachinskiy/commotion/releases/download/v1.7.3/commotion-1_7_3.zip
 [new_issue]: https://github.com/mrachinskiy/commotion/issues/new

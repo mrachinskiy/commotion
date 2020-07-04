@@ -103,6 +103,16 @@ classes = (
 
 
 def register():
+    if bl_info["blender"] > bpy.app.version:
+        addon_name = bl_info["name"].upper()
+        addon_ver = ".".join(str(x) for x in bl_info["version"])
+        blender_ver = ".".join(str(x) for x in bl_info["blender"][:2])
+        requirements_check = RuntimeError(
+            f"\n!!! BLENDER {blender_ver} IS REQUIRED FOR {addon_name} {addon_ver} !!!"
+            "\n!!! READ INSTALLATION GUIDE !!!"
+        )
+        raise requirements_check
+
     for cls in classes:
         bpy.utils.register_class(cls)
 

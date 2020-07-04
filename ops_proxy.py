@@ -24,7 +24,7 @@ from bpy.types import Operator
 
 
 class ANIM_OT_bake(Operator):
-    bl_label = "Commotion Bake Animation"
+    bl_label = "Bake Animation"
     bl_description = "Bake procedural animation into keyframes"
     bl_idname = "anim.commotion_bake"
     bl_options = {"REGISTER", "UNDO"}
@@ -97,7 +97,7 @@ class ANIM_OT_bake(Operator):
 
 
 class ANIM_OT_bake_remove(Operator):
-    bl_label = "Commotion Free Bake"
+    bl_label = "Free Bake"
     bl_description = "Remove baked keyframes"
     bl_idname = "anim.commotion_bake_remove"
     bl_options = {"REGISTER", "UNDO"}

@@ -83,7 +83,7 @@ class OBJECT_OT_sk_interpolation_set(Operator):
 
 
 class ANIM_OT_sk_generate_keyframes(Operator):
-    bl_label = "Commotion Shape Key Generate Keyframes"
+    bl_label = "Shape Key Generate Keyframes"
     bl_description = (
         "Create keyframes for absolute shape keys on selected objects, "
         "based on the current frame and shape keys timings"

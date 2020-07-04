@@ -201,7 +201,7 @@ class AdCopy:
 
 
 class ANIM_OT_animation_copy(AdCopy, Operator):
-    bl_label = "Commotion Copy"
+    bl_label = "Copy Animation"
     bl_description = "Copy animation from active to selected objects (can also use this to unlink animation)"
     bl_idname = "anim.commotion_animation_copy"
     bl_options = {"REGISTER", "UNDO"}
@@ -210,7 +210,7 @@ class ANIM_OT_animation_copy(AdCopy, Operator):
 
 
 class ANIM_OT_animation_link(AdCopy, Operator):
-    bl_label = "Commotion Link"
+    bl_label = "Link Animation"
     bl_description = "Link animation from active to selected objects"
     bl_idname = "anim.commotion_animation_link"
     bl_options = {"REGISTER", "UNDO"}
@@ -219,7 +219,7 @@ class ANIM_OT_animation_link(AdCopy, Operator):
 
 
 class ANIM_OT_animation_convert(Operator):
-    bl_label = "Commotion Convert To"
+    bl_label = "Convert to"
     bl_description = "Convert action to another type for selected objects"
     bl_idname = "anim.commotion_animation_convert"
     bl_options = {"REGISTER", "UNDO"}

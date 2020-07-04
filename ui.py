@@ -123,7 +123,7 @@ class VIEW3D_PT_commotion_animation_offset(Setup, Panel):
             col.prop(props, "offset_use_proxy")
 
         row = layout.row(align=True)
-        row.operator("anim.commotion_animation_offset", text="Offset Animation", icon="FORCE_HARMONIC")
+        row.operator("anim.commotion_animation_offset", icon="FORCE_HARMONIC")
         row.operator("anim.commotion_animation_offset_eyedropper", text="", icon="EYEDROPPER")
 
 
@@ -137,7 +137,7 @@ class VIEW3D_PT_commotion_animation_utils(Setup, Panel):
         row = col.row(align=True)
         row.operator("anim.commotion_animation_copy", text="Copy", icon="COPYDOWN")
         row.operator("anim.commotion_animation_link", text="Link", icon="LINKED")
-        col.operator_menu_enum("anim.commotion_animation_convert", "ad_type", text="Convert to")
+        col.operator_menu_enum("anim.commotion_animation_convert", "ad_type")
 
 
 class VIEW3D_PT_commotion_proxy_effector(Setup, Panel):
@@ -260,4 +260,4 @@ class VIEW3D_PT_commotion_proxy_effector_bake(Setup, Panel):
 
         row = layout.row(align=True)
         row.operator("anim.commotion_bake", text="Bake")
-        row.operator("anim.commotion_bake_remove", text="Free Bake")
+        row.operator("anim.commotion_bake_remove")

@@ -34,7 +34,7 @@ from .offset_ad import AdOffset
 
 
 class ANIM_OT_animation_offset(AdOffset, OffsetMethods, Operator):
-    bl_label = "Commotion Animation Offset"
+    bl_label = "Offset Animation"
     bl_description = "Offset animation"
     bl_idname = "anim.commotion_animation_offset"
     bl_options = {"REGISTER", "UNDO"}
@@ -148,7 +148,7 @@ class ANIM_OT_animation_offset(AdOffset, OffsetMethods, Operator):
 
 
 class ANIM_OT_animation_offset_eyedropper(Operator):
-    bl_label = "Commotion Animation Offset Eyedropper"
+    bl_label = "Animation Offset Eyedropper"
     bl_description = "Set offset and threshold properties from selected animated objects"
     bl_idname = "anim.commotion_animation_offset_eyedropper"
     bl_options = {"REGISTER", "UNDO"}

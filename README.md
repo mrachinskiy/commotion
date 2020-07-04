@@ -18,7 +18,7 @@ Video:
 How to install
 ==========================
 
-1. Download [Commotion 2.1.2][v_latest].<sup>1</sup>
+1. Download [Commotion 2.1.3][v_latest].<sup>1</sup>
 2. Make sure you have Blender 2.80 or newer.
 3. Open `Preferences` → `Add-ons` category.
 4. Use `Install` to install add-on from downloaded zip archive.
@@ -29,7 +29,7 @@ How to install
 Установка
 ==========================
 
-1. Загрузите [Commotion 2.1.2][v_latest].<sup>1</sup>
+1. Загрузите [Commotion 2.1.3][v_latest].<sup>1</sup>
 2. Убедитесь, что у вас установлен Blender 2.80 или новее.
 3. Откройте `Preferences` → `Add-ons`.
 4. Воспользуйтесь `Install` чтобы установить аддон из загруженного архива.
@@ -47,5 +47,5 @@ Contributing
 * [Open new issue][new_issue], be sure to include Blender and add-on versions, and screenshot showing the error message.
 
 
-[v_latest]: https://github.com/mrachinskiy/commotion/releases/download/v2.1.2/commotion-2_1_2.zip
+[v_latest]: https://github.com/mrachinskiy/commotion/releases/download/v2.1.3/commotion-2_1_3.zip
 [new_issue]: https://github.com/mrachinskiy/commotion/issues/new

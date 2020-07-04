@@ -84,10 +84,11 @@ class ANIM_OT_animation_offset(AdOffset, OffsetMethods, Operator):
         layout.use_property_decorate = False
 
         col = layout.column(heading="Data")
-        col.prop(self, "use_ob")
-        col.prop(self, "use_data")
-        col.prop(self, "use_sk")
-        col.prop(self, "use_mat")
+        sub = col.column(align=True)
+        sub.prop(self, "use_ob")
+        sub.prop(self, "use_data")
+        sub.prop(self, "use_sk")
+        sub.prop(self, "use_mat")
 
         sub = col.column()
         sub.enabled = not (self.sort_method == "MULTI" and self.use_proxy)

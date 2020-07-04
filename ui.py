@@ -102,10 +102,11 @@ class VIEW3D_PT_commotion_animation_offset(Setup, Panel):
         multi = props.offset_sort_method == "MULTI"
 
         col = layout.column(heading="Data")
-        col.prop(props, "offset_use_ob")
-        col.prop(props, "offset_use_data")
-        col.prop(props, "offset_use_sk")
-        col.prop(props, "offset_use_mat")
+        sub = col.column(align=True)
+        sub.prop(props, "offset_use_ob")
+        sub.prop(props, "offset_use_data")
+        sub.prop(props, "offset_use_sk")
+        sub.prop(props, "offset_use_mat")
 
         sub = col.column()
         sub.active = not (multi and props.offset_use_proxy)

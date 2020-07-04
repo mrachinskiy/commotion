@@ -126,7 +126,7 @@ class SceneProperties(PropertyGroup):
     offset_offset: FloatProperty(
         name="Offset",
         description="Frame step for animation offset",
-        default=1,
+        default=1.0,
         min=0,
         step=10,
         precision=3,
@@ -210,6 +210,7 @@ class SceneProperties(PropertyGroup):
         description="Fade trail over time",
         min=0.0,
         max=1.0,
+        soft_max=0.3,
         precision=3,
         subtype="FACTOR",
     )

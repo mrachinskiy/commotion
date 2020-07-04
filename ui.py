@@ -100,13 +100,12 @@ class VIEW3D_PT_commotion_animation_offset(Setup, Panel):
         layout.use_property_decorate = False
         props = context.scene.commotion
         multi = props.offset_sort_method == "MULTI"
-        multi_use_proxy = props.offset_use_proxy
 
         col = layout.column()
         col.prop(props, "offset_id_type")
 
         sub = col.column()
-        sub.active = not (multi and multi_use_proxy)
+        sub.active = not (multi and props.offset_use_proxy)
         sub.prop(props, "offset_offset")
         sub.prop(props, "offset_threshold")
         sub.prop(props, "offset_use_reverse")
@@ -115,8 +114,7 @@ class VIEW3D_PT_commotion_animation_offset(Setup, Panel):
 
         if props.offset_sort_method == "RANDOM":
             col.prop(props, "offset_seed")
-
-        if multi:
+        elif multi:
             col.prop(props, "offset_coll_animated")
             col.prop(props, "offset_coll_effectors")
             col.prop(props, "offset_use_proxy")
@@ -157,37 +155,104 @@ class VIEW3D_PT_commotion_proxy_effector(Setup, Panel):
         col.prop(props, "proxy_coll_animated")
         col.prop(props, "proxy_coll_effectors")
         col.prop(props, "proxy_falloff")
-        col.prop(props, "proxy_use_trail")
 
-        if props.proxy_use_trail:
-            col.prop(props, "proxy_trail_fade")
+        sub = col.column(heading="Trail")
 
-        col = col.column()
-        col.use_property_split = False
+        row = sub.row()
+        row.prop(props, "proxy_use_trail", text="")
 
-        col.prop(props, "proxy_use_loc")
-        if props.proxy_use_loc:
-            row = col.row()
-            row.column().prop(props, "proxy_start_loc", text="")
-            row.column().prop(props, "proxy_final_loc", text="")
+        subrow = row.row()
+        subrow.active = props.proxy_use_trail
+        subrow.prop(props, "proxy_trail_fade", text="")
 
-        col.prop(props, "proxy_use_rot")
-        if props.proxy_use_rot:
-            row = col.row()
-            row.column().prop(props, "proxy_start_rot", text="")
-            row.column().prop(props, "proxy_final_rot", text="")
 
-        col.prop(props, "proxy_use_sca")
-        if props.proxy_use_sca:
-            row = col.row()
-            row.column().prop(props, "proxy_start_sca", text="")
-            row.column().prop(props, "proxy_final_sca", text="")
+class VIEW3D_PT_commotion_proxy_effector_loc(Setup, Panel):
+    bl_label = "Location"
+    bl_options = {"DEFAULT_CLOSED"}
+    bl_parent_id = "VIEW3D_PT_commotion_proxy_effector"
 
-        col.prop(props, "proxy_use_sk")
-        if props.proxy_use_sk:
-            row = col.row()
-            row.column().prop(props, "proxy_start_sk", text="")
-            row.column().prop(props, "proxy_final_sk", text="")
+    def draw_header(self, context):
+        layout = self.layout
+        layout.prop(context.scene.commotion, "proxy_use_loc", text="")
+
+    def draw(self, context):
+        layout = self.layout
+
+        props = context.scene.commotion
+        layout.active = props.proxy_use_loc
+
+        row = layout.row()
+        row.column().prop(props, "proxy_start_loc", text="")
+        row.column().prop(props, "proxy_final_loc", text="")
+
+
+class VIEW3D_PT_commotion_proxy_effector_rot(Setup, Panel):
+    bl_label = "Rotation"
+    bl_options = {"DEFAULT_CLOSED"}
+    bl_parent_id = "VIEW3D_PT_commotion_proxy_effector"
+
+    def draw_header(self, context):
+        layout = self.layout
+        layout.prop(context.scene.commotion, "proxy_use_rot", text="")
+
+    def draw(self, context):
+        layout = self.layout
+
+        props = context.scene.commotion
+        layout.active = props.proxy_use_rot
+
+        row = layout.row()
+        row.column().prop(props, "proxy_start_rot", text="")
+        row.column().prop(props, "proxy_final_rot", text="")
+
+
+class VIEW3D_PT_commotion_proxy_effector_sca(Setup, Panel):
+    bl_label = "Scale"
+    bl_options = {"DEFAULT_CLOSED"}
+    bl_parent_id = "VIEW3D_PT_commotion_proxy_effector"
+
+    def draw_header(self, context):
+        layout = self.layout
+        layout.prop(context.scene.commotion, "proxy_use_sca", text="")
+
+    def draw(self, context):
+        layout = self.layout
+
+        props = context.scene.commotion
+        layout.active = props.proxy_use_sca
+
+        row = layout.row()
+        row.column().prop(props, "proxy_start_sca", text="")
+        row.column().prop(props, "proxy_final_sca", text="")
+
+
+class VIEW3D_PT_commotion_proxy_effector_sk(Setup, Panel):
+    bl_label = "Shape Keys"
+    bl_options = {"DEFAULT_CLOSED"}
+    bl_parent_id = "VIEW3D_PT_commotion_proxy_effector"
+
+    def draw_header(self, context):
+        layout = self.layout
+        layout.prop(context.scene.commotion, "proxy_use_sk", text="")
+
+    def draw(self, context):
+        layout = self.layout
+
+        props = context.scene.commotion
+        layout.active = props.proxy_use_sk
+
+        row = layout.row()
+        row.column().prop(props, "proxy_start_sk", text="")
+        row.column().prop(props, "proxy_final_sk", text="")
+
+
+class VIEW3D_PT_commotion_proxy_effector_bake(Setup, Panel):
+    bl_label = "Bake"
+    bl_options = {"DEFAULT_CLOSED"}
+    bl_parent_id = "VIEW3D_PT_commotion_proxy_effector"
+
+    def draw(self, context):
+        layout = self.layout
 
         row = layout.row(align=True)
         row.operator("anim.commotion_bake", text="Bake")

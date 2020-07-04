@@ -34,6 +34,7 @@ bl_info = {
 
 
 if "bpy" in locals():
+    from . import var
 
     def walk(path, parent_dir=None):
         import importlib
@@ -65,7 +66,6 @@ else:
     from bpy.props import PointerProperty
 
     from . import (
-        var,
         preferences,
         proxy_effector,
         op_offset,
@@ -76,8 +76,6 @@ else:
         mod_update,
     )
 
-
-var.UPDATE_VERSION_CURRENT = bl_info["version"]
 
 classes = (
     preferences.CommotionShapeKeyCollection,
@@ -111,7 +109,10 @@ def register():
     bpy.types.Scene.commotion = PointerProperty(type=preferences.SceneProperties)
     bpy.types.WindowManager.commotion = PointerProperty(type=preferences.WmProperties)
 
-    mod_update.update_init_check()
+    mod_update.init(
+        addon_version=bl_info["version"],
+        releases_url="https://api.github.com/repos/mrachinskiy/commotion/releases",
+    )
 
 
 def unregister():

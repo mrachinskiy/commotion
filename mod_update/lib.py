@@ -28,6 +28,26 @@ from .. import var
 from . import state
 
 
+ADDON_VERSION = None
+RELEASES_URL = None
+SAVE_STATE_FILEPATH = os.path.join(var.CONFIG_DIR, "update_state.json")
+
+
+def _parse_tag(tag):
+    import re
+
+    vers = [
+        tuple(int(x) for x in ver_str)
+        for ver_str in
+        [re.sub(r"[^0-9]", " ", ver_raw).split() for ver_raw in tag.split("-")]
+    ]
+
+    if len(vers) == 1:
+        vers.append((0, 0, 0))
+
+    return vers
+
+
 def _save_state_deserialize():
     import datetime
     import json
@@ -37,8 +57,8 @@ def _save_state_deserialize():
         "last_check": 0,
     }
 
-    if os.path.exists(var.UPDATE_SAVE_STATE_FILEPATH):
-        with open(var.UPDATE_SAVE_STATE_FILEPATH, "r", encoding="utf-8") as file:
+    if os.path.exists(SAVE_STATE_FILEPATH):
+        with open(SAVE_STATE_FILEPATH, "r", encoding="utf-8") as file:
             data.update(json.load(file))
 
             last_check = datetime.date.fromtimestamp(data["last_check"])
@@ -54,14 +74,14 @@ def _save_state_serialize():
 
     state.days_passed = 0
     data = {
-        "update_available": var.update_available,
+        "update_available": state.update_available,
         "last_check": int(datetime.datetime.now().timestamp()),
     }
 
     if not os.path.exists(var.CONFIG_DIR):
         os.makedirs(var.CONFIG_DIR)
 
-    with open(var.UPDATE_SAVE_STATE_FILEPATH, "w", encoding="utf-8") as file:
+    with open(SAVE_STATE_FILEPATH, "w", encoding="utf-8") as file:
         json.dump(data, file, indent=4, ensure_ascii=False)
 
 
@@ -100,7 +120,7 @@ def _update_check(use_force_check):
 
     try:
 
-        with urllib.request.urlopen(var.UPDATE_URL_RELEASES, context=ssl_context) as response:
+        with urllib.request.urlopen(RELEASES_URL, context=ssl_context) as response:
             data = json.load(response)
 
             for release in data:
@@ -109,14 +129,13 @@ def _update_check(use_force_check):
                     continue
 
                 if not release["draft"]:
-                    version_string = re.sub(r"[^0-9]", " ", release["tag_name"])
-                    version_new = tuple(int(x) for x in version_string.split())
+                    update_version, required_blender = _parse_tag(release["tag_name"])
 
-                    if var.update_block(version_new):
-                        continue
-
-                    if version_new > var.UPDATE_VERSION_CURRENT:
-                        break
+                    if update_version > ADDON_VERSION:
+                        if required_blender <= bpy.app.version:
+                            break
+                        else:
+                            continue
                     else:
                         _save_state_serialize()
                         _runtime_state_set(None)
@@ -131,10 +150,10 @@ def _update_check(use_force_check):
 
                 prerelease_note = " (pre-release)" if release["prerelease"] else ""
 
-                var.update_available = True
-                state.version_new = release["tag_name"] + prerelease_note
-                state.url_download = asset["browser_download_url"]
-                state.url_changelog = release["html_url"]
+                state.update_available = True
+                state.update_version = ".".join(str(x) for x in update_version) + prerelease_note
+                state.download_url = asset["browser_download_url"]
+                state.changelog_url = release["html_url"]
 
         _save_state_serialize()
         _runtime_state_set(None)
@@ -161,7 +180,7 @@ def _update_download():
 
     try:
 
-        with urllib.request.urlopen(state.url_download, context=ssl_context) as response:
+        with urllib.request.urlopen(state.download_url, context=ssl_context) as response:
             with zipfile.ZipFile(io.BytesIO(response.read())) as zfile:
                 addons_dir = os.path.dirname(var.ADDON_DIR)
                 extract_relpath = pathlib.Path(zfile.namelist()[0])
@@ -185,3 +204,13 @@ def update_init_check(use_force_check=False):
 
 def update_init_download():
     threading.Thread(target=_update_download).start()
+
+
+def init(addon_version=None, releases_url=None):
+    global ADDON_VERSION
+    global RELEASES_URL
+
+    ADDON_VERSION = addon_version
+    RELEASES_URL = releases_url
+
+    update_init_check()

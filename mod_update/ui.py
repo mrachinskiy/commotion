@@ -21,7 +21,6 @@
 
 from bpy.app.translations import pgettext_iface as _
 
-from .. import var
 from . import state, operators
 
 
@@ -40,7 +39,7 @@ def prefs_ui(self, layout):
 
     if state.status is state.COMPLETED:
         row.label(text="Update completed")
-        row.operator(operators.OP_IDNAME_WHATS_NEW)
+        row.operator(operators.WM_OT_update_whats_new.bl_idname)
 
         row = layout.row(align=True)
         row.alignment = "CENTER"
@@ -55,8 +54,8 @@ def prefs_ui(self, layout):
     elif state.status is state.ERROR:
         row.label(text=state.error_msg)
 
-    elif var.update_available:
-        row.label(text=_("Update {} is available").format(state.version_new))
+    elif state.update_available:
+        row.label(text=_("Update {} is available").format(state.update_version))
 
     else:
         if state.days_passed is None:
@@ -75,10 +74,10 @@ def prefs_ui(self, layout):
     col.scale_y = 1.5
     col.enabled = state.status is None or state.status is state.ERROR
 
-    if var.update_available:
-        col.operator(operators.OP_IDNAME_DOWNLOAD)
+    if state.update_available:
+        col.operator(operators.WM_OT_update_download.bl_idname)
     else:
-        col.operator(operators.OP_IDNAME_CHECK)
+        col.operator(operators.WM_OT_update_check.bl_idname)
 
 
 def sidebar_ui(self, context):
@@ -91,7 +90,7 @@ def sidebar_ui(self, context):
 
     if state.status is state.COMPLETED:
         row.label(text="Update completed")
-        row.operator(operators.OP_IDNAME_WHATS_NEW)
+        row.operator(operators.WM_OT_update_whats_new.bl_idname)
 
         row = layout.row(align=True)
         row.alignment = "CENTER"
@@ -104,10 +103,10 @@ def sidebar_ui(self, context):
         row.label(text=state.error_msg)
 
     else:
-        row.label(text=_("Update {} is available").format(state.version_new))
+        row.label(text=_("Update {} is available").format(state.update_version))
 
     col = layout.row()
     col.alignment = "CENTER"
     col.scale_y = 1.5
     col.enabled = state.status is None or state.status is state.ERROR
-    col.operator(operators.OP_IDNAME_DOWNLOAD)
+    col.operator(operators.WM_OT_update_download.bl_idname)

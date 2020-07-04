@@ -57,11 +57,11 @@ class OffsetMethods:
 
         self.offset_simple(obs)
 
-    def offset_from_multi(self, context):
-        obs = [[] for x in self.coll_effectors.objects]
-        effector_loc = [(i, x.matrix_world.translation) for i, x in enumerate(self.coll_effectors.objects)]
+    def offset_from_multi(self, coll_animated, coll_effectors):
+        obs = [[] for x in coll_effectors.objects]
+        effector_loc = [(i, x.matrix_world.translation) for i, x in enumerate(coll_effectors.objects)]
 
-        for ob in self.coll_animated.objects:
+        for ob in coll_animated.objects:
             ob_loc = ob.matrix_world.translation
             eff_to_ob_dist = []
 
@@ -87,13 +87,13 @@ class OffsetMethods:
                     offset += self.offset
                     i = 1
 
-    def offset_from_multi_proxy(self, context):
+    def offset_from_multi_proxy(self, context, coll_animated, coll_effectors):
         self.frame = 0
         scene = context.scene
         frame = scene.frame_start
         scene.frame_set(frame)
-        obs = [[i, ob, False] for i, ob in enumerate(self.coll_animated.objects)]
-        effectors = self.coll_effectors.objects
+        obs = [[i, ob, False] for i, ob in enumerate(coll_animated.objects)]
+        effectors = coll_effectors.objects
 
         while frame <= scene.frame_end:
 

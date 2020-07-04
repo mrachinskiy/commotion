@@ -92,6 +92,7 @@ classes = (
     ui.VIEW3D_PT_commotion_proxy_effector_sk,
     ui.VIEW3D_PT_commotion_proxy_effector_bake,
     op_offset.ANIM_OT_animation_offset,
+    op_offset.ANIM_OT_animation_offset_eyedropper,
     ops_shapekey.OBJECT_OT_sk_coll_refresh,
     ops_shapekey.OBJECT_OT_sk_interpolation_set,
     ops_shapekey.ANIM_OT_sk_generate_keyframes,

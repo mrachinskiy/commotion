@@ -90,17 +90,6 @@ class CommotionPreferences(AddonPreferences):
 
 
 class SceneProperties(PropertyGroup):
-    offset_id_type: EnumProperty(
-        name="Data",
-        description="Animation data type",
-        items=(
-            ("ALL", "All", ""),
-            ("OBJECT", "Object", ""),
-            ("OBJECT_DATA", "Object Data", ""),
-            ("SHAPE_KEYS", "Shape Keys", ""),
-            ("MATERIAL", "Material", ""),
-        ),
-    )
     offset_sort_method: EnumProperty(
         name="Sort By",
         description="Sort objects method",
@@ -138,6 +127,26 @@ class SceneProperties(PropertyGroup):
     offset_use_proxy: BoolProperty(
         name="Proxymity",
         description="Enable offset by proximity from effector (effector range controlled by object size)",
+    )
+    offset_use_ob: BoolProperty(
+        name="Object",
+        description="Affect object animation data",
+        default=True,
+    )
+    offset_use_data: BoolProperty(
+        name="Object Data",
+        description="Affect object data animation data",
+        default=True,
+    )
+    offset_use_sk: BoolProperty(
+        name="Shape Keys",
+        description="Affect shape keys animation data",
+        default=True,
+    )
+    offset_use_mat: BoolProperty(
+        name="Material",
+        description="Affect material animation data",
+        default=True,
     )
     offset_coll_animated: PointerProperty(
         name="Animated",

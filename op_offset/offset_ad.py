@@ -25,10 +25,12 @@ from .. import lib
 class AdOffset:
 
     def offset_simple(self, obs):
+        import operator
+
         offset = 0
         i = 1
 
-        for ob, _ in sorted(obs, key=lambda x: x[1], reverse=self.use_reverse):
+        for ob, _ in sorted(obs, key=operator.itemgetter(1), reverse=self.use_reverse):
 
             if self.ad_offset(ob, offset) is False:
                 continue

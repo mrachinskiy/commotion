@@ -58,6 +58,8 @@ class OffsetMethods:
         self.offset_simple(obs)
 
     def offset_from_multi(self, coll_animated, coll_effectors):
+        import operator
+
         obs = [[] for x in coll_effectors.objects]
         effector_loc = [(i, x.matrix_world.translation) for i, x in enumerate(coll_effectors.objects)]
 
@@ -69,14 +71,14 @@ class OffsetMethods:
                 distance = (loc - ob_loc).length
                 eff_to_ob_dist.append((i, distance))
 
-            _id, distance = sorted(eff_to_ob_dist, key=lambda x: x[1])[0]
+            _id, distance = sorted(eff_to_ob_dist, key=operator.itemgetter(1))[0]
             obs[_id].append((ob, distance))
 
         for ob_groups in obs:
             offset = 0
             i = 1
 
-            for ob, dis in sorted(ob_groups, key=lambda x: x[1], reverse=self.use_reverse):
+            for ob, dis in sorted(ob_groups, key=operator.itemgetter(1), reverse=self.use_reverse):
 
                 if self.ad_offset(ob, offset) is False:
                     continue

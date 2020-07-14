@@ -49,6 +49,8 @@ def lerp(a, b, factor):
 
 @persistent
 def proxy_handler(scene):
+    import operator
+
     props = scene.commotion
 
     use_loc = props.proxy_use_loc
@@ -105,7 +107,7 @@ def proxy_handler(scene):
             fac = distance / rad
             distance_fac.append((distance, rad, fac))
 
-        distance, radius, _ = min(distance_fac, key=lambda x: x[2])
+        distance, radius, _ = min(distance_fac, key=operator.itemgetter(2))
 
         if distance > radius:
             if use_trail:

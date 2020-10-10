@@ -115,9 +115,18 @@ class ANIM_OT_animation_offset(Operator):
                 return {"CANCELLED"}
 
             if self.use_proxy:
-                offset_methods.offset_from_multi_proxy(self, context, props.offset_coll_animated, props.offset_coll_effectors)
+                offset_methods.offset_from_multi_proxy(
+                    self,
+                    context,
+                    props.offset_coll_animated,
+                    props.offset_coll_effectors,
+                )
             else:
-                offset_methods.offset_from_multi(self, props.offset_coll_animated, props.offset_coll_effectors)
+                offset_methods.offset_from_multi(
+                    self,
+                    props.offset_coll_animated,
+                    props.offset_coll_effectors,
+                )
 
         return {"FINISHED"}
 

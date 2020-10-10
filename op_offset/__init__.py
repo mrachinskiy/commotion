@@ -27,13 +27,8 @@ from bpy.props import (
     EnumProperty,
 )
 
-from .. import lib
 
-from .offset_methods import OffsetMethods
-from .offset_ad import AdOffset
-
-
-class ANIM_OT_animation_offset(AdOffset, OffsetMethods, Operator):
+class ANIM_OT_animation_offset(Operator):
     bl_label = "Offset Animation"
     bl_description = "Offset animation"
     bl_idname = "anim.commotion_animation_offset"
@@ -104,12 +99,14 @@ class ANIM_OT_animation_offset(AdOffset, OffsetMethods, Operator):
             col.prop(self, "seed")
 
     def execute(self, context):
+        from . import offset_methods
+
         if self.sort_method == "CURSOR":
-            self.offset_from_cursor(context)
+            offset_methods.offset_from_cursor(self, context)
         elif self.sort_method == "NAME":
-            self.offset_from_name(context)
+            offset_methods.offset_from_name(self, context)
         elif self.sort_method == "RANDOM":
-            self.offset_from_random(context)
+            offset_methods.offset_from_random(self, context)
         else:
             props = context.scene.commotion
 
@@ -118,9 +115,9 @@ class ANIM_OT_animation_offset(AdOffset, OffsetMethods, Operator):
                 return {"CANCELLED"}
 
             if self.use_proxy:
-                self.offset_from_multi_proxy(context, props.offset_coll_animated, props.offset_coll_effectors)
+                offset_methods.offset_from_multi_proxy(self, context, props.offset_coll_animated, props.offset_coll_effectors)
             else:
-                self.offset_from_multi(props.offset_coll_animated, props.offset_coll_effectors)
+                offset_methods.offset_from_multi(self, props.offset_coll_animated, props.offset_coll_effectors)
 
         return {"FINISHED"}
 
@@ -172,6 +169,7 @@ class ANIM_OT_animation_offset_eyedropper(Operator):
 
     def execute(self, context):
         from collections import Counter
+        from .. import lib
 
         obs_frames = []
 

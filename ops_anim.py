@@ -22,8 +22,6 @@
 from bpy.types import Operator
 from bpy.props import EnumProperty
 
-from . import lib
-
 
 def anim_get(ob):
     action_ob = None
@@ -234,6 +232,8 @@ class ANIM_OT_animation_convert(Operator):
     )
 
     def execute(self, context):
+        from . import lib
+
         use_to_strips = self.ad_type == "STRIPS"
 
         for ob in context.selected_objects:

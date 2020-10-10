@@ -30,7 +30,51 @@ from bpy.props import (
     PointerProperty,
 )
 
-from . import proxy_effector, mod_update
+from . import mod_update
+
+
+# Proximity Effector utils
+# -----------------------------------
+
+
+def upd_proxy(self, context):
+    from . import proxy_effector
+    proxy_effector.handler_toggle(self, context)
+
+
+def upd_proxy_loc(self, context):
+    if not self.proxy_coll_animated or self.proxy_use_loc:
+        return
+
+    for ob in self.proxy_coll_animated.objects:
+        ob.delta_location = (0.0, 0.0, 0.0)
+
+
+def upd_proxy_rot(self, context):
+    if not self.proxy_coll_animated or self.proxy_use_rot:
+        return
+
+    for ob in self.proxy_coll_animated.objects:
+        ob.delta_rotation_euler = (0.0, 0.0, 0.0)
+
+
+def upd_proxy_sca(self, context):
+    if not self.proxy_coll_animated or self.proxy_use_sca:
+        return
+
+    for ob in self.proxy_coll_animated.objects:
+        ob.delta_scale = (1.0, 1.0, 1.0)
+
+
+def upd_proxy_sk(self, context):
+    if not self.proxy_coll_animated or self.proxy_use_sk:
+        return
+
+    for ob in self.proxy_coll_animated.objects:
+        try:
+            ob.data.shape_keys.eval_time = 0.0
+        except AttributeError:
+            continue
 
 
 # Custom properties
@@ -159,10 +203,10 @@ class SceneProperties(PropertyGroup):
         type=Collection,
     )
 
-    proxy_use_loc: BoolProperty(name="Location", update=proxy_effector.update_proxy_use_loc)
-    proxy_use_rot: BoolProperty(name="Rotation", update=proxy_effector.update_proxy_use_rot)
-    proxy_use_sca: BoolProperty(name="Scale", update=proxy_effector.update_proxy_use_sca)
-    proxy_use_sk: BoolProperty(name="Absolute Shape Keys", update=proxy_effector.update_proxy_use_sk)
+    proxy_use_loc: BoolProperty(name="Location", update=upd_proxy_loc)
+    proxy_use_rot: BoolProperty(name="Rotation", update=upd_proxy_rot)
+    proxy_use_sca: BoolProperty(name="Scale", update=upd_proxy_sca)
+    proxy_use_sk: BoolProperty(name="Absolute Shape Keys", update=upd_proxy_sk)
     proxy_use_trail: BoolProperty(
         name="Trail",
         description="Leave permanent trail after effector left the effective range",
@@ -252,5 +296,5 @@ class WmProperties(PropertyGroup):
             "Enable proxymity effector (effector range controlled by object size)"
             "\nWARNING: works only on animation playback"
         ),
-        update=proxy_effector.handler_toggle,
+        update=upd_proxy,
     )

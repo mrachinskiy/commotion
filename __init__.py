@@ -65,7 +65,6 @@ else:
 
     from . import (
         preferences,
-        proxy_effector,
         op_offset,
         ops_anim,
         ops_proxy,
@@ -130,6 +129,8 @@ def register():
 
 
 def unregister():
+    from . import proxy_effector
+
     for cls in classes:
         bpy.utils.unregister_class(cls)
 

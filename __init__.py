@@ -33,33 +33,32 @@ bl_info = {
 
 
 if "bpy" in locals():
+    import os
     from . import var
 
-    def walk(path, parent_dir=None):
+
+    def reload_recursive(path, mods):
         import importlib
-        import os
 
         for entry in os.scandir(path):
 
-            if entry.is_file() and entry.name.endswith(".py"):
+            if entry.is_file() and entry.name.endswith(".py") and not entry.name.startswith("__"):
                 filename, _ = os.path.splitext(entry.name)
-                is_init = filename == "__init__"
 
-                if parent_dir:
-                    module = parent_dir if is_init else f"{parent_dir}.{filename}"
-                else:
-                    if is_init:
-                        continue
-                    module = filename
-
-                importlib.reload(eval(module))
+                if filename in mods:
+                    importlib.reload(mods[filename])
 
             elif entry.is_dir() and not entry.name.startswith((".", "__")):
-                dirname = f"{parent_dir}.{entry.name}" if parent_dir else entry.name
-                walk(entry.path, parent_dir=dirname)
 
-    walk(var.ADDON_DIR)
+                if entry.name in mods:
+                    importlib.reload(mods[entry.name])
+                    reload_recursive(entry.path, mods[entry.name].__dict__)
+                    continue
 
+                reload_recursive(entry.path, mods)
+
+
+    reload_recursive(var.ADDON_DIR, locals())
 else:
     import bpy
     from bpy.props import PointerProperty

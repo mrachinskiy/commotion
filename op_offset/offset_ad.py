@@ -23,12 +23,10 @@ from .. import lib
 
 
 def offset_simple(self, obs):
-    import operator
-
     offset = 0
     i = 1
 
-    for ob, _ in sorted(obs, key=operator.itemgetter(1), reverse=self.use_reverse):
+    for ob in obs:
 
         if ad_offset(self, ob, offset) is False:
             continue

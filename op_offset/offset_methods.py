@@ -20,83 +20,62 @@
 
 
 import random
+import operator
 
 from ..lib import effector_radius
 from . import offset_ad
 
 
+def _flatten(iterable):
+    for x, _ in iterable:
+        yield x
+
+
 def offset_from_cursor(self, context):
-    obs = []
-    app = obs.append
-
-    for ob in context.selected_objects:
-        distance = (self.cursor - ob.matrix_world.translation).length
-        app((ob, distance))
-
-    offset_ad.offset_simple(self, obs)
+    obs = [(ob, (self.cursor - ob.matrix_world.translation).length) for ob in context.selected_objects]
+    obs.sort(key=operator.itemgetter(1), reverse=self.use_reverse)
+    offset_ad.offset_simple(self, _flatten(obs))
 
 
 def offset_from_name(self, context):
-    obs = []
-    app = obs.append
-
-    for ob in context.selected_objects:
-        app((ob, ob.name))
-
-    offset_ad.offset_simple(self, obs)
+    obs = [(ob, ob.name) for ob in context.selected_objects]
+    obs.sort(key=operator.itemgetter(1), reverse=self.use_reverse)
+    offset_ad.offset_simple(self, _flatten(obs))
 
 
 def offset_from_random(self, context):
-    selected = list(context.selected_objects)
-    obs = []
-    app = obs.append
+    obs = list(context.selected_objects)
+    random.Random(self.seed).shuffle(obs)
 
-    random.Random(self.seed).shuffle(selected)
-
-    for i, ob in enumerate(selected):
-        app((ob, i))
+    if self.use_reverse:
+        obs.reverse()
 
     offset_ad.offset_simple(self, obs)
 
 
 def offset_from_multi(self, coll_animated, coll_effectors):
-    import operator
-
-    obs = [[] for x in coll_effectors.objects]
-    effector_loc = [(i, x.matrix_world.translation) for i, x in enumerate(coll_effectors.objects)]
+    obs = [[] for _ in coll_effectors.objects]
+    effector_loc = [(i, ob.matrix_world.translation) for i, ob in enumerate(coll_effectors.objects)]
 
     for ob in coll_animated.objects:
         ob_loc = ob.matrix_world.translation
-        eff_to_ob_dist = []
+        eff_to_ob_dist = [(i, (loc - ob_loc).length) for i, loc in effector_loc]
+        eff_to_ob_dist.sort(key=operator.itemgetter(1))
 
-        for i, loc in effector_loc:
-            distance = (loc - ob_loc).length
-            eff_to_ob_dist.append((i, distance))
-
-        _id, distance = sorted(eff_to_ob_dist, key=operator.itemgetter(1))[0]
-        obs[_id].append((ob, distance))
+        i, distance = eff_to_ob_dist[0]
+        obs[i].append((ob, distance))
 
     for ob_groups in obs:
-        offset = 0
-        i = 1
-
-        for ob, _ in sorted(ob_groups, key=operator.itemgetter(1), reverse=self.use_reverse):
-
-            if offset_ad.ad_offset(self, ob, offset) is False:
-                continue
-
-            if i < self.threshold:
-                i += 1
-            else:
-                offset += self.offset
-                i = 1
+        ob_groups.sort(key=operator.itemgetter(1), reverse=self.use_reverse)
+        offset_ad.offset_simple(self, _flatten(ob_groups))
 
 
 def offset_from_multi_proxy(self, context, coll_animated, coll_effectors):
-    self.frame = 0
     scene = context.scene
     frame = scene.frame_start
     scene.frame_set(frame)
+    self.frame = 0
+
     obs = [[i, ob, False] for i, ob in enumerate(coll_animated.objects)]
     effectors = coll_effectors.objects
 

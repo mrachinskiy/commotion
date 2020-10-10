@@ -109,24 +109,17 @@ class ANIM_OT_animation_offset(Operator):
             offset_methods.offset_from_random(self, context)
         else:
             props = context.scene.commotion
+            coll_anim = props.offset_coll_animated
+            coll_effct = props.offset_coll_effectors
 
-            if not props.offset_coll_animated or not props.offset_coll_effectors:
+            if not coll_anim or not coll_effct:
                 self.report({"ERROR"}, "Animated or Effectors collections are not specified")
                 return {"CANCELLED"}
 
             if self.use_proxy:
-                offset_methods.offset_from_multi_proxy(
-                    self,
-                    context,
-                    props.offset_coll_animated,
-                    props.offset_coll_effectors,
-                )
+                offset_methods.offset_from_multi_proxy(self, context, coll_anim, coll_effct)
             else:
-                offset_methods.offset_from_multi(
-                    self,
-                    props.offset_coll_animated,
-                    props.offset_coll_effectors,
-                )
+                offset_methods.offset_from_multi(self, coll_anim, coll_effct)
 
         return {"FINISHED"}
 

@@ -79,6 +79,7 @@ classes = (
     preferences.CommotionPreferences,
     preferences.SceneProperties,
     preferences.WmProperties,
+    ui.VIEW3D_MT_commotion,
     ui.VIEW3D_PT_commotion_update,
     ui.VIEW3D_PT_commotion_animation_offset,
     ui.VIEW3D_PT_commotion_animation_utils,
@@ -122,6 +123,14 @@ def register():
     bpy.types.Scene.commotion = PointerProperty(type=preferences.SceneProperties)
     bpy.types.WindowManager.commotion = PointerProperty(type=preferences.WmProperties)
 
+    # Menu
+    # ---------------------------
+
+    bpy.types.VIEW3D_MT_object.append(ui.draw_commotion_menu)
+
+    # mod_update
+    # ---------------------------
+
     mod_update.init(
         addon_version=bl_info["version"],
         releases_url="https://api.github.com/repos/mrachinskiy/commotion/releases",
@@ -136,6 +145,15 @@ def unregister():
 
     del bpy.types.Scene.commotion
     del bpy.types.WindowManager.commotion
+
+    # Menu
+    # ---------------------------
+
+    bpy.types.VIEW3D_MT_object.remove(ui.draw_commotion_menu)
+
+    # Handlers
+    # ---------------------------
+
     proxy_effector.handler_del()
 
 

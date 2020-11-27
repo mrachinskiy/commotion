@@ -106,9 +106,7 @@ class AdCopy:
             obs.remove(ob_active)
 
         Anim = anim_get(ob_active)
-
-        is_action_mat = bool(Anim.action_mat) or bool(Anim.action_node)
-        is_nla_tracks_mat = bool(Anim.nla_tracks_mat) or bool(Anim.nla_tracks_node)
+        is_anim_mat = bool(Anim.action_mat or Anim.action_node or Anim.nla_tracks_mat or Anim.nla_tracks_node)
 
         for ob in obs:
 
@@ -131,7 +129,7 @@ class AdCopy:
                 except AttributeError:
                     pass
 
-            if (is_action_mat or is_nla_tracks_mat) and ob.material_slots:
+            if is_anim_mat and ob.material_slots:
                 for i, slot in enumerate(ob.material_slots):
 
                     if i in Anim.action_mat:

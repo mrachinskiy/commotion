@@ -61,15 +61,8 @@ class SidebarSetup:
     bl_context = "objectmode"
 
 
-class VIEW3D_PT_commotion_update(SidebarSetup, Panel):
+class VIEW3D_PT_commotion_update(mod_update.SidebarPanel, SidebarSetup, Panel):
     bl_label = "Update"
-
-    @classmethod
-    def poll(cls, context):
-        return mod_update.state.update_available
-
-    def draw(self, context):
-        mod_update.sidebar_ui(self, context)
 
 
 class VIEW3D_PT_commotion_shape_keys(SidebarSetup, Panel):

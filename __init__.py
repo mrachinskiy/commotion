@@ -103,9 +103,7 @@ classes = (
     ops_anim.ANIM_OT_animation_convert,
     ops_proxy.ANIM_OT_bake,
     ops_proxy.ANIM_OT_bake_remove,
-    mod_update.WM_OT_update_check,
-    mod_update.WM_OT_update_download,
-    mod_update.WM_OT_update_whats_new,
+    *mod_update.ops,
 )
 
 
@@ -136,7 +134,7 @@ def register():
 
     mod_update.init(
         addon_version=bl_info["version"],
-        releases_url="https://api.github.com/repos/mrachinskiy/commotion/releases",
+        repo_url="mrachinskiy/commotion",
     )
 
 

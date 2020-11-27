@@ -89,28 +89,8 @@ class CommotionShapeKeyCollection(PropertyGroup):
 # -----------------------------------
 
 
-class CommotionPreferences(AddonPreferences):
+class CommotionPreferences(mod_update.Preferences, AddonPreferences):
     bl_idname = __package__
-
-    update_use_auto_check: BoolProperty(
-        name="Automatically check for updates",
-        description="Automatically check for updates with specified interval",
-        default=True,
-    )
-    update_interval: EnumProperty(
-        name="Auto-check interval",
-        description="Auto-check interval",
-        items=(
-            ("1", "Once a day", ""),
-            ("7", "Once a week", ""),
-            ("30", "Once a month", ""),
-        ),
-        default="7",
-    )
-    update_use_prerelease: BoolProperty(
-        name="Update to pre-release",
-        description="Update add-on to pre-release version if available",
-    )
 
     def draw(self, context):
         props_wm = context.window_manager.commotion

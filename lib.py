@@ -19,11 +19,16 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
-def ad_check(ad):
+from typing import List
+
+from bpy.types import AnimData, Object
+
+
+def ad_check(ad: AnimData) -> bool:
     return ad and (ad.action or ad.nla_tracks)
 
 
-def ad_get(ob, use_ob=True, use_data=True, use_sk=True, use_mat=True):
+def ad_get(ob: Object, use_ob=True, use_data=True, use_sk=True, use_mat=True) -> List[AnimData]:
     ads = []
 
     if use_ob and ad_check(ob.animation_data):
@@ -52,8 +57,8 @@ def ad_get(ob, use_ob=True, use_data=True, use_sk=True, use_mat=True):
     return ads
 
 
-def effector_radius(ob):
+def effector_radius(ob: Object) -> float:
     if ob.type == "EMPTY":
-        return ob.empty_display_size * ob.matrix_world.to_scale()[0]
+        return ob.empty_display_size * ob.matrix_world.to_scale().x
 
-    return ob.dimensions[0] / 2
+    return ob.dimensions.x / 2

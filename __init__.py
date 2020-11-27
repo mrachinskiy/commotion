@@ -34,10 +34,13 @@ bl_info = {
 
 if "bpy" in locals():
     import os
+    from typing import Dict
+    from types import ModuleType
+
     from . import var
 
 
-    def reload_recursive(path, mods):
+    def reload_recursive(path: str, mods: Dict[str, ModuleType]) -> None:
         import importlib
 
         for entry in os.scandir(path):

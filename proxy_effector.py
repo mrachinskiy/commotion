@@ -19,6 +19,8 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
+from typing import Union
+
 import bpy
 from bpy.app.handlers import persistent
 from mathutils import Vector
@@ -43,7 +45,7 @@ def handler_toggle(self, context):
         handler_del()
 
 
-def lerp(a, b, factor):
+def lerp(a: Union[Vector, float], b: Union[Vector, float], factor: float) -> Union[Vector, float]:
     return a + factor * (b - a)
 
 

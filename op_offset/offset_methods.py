@@ -21,6 +21,9 @@
 
 import random
 import operator
+from typing import Iterable
+
+from bpy.types import Collection
 
 from ..lib import effector_radius
 from . import offset_ad
@@ -53,7 +56,7 @@ def offset_from_random(self, context):
     offset_ad.offset_simple(self, obs)
 
 
-def offset_from_multi(self, coll_animated, coll_effectors):
+def offset_from_multi(self, coll_animated: Collection, coll_effectors: Collection) -> None:
     obs = [[] for _ in coll_effectors.objects]
     effector_loc = [(i, ob.matrix_world.translation) for i, ob in enumerate(coll_effectors.objects)]
 
@@ -70,7 +73,7 @@ def offset_from_multi(self, coll_animated, coll_effectors):
         offset_ad.offset_simple(self, _flatten(ob_groups))
 
 
-def offset_from_multi_proxy(self, context, coll_animated, coll_effectors):
+def offset_from_multi_proxy(self, context, coll_animated: Collection, coll_effectors: Collection) -> None:
     scene = context.scene
     frame = scene.frame_start
     scene.frame_set(frame)

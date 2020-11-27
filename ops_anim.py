@@ -19,39 +19,63 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
-from bpy.types import Operator
+from typing import Sequence, Dict, Optional
+
+from bpy.types import Operator, Object, Action, NlaTrack
 from bpy.props import EnumProperty
 
 
-def anim_get(ob):
-    action_ob = None
-    action_data = None
-    action_sk = None
-    action_mat = {}
-    action_node = {}
+ActionMaterials = Dict[int, Action]
+NlaTracks = Sequence[NlaTrack]
+NlaTracksMaterials = Dict[int, NlaTracks]
 
-    nla_tracks_ob = None
-    nla_tracks_data = None
-    nla_tracks_sk = None
-    nla_tracks_mat = {}
-    nla_tracks_node = {}
+
+class Animation:
+    __slots__ = (
+        "action_ob",
+        "action_data",
+        "action_sk",
+        "action_mat",
+        "action_node",
+        "nla_tracks_ob",
+        "nla_tracks_data",
+        "nla_tracks_sk",
+        "nla_tracks_mat",
+        "nla_tracks_node",
+    )
+
+    def __init__(self) -> None:
+        self.action_ob: Optional[Action] = None
+        self.action_data: Optional[Action] = None
+        self.action_sk: Optional[Action] = None
+        self.action_mat: ActionMaterials = {}
+        self.action_node: ActionMaterials = {}
+        self.nla_tracks_ob: Optional[NlaTracks] = None
+        self.nla_tracks_data: Optional[NlaTracks] = None
+        self.nla_tracks_sk: Optional[NlaTracks] = None
+        self.nla_tracks_mat: NlaTracksMaterials = {}
+        self.nla_tracks_node: NlaTracksMaterials = {}
+
+
+def anim_get(ob: Object) -> Animation:
+    Anim = Animation()
 
     ad = ob.animation_data
     if ad:
-        action_ob = ob.animation_data.action
-        nla_tracks_ob = ob.animation_data.nla_tracks
+        Anim.action_ob = ob.animation_data.action
+        Anim.nla_tracks_ob = ob.animation_data.nla_tracks
 
     if ob.data:
         ad = ob.data.animation_data
         if ad:
-            action_data = ad.action
-            nla_tracks_data = ad.nla_tracks
+            Anim.action_data = ad.action
+            Anim.nla_tracks_data = ad.nla_tracks
 
         try:
             ad = ob.data.shape_keys.animation_data
             if ad:
-                action_sk = ad.action
-                nla_tracks_sk = ad.nla_tracks
+                Anim.action_sk = ad.action
+                Anim.nla_tracks_sk = ad.nla_tracks
         except AttributeError:
             pass
 
@@ -60,27 +84,16 @@ def anim_get(ob):
 
             ad = slot.material.animation_data
             if ad:
-                action_mat[i] = ad.action
-                nla_tracks_mat[i] = ad.nla_tracks
+                Anim.action_mat[i] = ad.action
+                Anim.nla_tracks_mat[i] = ad.nla_tracks
 
             if slot.material.node_tree:
                 ad = slot.material.node_tree.animation_data
                 if ad:
-                    action_node[i] = ad.action
-                    nla_tracks_node[i] = ad.nla_tracks
+                    Anim.action_node[i] = ad.action
+                    Anim.nla_tracks_node[i] = ad.nla_tracks
 
-    return (
-        action_ob,
-        action_data,
-        action_sk,
-        action_mat,
-        action_node,
-        nla_tracks_ob,
-        nla_tracks_data,
-        nla_tracks_sk,
-        nla_tracks_mat,
-        nla_tracks_node,
-    )
+    return Anim
 
 
 class AdCopy:
@@ -92,73 +105,59 @@ class AdCopy:
         if ob_active.select_get():
             obs.remove(ob_active)
 
-        (action_ob,
-         action_data,
-         action_sk,
-         action_mat,
-         action_node,
-         nla_tracks_ob,
-         nla_tracks_data,
-         nla_tracks_sk,
-         nla_tracks_mat,
-         nla_tracks_node) = anim_get(ob_active)
+        Anim = anim_get(ob_active)
 
-        is_action_mat = bool(action_mat) or bool(action_node)
-        is_nla_tracks_mat = bool(nla_tracks_mat) or bool(nla_tracks_node)
+        is_action_mat = bool(Anim.action_mat) or bool(Anim.action_node)
+        is_nla_tracks_mat = bool(Anim.nla_tracks_mat) or bool(Anim.nla_tracks_node)
 
         for ob in obs:
 
-            act_data = []
-            nla_data = []
-
-            if action_ob:
-                act_data.append((action_ob, ob))
-
-            if nla_tracks_ob:
-                nla_data.append((nla_tracks_ob, ob))
+            if Anim.action_ob:
+                self.action_copy(ob, Anim.action_ob)
+            if Anim.nla_tracks_ob:
+                self.nla_copy(ob, Anim.nla_tracks_ob)
 
             if ob.data:
-                if action_data:
-                    act_data.append((action_data, ob.data))
-                if nla_tracks_data:
-                    nla_data.append((nla_tracks_data, ob.data))
+                if Anim.action_data:
+                    self.action_copy(ob.data, Anim.action_data)
+                if Anim.nla_tracks_data:
+                    self.nla_copy(ob.data, Anim.nla_tracks_data)
 
                 try:
-                    if action_sk:
-                        act_data.append((action_sk, ob.data.shape_keys))
-                    if nla_tracks_sk:
-                        nla_data.append((nla_tracks_sk, ob.data.shape_keys))
+                    if Anim.action_sk:
+                        self.action_copy(ob.data.shape_keys, Anim.action_sk)
+                    if Anim.nla_tracks_sk:
+                        self.nla_copy(ob.data.shape_keys, Anim.nla_tracks_sk)
                 except AttributeError:
                     pass
 
             if (is_action_mat or is_nla_tracks_mat) and ob.material_slots:
                 for i, slot in enumerate(ob.material_slots):
 
-                    if i in action_mat:
-                        act_data.append((action_mat[i], slot.material))
-                    if i in nla_tracks_mat:
-                        nla_data.append((nla_tracks_mat[i], slot.material))
+                    if i in Anim.action_mat:
+                        self.action_copy(slot.material, Anim.action_mat[i])
+                    if i in Anim.nla_tracks_mat:
+                        self.nla_copy(slot.material, Anim.nla_tracks_mat[i])
 
-                    if i in action_node:
-                        act_data.append((action_node[i], slot.material.node_tree))
-                    if i in nla_tracks_node:
-                        nla_data.append((nla_tracks_node[i], slot.material.node_tree))
-
-            if act_data:
-                for action, data in act_data:
-                    if not data.animation_data:
-                        data.animation_data_create()
-                    data.animation_data.action = action if self.use_link else action.copy()
-
-            if nla_data:
-                for nla_tracks, data in nla_data:
-                    if not data.animation_data:
-                        data.animation_data_create()
-                    self.nla_copy(data.animation_data.nla_tracks, nla_tracks)
+                    if i in Anim.action_node:
+                        self.action_copy(slot.material.node_tree, Anim.action_node[i])
+                    if i in Anim.nla_tracks_node:
+                        self.nla_copy(slot.material.node_tree, Anim.nla_tracks_node[i])
 
         return {"FINISHED"}
 
-    def nla_copy(self, ob_nla_tracks, nla_tracks):
+    def action_copy(self, data, action: Action) -> None:
+        if not data.animation_data:
+            data.animation_data_create()
+
+        data.animation_data.action = action if self.use_link else action.copy()
+
+    def nla_copy(self, data, nla_tracks: NlaTracks) -> None:
+        if not data.animation_data:
+            data.animation_data_create()
+
+        ob_nla_tracks = data.animation_data.nla_tracks
+
         if ob_nla_tracks:
             for track in ob_nla_tracks:
                 ob_nla_tracks.remove(track)

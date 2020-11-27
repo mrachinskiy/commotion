@@ -19,10 +19,14 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
+from typing import Iterable
+
+from bpy.types import Object
+
 from .. import lib
 
 
-def offset_simple(self, obs):
+def offset_simple(self, obs: Iterable[Object]) -> None:
     offset = 0
     i = 1
 
@@ -38,7 +42,7 @@ def offset_simple(self, obs):
             i = 1
 
 
-def ad_offset(self, ob, offset):
+def ad_offset(self, ob: Object, offset: float) -> bool:
     ads = lib.ad_get(ob, self.use_ob, self.use_data, self.use_sk, self.use_mat)
 
     if not ads:

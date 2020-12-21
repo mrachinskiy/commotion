@@ -21,32 +21,32 @@
 
 import random
 import operator
-from typing import Iterable
+from typing import Iterable, Any, Tuple, Iterator
 
-from bpy.types import Collection
+from bpy.types import Collection, Object
 
 from ..lib import effector_radius
 from . import offset_ad
 
 
-def _flatten(iterable):
-    for x, _ in iterable:
-        yield x
+def _flatten(obs: Iterable[Tuple[Object, Any]]) -> Iterator[Object]:
+    for ob, _ in obs:
+        yield ob
 
 
-def offset_from_cursor(self, context):
+def offset_from_cursor(self, context) -> None:
     obs = [(ob, (self.cursor - ob.matrix_world.translation).length) for ob in context.selected_objects]
     obs.sort(key=operator.itemgetter(1), reverse=self.use_reverse)
     offset_ad.offset_simple(self, _flatten(obs))
 
 
-def offset_from_name(self, context):
+def offset_from_name(self, context) -> None:
     obs = [(ob, ob.name) for ob in context.selected_objects]
     obs.sort(key=operator.itemgetter(1), reverse=self.use_reverse)
     offset_ad.offset_simple(self, _flatten(obs))
 
 
-def offset_from_random(self, context):
+def offset_from_random(self, context) -> None:
     obs = list(context.selected_objects)
     random.Random(self.seed).shuffle(obs)
 

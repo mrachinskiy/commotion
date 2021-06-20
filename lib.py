@@ -49,10 +49,11 @@ def ad_get(ob: Object, use_ob=True, use_data=True, use_sk=True, use_mat=True) ->
 
     if use_mat and ob.material_slots:
         for slot in ob.material_slots:
-            if ad_check(slot.material.animation_data):
-                ads.append(slot.material.animation_data)
-            if slot.material.node_tree and ad_check(slot.material.node_tree.animation_data):
-                ads.append(slot.material.node_tree.animation_data)
+            if slot.material is not None:
+                if ad_check(slot.material.animation_data):
+                    ads.append(slot.material.animation_data)
+                if slot.material.node_tree and ad_check(slot.material.node_tree.animation_data):
+                    ads.append(slot.material.node_tree.animation_data)
 
     return ads
 

@@ -33,32 +33,28 @@ bl_info = {
 
 
 if "bpy" in locals():
-    import os
-    from typing import Dict
     from types import ModuleType
+    from pathlib import Path
 
     from . import var
 
 
-    def reload_recursive(path: str, mods: Dict[str, ModuleType]) -> None:
+    def reload_recursive(path: Path, mods: dict[str, ModuleType]) -> None:
         import importlib
 
-        for entry in os.scandir(path):
+        for child in path.iterdir():
 
-            if entry.is_file() and entry.name.endswith(".py") and not entry.name.startswith("__"):
-                filename, _ = os.path.splitext(entry.name)
+            if child.is_file() and child.suffix == ".py" and not child.name.startswith("__") and child.stem in mods:
+                importlib.reload(mods[child.stem])
 
-                if filename in mods:
-                    importlib.reload(mods[filename])
+            elif child.is_dir() and not child.name.startswith((".", "__")):
 
-            elif entry.is_dir() and not entry.name.startswith((".", "__")):
-
-                if entry.name in mods:
-                    importlib.reload(mods[entry.name])
-                    reload_recursive(entry.path, mods[entry.name].__dict__)
+                if child.name in mods:
+                    reload_recursive(child, mods[child.name].__dict__)
+                    importlib.reload(mods[child.name])
                     continue
 
-                reload_recursive(entry.path, mods)
+                reload_recursive(child, mods)
 
 
     reload_recursive(var.ADDON_DIR, locals())

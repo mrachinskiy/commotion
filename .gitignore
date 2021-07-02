@@ -1,7 +1,10 @@
+# Release files
+mod_update/
+.config/
+
 # IDE
 .idea/
 .vscode/
-.config/
 
 # Python byte-compiled
 __pycache__/

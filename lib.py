@@ -19,8 +19,6 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
-from typing import List
-
 from bpy.types import AnimData, Object
 
 
@@ -28,7 +26,7 @@ def ad_check(ad: AnimData) -> bool:
     return ad and (ad.action or ad.nla_tracks)
 
 
-def ad_get(ob: Object, use_ob=True, use_data=True, use_sk=True, use_mat=True) -> List[AnimData]:
+def ad_get(ob: Object, use_ob=True, use_data=True, use_sk=True, use_mat=True) -> list[AnimData]:
     ads = []
 
     if use_ob and ad_check(ob.animation_data):

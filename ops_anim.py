@@ -19,15 +19,14 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
-from typing import Sequence, Dict, Optional
+from typing import Optional
+from collections.abc import Sequence
 
 from bpy.types import Operator, Object, Action, NlaTrack
 from bpy.props import EnumProperty
 
 
-ActionMaterials = Dict[int, Action]
 NlaTracks = Sequence[NlaTrack]
-NlaTracksMaterials = Dict[int, NlaTracks]
 
 
 class Animation:
@@ -48,13 +47,13 @@ class Animation:
         self.action_ob: Optional[Action] = None
         self.action_data: Optional[Action] = None
         self.action_sk: Optional[Action] = None
-        self.action_mat: ActionMaterials = {}
-        self.action_node: ActionMaterials = {}
+        self.action_mat: dict[int, Action] = {}
+        self.action_node: dict[int, Action] = {}
         self.nla_tracks_ob: Optional[NlaTracks] = None
         self.nla_tracks_data: Optional[NlaTracks] = None
         self.nla_tracks_sk: Optional[NlaTracks] = None
-        self.nla_tracks_mat: NlaTracksMaterials = {}
-        self.nla_tracks_node: NlaTracksMaterials = {}
+        self.nla_tracks_mat: dict[int, NlaTracks] = {}
+        self.nla_tracks_node: dict[int, NlaTracks] = {}
 
 
 def anim_get(ob: Object) -> Animation:

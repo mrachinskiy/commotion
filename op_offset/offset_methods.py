@@ -21,7 +21,7 @@
 
 import random
 import operator
-from typing import Iterable, Any, Tuple, Iterator
+from typing import Any, Iterator
 
 from bpy.types import Collection, Object
 
@@ -29,7 +29,7 @@ from ..lib import effector_radius
 from . import offset_ad
 
 
-def _flatten(obs: Iterable[Tuple[Object, Any]]) -> Iterator[Object]:
+def _flatten(obs: list[tuple[Object, Any]]) -> Iterator[Object]:
     for ob, _ in obs:
         yield ob
 

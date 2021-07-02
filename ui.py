@@ -61,7 +61,7 @@ class SidebarSetup:
     bl_context = "objectmode"
 
 
-class VIEW3D_PT_commotion_update(mod_update.SidebarPanel, SidebarSetup, Panel):
+class VIEW3D_PT_commotion_update(mod_update.Sidebar, SidebarSetup, Panel):
     bl_label = "Update"
 
 

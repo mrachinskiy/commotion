@@ -19,7 +19,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
-from typing import Iterable
+from collections.abc import Iterable
 
 from bpy.types import Object
 

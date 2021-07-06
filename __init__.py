@@ -33,43 +33,24 @@ bl_info = {
 
 
 if "bpy" in locals():
-    from types import ModuleType
-    from pathlib import Path
-
-    from . import var
-
-
-    def reload_recursive(path: Path, mods: dict[str, ModuleType]) -> None:
-        import importlib
-
-        for child in path.iterdir():
-
-            if child.is_file() and child.suffix == ".py" and not child.name.startswith("__") and child.stem in mods:
-                importlib.reload(mods[child.stem])
-
-            elif child.is_dir() and not child.name.startswith((".", "__")):
-
-                if child.name in mods:
-                    reload_recursive(child, mods[child.name].__dict__)
-                    importlib.reload(mods[child.name])
-                    continue
-
-                reload_recursive(child, mods)
-
-
-    reload_recursive(var.ADDON_DIR, locals())
+    mod_essentials.reload_recursive(var.ADDON_DIR, locals())
 else:
     import bpy
     from bpy.props import PointerProperty
 
+    from . import mod_essentials, var
+
+    mod_essentials.check_path(var.ADDON_DIR / "mod_update")
+    mod_essentials.check_ver(bl_info)
+
     from . import (
-        preferences,
+        mod_update,
         op_offset,
         ops_anim,
         ops_proxy,
         ops_shapekey,
+        preferences,
         ui,
-        mod_update,
     )
 
 
@@ -104,16 +85,6 @@ classes = (
 
 
 def register():
-    if bl_info["blender"] > bpy.app.version:
-        addon_name = bl_info["name"].upper()
-        addon_ver = ".".join(str(x) for x in bl_info["version"])
-        blender_ver = ".".join(str(x) for x in bl_info["blender"][:2])
-        requirements_check = RuntimeError(
-            f"\n!!! BLENDER {blender_ver} IS REQUIRED FOR {addon_name} {addon_ver} !!!"
-            "\n!!! READ INSTALLATION GUIDE !!!"
-        )
-        raise requirements_check
-
     for cls in classes:
         bpy.utils.register_class(cls)
 

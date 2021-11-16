@@ -23,6 +23,7 @@ import random
 import operator
 from typing import Any, Iterator
 
+import bpy
 from bpy.types import Collection, Object
 
 from ..lib import effector_radius
@@ -34,20 +35,20 @@ def _flatten(obs: list[tuple[Object, Any]]) -> Iterator[Object]:
         yield ob
 
 
-def offset_from_cursor(self, context) -> None:
-    obs = [(ob, (self.cursor - ob.matrix_world.translation).length) for ob in context.selected_objects]
+def offset_from_cursor(self) -> None:
+    obs = [(ob, (self.cursor - ob.matrix_world.translation).length) for ob in bpy.context.selected_objects]
     obs.sort(key=operator.itemgetter(1), reverse=self.use_reverse)
     offset_ad.offset_simple(self, _flatten(obs))
 
 
-def offset_from_name(self, context) -> None:
-    obs = [(ob, ob.name) for ob in context.selected_objects]
+def offset_from_name(self) -> None:
+    obs = [(ob, ob.name) for ob in bpy.context.selected_objects]
     obs.sort(key=operator.itemgetter(1), reverse=self.use_reverse)
     offset_ad.offset_simple(self, _flatten(obs))
 
 
-def offset_from_random(self, context) -> None:
-    obs = list(context.selected_objects)
+def offset_from_random(self) -> None:
+    obs = list(bpy.context.selected_objects)
     random.Random(self.seed).shuffle(obs)
 
     if self.use_reverse:
@@ -73,8 +74,8 @@ def offset_from_multi(self, coll_animated: Collection, coll_effectors: Collectio
         offset_ad.offset_simple(self, _flatten(ob_groups))
 
 
-def offset_from_multi_proxy(self, context, coll_animated: Collection, coll_effectors: Collection) -> None:
-    scene = context.scene
+def offset_from_multi_proxy(self, coll_animated: Collection, coll_effectors: Collection) -> None:
+    scene = bpy.context.scene
     frame = scene.frame_start
     scene.frame_set(frame)
     self.frame = 0

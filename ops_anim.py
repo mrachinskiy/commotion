@@ -29,7 +29,7 @@ from bpy.props import EnumProperty
 NlaTracks = Sequence[NlaTrack]
 
 
-class Animation:
+class _Animation:
     __slots__ = (
         "action_ob",
         "action_data",
@@ -56,8 +56,8 @@ class Animation:
         self.nla_tracks_node: dict[int, NlaTracks] = {}
 
 
-def anim_get(ob: Object) -> Animation:
-    Anim = Animation()
+def _anim_get(ob: Object) -> _Animation:
+    Anim = _Animation()
 
     ad = ob.animation_data
     if ad:
@@ -95,7 +95,7 @@ def anim_get(ob: Object) -> Animation:
     return Anim
 
 
-class AdCopy:
+class _AdCopy:
 
     def execute(self, context):
         ob_active = context.object
@@ -104,7 +104,7 @@ class AdCopy:
         if ob_active.select_get():
             obs.remove(ob_active)
 
-        Anim = anim_get(ob_active)
+        Anim = _anim_get(ob_active)
         is_anim_mat = bool(Anim.action_mat or Anim.action_node or Anim.nla_tracks_mat or Anim.nla_tracks_node)
 
         for ob in obs:
@@ -194,7 +194,7 @@ class AdCopy:
                 strip_new.strip_time = strip.strip_time
 
 
-class ANIM_OT_animation_copy(AdCopy, Operator):
+class ANIM_OT_animation_copy(_AdCopy, Operator):
     bl_label = "Copy Animation"
     bl_description = "Copy animation from active to selected objects (can also use this to unlink animation)"
     bl_idname = "anim.commotion_animation_copy"
@@ -203,7 +203,7 @@ class ANIM_OT_animation_copy(AdCopy, Operator):
     use_link = False
 
 
-class ANIM_OT_animation_link(AdCopy, Operator):
+class ANIM_OT_animation_link(_AdCopy, Operator):
     bl_label = "Link Animation"
     bl_description = "Link animation from active to selected objects"
     bl_idname = "anim.commotion_animation_link"

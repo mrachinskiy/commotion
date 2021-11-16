@@ -45,7 +45,7 @@ def handler_toggle(self, context):
         handler_del()
 
 
-def lerp(a: Union[Vector, float], b: Union[Vector, float], factor: float) -> Union[Vector, float]:
+def _lerp(a: Union[Vector, float], b: Union[Vector, float], factor: float) -> Union[Vector, float]:
     return a + factor * (b - a)
 
 
@@ -114,10 +114,10 @@ def proxy_handler(scene):
         if distance > radius:
             if use_trail:
                 if use_fade:
-                    if use_loc: ob.delta_location = ob.delta_location.lerp(start_loc, fade_factor)
+                    if use_loc: ob.delta_location = ob.delta_location._lerp(start_loc, fade_factor)
                     if use_rot: ob.delta_rotation_euler = ob.delta_rotation_euler.to_quaternion().slerp(start_rot.to_quaternion(), fade_factor).to_euler()
-                    if use_sca: ob.delta_scale = ob.delta_scale.lerp(start_sca, fade_factor)
-                    if use_sk: ob_sk.eval_time = lerp(ob_sk.eval_time, start_sk, fade_factor)
+                    if use_sca: ob.delta_scale = ob.delta_scale._lerp(start_sca, fade_factor)
+                    if use_sk: ob_sk.eval_time = _lerp(ob_sk.eval_time, start_sk, fade_factor)
             else:
                 if use_loc: ob.delta_location = start_loc
                 if use_rot: ob.delta_rotation_euler = start_rot
@@ -131,15 +131,15 @@ def proxy_handler(scene):
         else:
             factor = 0
 
-        if use_loc: vec_loc = final_loc.lerp(start_loc, factor)
+        if use_loc: vec_loc = final_loc._lerp(start_loc, factor)
         if use_rot: vec_rot = final_rot.to_quaternion().slerp(start_rot.to_quaternion(), factor).to_euler()
-        if use_sca: vec_sca = final_sca.lerp(start_sca, factor)
-        if use_sk: val_sk = lerp(final_sk, start_sk, factor)
+        if use_sca: vec_sca = final_sca._lerp(start_sca, factor)
+        if use_sk: val_sk = _lerp(final_sk, start_sk, factor)
 
         if use_trail:
             if use_loc:
                 if use_fade:
-                    ob.delta_location = ob.delta_location.lerp(start_loc, fade_factor)
+                    ob.delta_location = ob.delta_location._lerp(start_loc, fade_factor)
                 if is_neg_loc:
                     if vec_loc < ob.delta_location: ob.delta_location = vec_loc
                 else:
@@ -153,14 +153,14 @@ def proxy_handler(scene):
                     if Vector(vec_rot) > Vector(ob.delta_rotation_euler): ob.delta_rotation_euler = vec_rot
             if use_sca:
                 if use_fade:
-                    ob.delta_scale = ob.delta_scale.lerp(start_sca, fade_factor)
+                    ob.delta_scale = ob.delta_scale._lerp(start_sca, fade_factor)
                 if is_neg_sca:
                     if vec_sca < ob.delta_scale: ob.delta_scale = vec_sca
                 else:
                     if vec_sca > ob.delta_scale: ob.delta_scale = vec_sca
             if use_sk:
                 if use_fade:
-                    ob_sk.eval_time = lerp(ob_sk.eval_time, start_sk, fade_factor)
+                    ob_sk.eval_time = _lerp(ob_sk.eval_time, start_sk, fade_factor)
                 if is_neg_sk:
                     if val_sk < ob_sk.eval_time: ob_sk.eval_time = val_sk
                 else:

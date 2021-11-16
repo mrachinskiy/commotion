@@ -102,11 +102,11 @@ class ANIM_OT_animation_offset(Operator):
         from . import offset_methods
 
         if self.sort_method == "CURSOR":
-            offset_methods.offset_from_cursor(self, context)
+            offset_methods.offset_from_cursor(self)
         elif self.sort_method == "NAME":
-            offset_methods.offset_from_name(self, context)
+            offset_methods.offset_from_name(self)
         elif self.sort_method == "RANDOM":
-            offset_methods.offset_from_random(self, context)
+            offset_methods.offset_from_random(self)
         else:
             props = context.scene.commotion
             coll_anim = props.offset_coll_animated
@@ -117,7 +117,7 @@ class ANIM_OT_animation_offset(Operator):
                 return {"CANCELLED"}
 
             if self.use_proxy:
-                offset_methods.offset_from_multi_proxy(self, context, coll_anim, coll_effct)
+                offset_methods.offset_from_multi_proxy(self, coll_anim, coll_effct)
             else:
                 offset_methods.offset_from_multi(self, coll_anim, coll_effct)
 

@@ -148,9 +148,9 @@ class _AdCopy:
 
             for strip in track.strips:
                 if self.use_link:
-                    strip_new = track_new.strips.new(strip.name, strip.frame_start, strip.action)
+                    strip_new = track_new.strips.new(strip.name, int(strip.frame_start), strip.action)
                 else:
-                    strip_new = track_new.strips.new(strip.name, strip.frame_start, strip.action.copy())
+                    strip_new = track_new.strips.new(strip.name, int(strip.frame_start), strip.action.copy())
 
                 strip_new.name = strip.name
                 strip_new.select = False

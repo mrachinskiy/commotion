@@ -153,7 +153,7 @@ class _AdCopy:
                     strip_new = track_new.strips.new(strip.name, int(strip.frame_start), strip.action.copy())
 
                 strip_new.name = strip.name
-                strip_new.select = False
+                strip_new.select = strip.select
 
                 strip_new.frame_start = strip.frame_start
                 strip_new.frame_end = strip.frame_end

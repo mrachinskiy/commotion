@@ -47,6 +47,8 @@ def ad_offset(self, ob: Object, offset: float) -> bool:
             fcus = ad.action.fcurves
             for fcu in fcus:
                 for kp in fcu.keyframe_points:
+                    if self.use_select and not kp.select_control_point:
+                        continue
                     kp.co[0] += fcu_offset
                     kp.handle_left[0] += fcu_offset
                     kp.handle_right[0] += fcu_offset
@@ -71,6 +73,8 @@ def ad_offset(self, ob: Object, offset: float) -> bool:
             for track in tracks:
                 strips = reversed(track.strips) if use_rev else track.strips
                 for strip in strips:
+                    if self.use_select and not strip.select:
+                        continue
                     if use_rev:
                         strip.frame_end += strip_offset
                         strip.frame_start += strip_offset

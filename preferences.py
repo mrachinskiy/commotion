@@ -100,12 +100,12 @@ class SceneProperties(PropertyGroup):
         name="Sort By",
         description="Sort objects method",
         items=(
-            ("CURSOR", "Cursor", ""),
             ("NAME", "Name", ""),
+            ("CURSOR", "Cursor", ""),
             ("MULTI", "Multi-Offset", ""),
             ("RANDOM", "Random", ""),
         ),
-        default="CURSOR",
+        default="NAME",
     )
     offset_threshold: IntProperty(
         name="Threshold",
@@ -153,6 +153,10 @@ class SceneProperties(PropertyGroup):
         name="Material",
         description="Affect material animation data",
         default=True,
+    )
+    offset_use_select: BoolProperty(
+        name="Selected",
+        description="Affect only selected keyframes or strips",
     )
     offset_coll_animated: PointerProperty(
         name="Animated",

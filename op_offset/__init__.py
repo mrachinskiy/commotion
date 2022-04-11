@@ -20,6 +20,7 @@ class ANIM_OT_animation_offset(Operator):
     use_data: BoolProperty(name="Object Data", description="Affect object data animation data")
     use_sk: BoolProperty(name="Shape Keys", description="Affect shape keys animation data")
     use_mat: BoolProperty(name="Material", description="Affect material animation data")
+    use_select: BoolProperty(name="Selected", description="Affect only selected keyframes or strips")
     use_reverse: BoolProperty(name="Reverse", description="Reverse animation offset")
     use_proxy: BoolProperty(
         name="Proxymity",
@@ -48,8 +49,8 @@ class ANIM_OT_animation_offset(Operator):
         name="Sort By",
         description="Sort objects method",
         items=(
-            ("CURSOR", "Cursor", ""),
             ("NAME", "Name", ""),
+            ("CURSOR", "Cursor", ""),
             ("MULTI", "Multi-Offset", ""),
             ("RANDOM", "Random", ""),
         ),
@@ -66,6 +67,9 @@ class ANIM_OT_animation_offset(Operator):
         sub.prop(self, "use_data")
         sub.prop(self, "use_sk")
         sub.prop(self, "use_mat")
+
+        sub = col.column(heading="Limit")
+        sub.prop(self, "use_select")
 
         sub = col.column()
         sub.enabled = not (self.sort_method == "MULTI" and self.use_proxy)
@@ -113,6 +117,7 @@ class ANIM_OT_animation_offset(Operator):
         self.use_data = props.offset_use_data
         self.use_sk = props.offset_use_sk
         self.use_mat = props.offset_use_mat
+        self.use_select = props.offset_use_select
         self.frame = scene.frame_current
         self.cursor = scene.cursor.location
         self.offset = props.offset_offset

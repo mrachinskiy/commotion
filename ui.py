@@ -114,6 +114,9 @@ class VIEW3D_PT_commotion_animation_offset(SidebarSetup, Panel):
         sub.prop(props, "offset_use_sk")
         sub.prop(props, "offset_use_mat")
 
+        sub = col.column(heading="Limit")
+        sub.prop(props, "offset_use_select")
+
         sub = col.column()
         sub.active = not (multi and props.offset_use_proxy)
         sub.prop(props, "offset_offset")

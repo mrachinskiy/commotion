@@ -223,6 +223,7 @@ class SceneProperties(PropertyGroup):
     proxy_trail_fade: FloatProperty(
         name="Fade",
         description="Fade trail over time",
+        default=0.05,
         min=0.0,
         max=1.0,
         soft_max=0.3,

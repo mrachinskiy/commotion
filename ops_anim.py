@@ -232,8 +232,10 @@ class ANIM_OT_animation_convert(Operator):
                     if not nla_tracks:
                         nla_tracks.new()
 
-                    frame_start = ad.action.frame_range[0]
-                    nla_tracks[0].strips.new("name", frame_start, ad.action)
+                    frame_start, frame_end = ad.action.frame_range
+                    strip_new = nla_tracks.active.strips.new("name", int(frame_start), ad.action)
+                    strip_new.frame_start = frame_start
+                    strip_new.frame_end = frame_end
                     ad.action = None
 
                 else:
@@ -243,7 +245,7 @@ class ANIM_OT_animation_convert(Operator):
                     if not nla_tracks:
                         continue
 
-                    ad.action = nla_tracks[0].strips[0].action
+                    ad.action = nla_tracks.active.strips[0].action
 
                     for track in nla_tracks:
                         nla_tracks.remove(track)

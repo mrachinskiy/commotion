@@ -155,7 +155,7 @@ class SceneProperties(PropertyGroup):
         default=True,
     )
     offset_use_select: BoolProperty(
-        name="Selected",
+        name="Selected Only",
         description="Affect only selected keyframes or strips",
     )
     offset_coll_animated: PointerProperty(

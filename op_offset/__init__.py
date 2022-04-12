@@ -20,7 +20,7 @@ class ANIM_OT_animation_offset(Operator):
     use_data: BoolProperty(name="Object Data", description="Affect object data animation data")
     use_sk: BoolProperty(name="Shape Keys", description="Affect shape keys animation data")
     use_mat: BoolProperty(name="Material", description="Affect material animation data")
-    use_select: BoolProperty(name="Selected", description="Affect only selected keyframes or strips")
+    use_select: BoolProperty(name="Selected Only", description="Affect only selected keyframes or strips")
     use_reverse: BoolProperty(name="Reverse", description="Reverse animation offset")
     use_proxy: BoolProperty(
         name="Proxymity",
@@ -61,6 +61,8 @@ class ANIM_OT_animation_offset(Operator):
         layout.use_property_split = True
         layout.use_property_decorate = False
 
+        is_proxy = self.sort_method == "MULTI" and self.use_proxy
+
         col = layout.column(heading="Data")
         sub = col.column(align=True)
         sub.prop(self, "use_ob")
@@ -68,13 +70,15 @@ class ANIM_OT_animation_offset(Operator):
         sub.prop(self, "use_sk")
         sub.prop(self, "use_mat")
 
-        sub = col.column(heading="Limit")
-        sub.prop(self, "use_select")
-
         sub = col.column()
-        sub.enabled = not (self.sort_method == "MULTI" and self.use_proxy)
+        sub.enabled = not is_proxy
         sub.prop(self, "offset")
         sub.prop(self, "threshold")
+
+        sub = col.column(align=True)
+        sub.prop(self, "use_select")
+        sub = sub.column()
+        sub.enabled = not is_proxy
         sub.prop(self, "use_reverse")
 
         col.prop(self, "sort_method")

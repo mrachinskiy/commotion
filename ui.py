@@ -105,7 +105,7 @@ class VIEW3D_PT_commotion_animation_offset(SidebarSetup, Panel):
         layout.use_property_split = True
         layout.use_property_decorate = False
         props = context.scene.commotion
-        multi = props.offset_sort_method == "MULTI"
+        is_proxy = props.offset_sort_method == "MULTI" and props.offset_use_proxy
 
         col = layout.column(heading="Data")
         sub = col.column(align=True)
@@ -114,23 +114,25 @@ class VIEW3D_PT_commotion_animation_offset(SidebarSetup, Panel):
         sub.prop(props, "offset_use_sk")
         sub.prop(props, "offset_use_mat")
 
-        sub = col.column(heading="Limit")
-        sub.prop(props, "offset_use_select")
-
         sub = col.column()
-        sub.active = not (multi and props.offset_use_proxy)
+        sub.active = not is_proxy
         sub.prop(props, "offset_offset")
         sub.prop(props, "offset_threshold")
+
+        sub = col.column(align=True)
+        sub.prop(props, "offset_use_select")
+        sub = sub.column()
+        sub.active = not is_proxy
         sub.prop(props, "offset_use_reverse")
 
         col.prop(props, "offset_sort_method")
 
-        if props.offset_sort_method == "RANDOM":
-            col.prop(props, "offset_seed")
-        elif multi:
+        if props.offset_sort_method == "MULTI":
             col.prop(props, "offset_coll_animated")
             col.prop(props, "offset_coll_effectors")
             col.prop(props, "offset_use_proxy")
+        elif props.offset_sort_method == "RANDOM":
+            col.prop(props, "offset_seed")
 
         row = layout.row(align=True)
         row.operator("anim.commotion_animation_offset", icon="FORCE_HARMONIC")

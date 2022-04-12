@@ -21,6 +21,7 @@ class VIEW3D_MT_commotion(Menu):
 
     def draw(self, context):
         layout = self.layout
+        layout.operator_context = "INVOKE_DEFAULT"
         layout.operator("wm.call_panel", text="Animation Offset", icon="WINDOW").name = "VIEW3D_PT_commotion_animation_offset"
         layout.separator()
         layout.operator("anim.commotion_animation_copy", text="Copy", icon="COPYDOWN")

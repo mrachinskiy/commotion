@@ -11,12 +11,16 @@ Features:
 Video:
 
 * [Demo v1.0](http://youtu.be/gLj4PvHbm4s)
-* [Overview v1.4](https://youtu.be/YNtaR00sA40)
-* [Tutorial: Simple Motiongraphics](http://youtu.be/qbJMTOUdxRY)
 
 
 How to install
 ==========================
+
+### Available as an [extension](https://extensions.blender.org/add-ons/commotion/) for Blender 4.2 or newer.
+
+---
+
+### For Blender 4.1 or older
 
 1. Download [Commotion 2.3.1][download_latest]<sup>1</sup>
 2. Make sure you have Blender 2.93 or newer.
@@ -30,6 +34,12 @@ How to install
 
 Установка
 ==========================
+
+### Доступно как [расширение](https://extensions.blender.org/add-ons/commotion/) для Blender 4.2 или новее.
+
+---
+
+### Для Blender 4.1 или старше
 
 1. Загрузите [Commotion 2.3.1][download_latest]<sup>1</sup>
 2. Убедитесь, что у вас установлен Blender 2.93 или новее.

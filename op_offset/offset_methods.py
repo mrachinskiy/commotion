@@ -1,8 +1,8 @@
+# SPDX-FileCopyrightText: 2014-2024 Mikhail Rachinskiy
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Copyright 2014-2022 Mikhail Rachinskiy
 
-import random
 import operator
+import random
 from typing import Any, Iterator
 
 import bpy

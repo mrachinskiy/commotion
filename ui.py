@@ -1,9 +1,7 @@
+# SPDX-FileCopyrightText: 2014-2024 Mikhail Rachinskiy
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Copyright 2014-2022 Mikhail Rachinskiy
 
-from bpy.types import Panel, Menu
-
-from . import mod_update
+from bpy.types import Menu, Panel
 
 
 # Menus
@@ -42,10 +40,6 @@ class SidebarSetup:
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_context = "objectmode"
-
-
-class VIEW3D_PT_commotion_update(mod_update.Sidebar, SidebarSetup, Panel):
-    bl_label = "Update"
 
 
 class VIEW3D_PT_commotion_shape_keys(SidebarSetup, Panel):

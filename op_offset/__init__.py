@@ -1,13 +1,8 @@
+# SPDX-FileCopyrightText: 2014-2024 Mikhail Rachinskiy
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Copyright 2014-2022 Mikhail Rachinskiy
 
+from bpy.props import BoolProperty, EnumProperty, FloatProperty, IntProperty
 from bpy.types import Operator
-from bpy.props import (
-    BoolProperty,
-    IntProperty,
-    FloatProperty,
-    EnumProperty,
-)
 
 
 class ANIM_OT_animation_offset(Operator):

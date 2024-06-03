@@ -1,21 +1,13 @@
+# SPDX-FileCopyrightText: 2014-2024 Mikhail Rachinskiy
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Copyright 2014-2022 Mikhail Rachinskiy
 
-from bpy.types import PropertyGroup, AddonPreferences, Collection
-from bpy.props import (
-    BoolProperty,
-    IntProperty,
-    FloatProperty,
-    EnumProperty,
-    FloatVectorProperty,
-    CollectionProperty,
-    PointerProperty,
-)
-
-from . import mod_update
+from bpy.props import (BoolProperty, CollectionProperty, EnumProperty,
+                       FloatProperty, FloatVectorProperty, IntProperty,
+                       PointerProperty)
+from bpy.types import Collection, PropertyGroup
 
 
-# Proximity Effector utils
+# Update callbacks
 # -----------------------------------
 
 
@@ -67,31 +59,7 @@ class CommotionShapeKeyCollection(PropertyGroup):
     selected: BoolProperty(description="Affect referenced shape key", default=True)
 
 
-# Add-on preferences
-# -----------------------------------
-
-
-class CommotionPreferences(mod_update.Preferences, AddonPreferences):
-    bl_idname = __package__
-
-    def draw(self, context):
-        props_wm = context.window_manager.commotion
-
-        layout = self.layout
-        layout.use_property_split = True
-        layout.use_property_decorate = False
-
-        split = layout.split(factor=0.25)
-        col = split.column()
-        col.use_property_split = False
-        col.scale_y = 1.3
-        col.prop(props_wm, "prefs_active_tab", expand=True)
-
-        box = split.box()
-        mod_update.prefs_ui(self, box)
-
-
-# Scene properties
+# Scene/WM properties
 # -----------------------------------
 
 
@@ -246,16 +214,7 @@ class SceneProperties(PropertyGroup):
     )
 
 
-# Window manager properties
-# ------------------------------------------
-
-
 class WmProperties(PropertyGroup):
-    prefs_active_tab: EnumProperty(
-        items=(
-            ("UPDATES", "Updates", ""),
-        ),
-    )
     skcoll: CollectionProperty(type=CommotionShapeKeyCollection)
     use_proxy: BoolProperty(
         name="Proximity Effector",

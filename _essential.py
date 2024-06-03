@@ -1,9 +1,10 @@
+# SPDX-FileCopyrightText: 2021-2024 Mikhail Rachinskiy
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Copyright 2021-2022 Mikhail Rachinskiy
 
 # v1.1.1
 
 from __future__ import annotations
+
 from pathlib import Path
 from typing import Any
 

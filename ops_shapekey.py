@@ -1,8 +1,8 @@
+# SPDX-FileCopyrightText: 2014-2024 Mikhail Rachinskiy
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Copyright 2014-2022 Mikhail Rachinskiy
 
-from bpy.types import Operator
 from bpy.props import EnumProperty
+from bpy.types import Operator
 
 
 class OBJECT_OT_sk_coll_refresh(Operator):

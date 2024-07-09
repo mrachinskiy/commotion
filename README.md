@@ -22,7 +22,7 @@ How to install
 
 ### For Blender 4.1 or older
 
-1. Download [Commotion 2.3.1][download_latest]<sup>1</sup>
+1. Download [Commotion 2.4.0][download_latest]<sup>1</sup>
 2. Make sure you have Blender 2.93 or newer.
 3. Open `Preferences` → `Add-ons` category.
 4. Use `Install` to install add-on from downloaded zip archive.<sup>2</sup>
@@ -41,9 +41,9 @@ How to install
 
 ### Для Blender 4.1 или старше
 
-1. Загрузите [Commotion 2.3.1][download_latest]<sup>1</sup>
+1. Загрузите [Commotion 2.4.0][download_latest]<sup>1</sup>
 2. Убедитесь, что у вас установлен Blender 2.93 или новее.
-3. Откройте `Preferences` → `Add-ons`.
+3. Откройте `Preferences` → `Add-ons`
 4. Воспользуйтесь `Install` чтобы установить аддон из загруженного архива.<sup>2</sup>
 
 <sup>1</sup> Примечание для пользователей mac: браузер Safari автоматически распаковывает скачиваемые zip архивы, чтобы это предотвратить в настройках `Safari` → `Preferences` → `General` отключите опцию `Open "safe" files after downloading`.
@@ -61,5 +61,5 @@ Contributing
 * [Open new issue][new_issue], be sure to include Blender and add-on versions, and screenshot showing the error message.
 
 
-[download_latest]: https://github.com/mrachinskiy/commotion/releases/download/v2.3.1-blender2.93.0/commotion-2_3_1.zip
+[download_latest]: https://github.com/mrachinskiy/commotion/releases/download/v2.4.0/commotion-2_4_0.zip
 [new_issue]: https://github.com/mrachinskiy/commotion/issues/new

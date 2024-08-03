@@ -1,6 +1,6 @@
 schema_version = "1.0.0"
 id = "commotion"
-version = "2.4.0"
+version = "2.4.1"
 name = "Commotion"
 tagline = "Animation offset tools for motion graphics"
 maintainer = "Mikhail Rachinskiy"

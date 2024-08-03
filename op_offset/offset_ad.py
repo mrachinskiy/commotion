@@ -38,7 +38,13 @@ def ad_offset(self, ob: Object, offset: float) -> bool:
         if ad.action:
             fcus = ad.action.fcurves
             for fcu in fcus:
-                fcus_frame_start.append(fcu.range()[0])
+                if self.use_select:
+                    for kp in fcu.keyframe_points:
+                        if kp.select_control_point:
+                            fcus_frame_start.append(kp.co.x)
+                            break
+                else:
+                    fcus_frame_start.append(fcu.range()[0])
 
     if fcus_frame_start:
         fcu_offset = self.frame - min(fcus_frame_start) + offset
@@ -49,9 +55,9 @@ def ad_offset(self, ob: Object, offset: float) -> bool:
                 for kp in fcu.keyframe_points:
                     if self.use_select and not kp.select_control_point:
                         continue
-                    kp.co[0] += fcu_offset
-                    kp.handle_left[0] += fcu_offset
-                    kp.handle_right[0] += fcu_offset
+                    kp.co.x += fcu_offset
+                    kp.handle_left.x += fcu_offset
+                    kp.handle_right.x += fcu_offset
 
     # NLA
 
@@ -61,7 +67,11 @@ def ad_offset(self, ob: Object, offset: float) -> bool:
         tracks = ad.nla_tracks
         for track in tracks:
             for strip in track.strips:
-                strips_frame_start.append(strip.frame_start)
+                if self.use_select:
+                    if strip.select:
+                        strips_frame_start.append(strip.frame_start)
+                else:
+                    strips_frame_start.append(strip.frame_start)
 
     if strips_frame_start:
         min_frame_start = min(strips_frame_start)

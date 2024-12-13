@@ -113,15 +113,18 @@ class _AdCopy:
             if is_anim_mat and ob.material_slots:
                 for i, slot in enumerate(ob.material_slots):
 
+                    if not (mat := slot.material):
+                        continue
+
                     if i in Anim.action_mat:
-                        self.action_copy(slot.material, Anim.action_mat[i])
+                        self.action_copy(mat, Anim.action_mat[i])
                     if i in Anim.nla_tracks_mat:
-                        self.nla_copy(slot.material, Anim.nla_tracks_mat[i])
+                        self.nla_copy(mat, Anim.nla_tracks_mat[i])
 
                     if i in Anim.action_node:
-                        self.action_copy(slot.material.node_tree, Anim.action_node[i])
+                        self.action_copy(mat.node_tree, Anim.action_node[i])
                     if i in Anim.nla_tracks_node:
-                        self.nla_copy(slot.material.node_tree, Anim.nla_tracks_node[i])
+                        self.nla_copy(mat.node_tree, Anim.nla_tracks_node[i])
 
         return {"FINISHED"}
 

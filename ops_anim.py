@@ -63,16 +63,16 @@ def _anim_get(ob: Object) -> _Animation:
     if ob.material_slots:
         for i, slot in enumerate(ob.material_slots):
 
-            ad = slot.material.animation_data
-            if ad:
+            if not (mat := slot.material):
+                continue
+
+            if (ad := mat.animation_data):
                 Anim.action_mat[i] = ad.action
                 Anim.nla_tracks_mat[i] = ad.nla_tracks
 
-            if slot.material.node_tree:
-                ad = slot.material.node_tree.animation_data
-                if ad:
-                    Anim.action_node[i] = ad.action
-                    Anim.nla_tracks_node[i] = ad.nla_tracks
+            if mat.node_tree and (ad := mat.node_tree.animation_data):
+                Anim.action_node[i] = ad.action
+                Anim.nla_tracks_node[i] = ad.nla_tracks
 
     return Anim
 

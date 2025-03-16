@@ -9,4 +9,4 @@ tags = ["Animation"]
 blender_version_min = "4.4.0"
 website = "https://github.com/mrachinskiy/commotion"
 license = ["SPDX:GPL-3.0-or-later"]
-copyright = ["2014-2024 Mikhail Rachinskiy"]
+copyright = ["2014-2025 Mikhail Rachinskiy"]

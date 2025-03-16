@@ -3,7 +3,7 @@
 
 from collections.abc import Iterable
 
-from bpy.types import Object
+from bpy.types import FCurve, Object
 
 from .. import lib
 
@@ -32,36 +32,37 @@ def ad_offset(self, ob: Object, offset: float) -> bool:
 
     # F-Curves
 
-    fcus_frame_start = []
-
+    # Get F-Curves
+    unique_fcurves: set[FCurve] = set()
     for ad in ads:
         if ad.action:
-            fcus = ad.action.fcurves
-            for fcu in fcus:
-                if self.use_select:
-                    for kp in fcu.keyframe_points:
-                        if kp.select_control_point:
-                            fcus_frame_start.append(kp.co.x)
-                            break
-                else:
-                    fcus_frame_start.append(fcu.range()[0])
+            for fcu in ad.action.layers[0].strips[0].channelbag(ad.action_slot).fcurves:
+                unique_fcurves.add(fcu)
+
+    # Get start keyframe
+    fcus_frame_start = set()
+    for fcu in unique_fcurves:
+        if self.use_select:
+            for kp in fcu.keyframe_points:
+                if kp.select_control_point:
+                    fcus_frame_start.add(kp.co.x)
+                    break
+        else:
+            fcus_frame_start.add(fcu.range()[0])
 
     if fcus_frame_start:
         fcu_offset = self.frame - min(fcus_frame_start) + offset
-
-        for ad in ads:
-            fcus = ad.action.fcurves
-            for fcu in fcus:
-                for kp in fcu.keyframe_points:
-                    if self.use_select and not kp.select_control_point:
-                        continue
-                    kp.co.x += fcu_offset
-                    kp.handle_left.x += fcu_offset
-                    kp.handle_right.x += fcu_offset
+        for fcu in unique_fcurves:
+            for kp in fcu.keyframe_points:
+                if self.use_select and not kp.select_control_point:
+                    continue
+                kp.co.x += fcu_offset
+                kp.handle_left.x += fcu_offset
+                kp.handle_right.x += fcu_offset
 
     # NLA
 
-    strips_frame_start = []
+    strips_frame_start = set()
 
     for ad in ads:
         tracks = ad.nla_tracks
@@ -69,9 +70,9 @@ def ad_offset(self, ob: Object, offset: float) -> bool:
             for strip in track.strips:
                 if self.use_select:
                     if strip.select:
-                        strips_frame_start.append(strip.frame_start)
+                        strips_frame_start.add(strip.frame_start)
                 else:
-                    strips_frame_start.append(strip.frame_start)
+                    strips_frame_start.add(strip.frame_start)
 
     if strips_frame_start:
         min_frame_start = min(strips_frame_start)

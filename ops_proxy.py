@@ -85,8 +85,7 @@ class ANIM_OT_bake_remove(Operator):
     bl_options = {"REGISTER", "UNDO"}
 
     def execute(self, context):
-        scene = context.scene
-        props = scene.commotion
+        props = context.scene.commotion
 
         if not props.proxy_coll_animated:
             return {"CANCELLED"}
@@ -95,28 +94,26 @@ class ANIM_OT_bake_remove(Operator):
         reset_rot = props.proxy_start_rot if props.proxy_use_rot else (0.0, 0.0, 0.0)
         reset_sca = props.proxy_start_sca if props.proxy_use_sca else (1.0, 1.0, 1.0)
         reset_sk = props.proxy_start_sk if props.proxy_use_sk else 0.0
-        ob_data_prev = None
+        handled_data = set()
 
         for ob in props.proxy_coll_animated.objects:
             try:
-                action = ob.animation_data.action
-                bpy.data.actions.remove(action)
-            except AttributeError:
+                bpy.data.actions.remove(ob.animation_data.action)
+            except (AttributeError, TypeError):
                 pass
 
             ob.delta_location = reset_loc
             ob.delta_rotation_euler = reset_rot
             ob.delta_scale = reset_sca
 
-            if ob.data is not ob_data_prev:
+            if ob.data and ob.data not in handled_data:
                 try:
                     sk = ob.data.shape_keys
-                    action = sk.animation_data.action
-                    bpy.data.actions.remove(action)
                     sk.eval_time = reset_sk
-                except AttributeError:
+                    bpy.data.actions.remove(sk.animation_data.action)
+                except (AttributeError, TypeError):
                     pass
 
-                ob_data_prev = ob.data
+                handled_data.add(ob.data)
 
         return {"FINISHED"}

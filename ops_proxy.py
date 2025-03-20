@@ -1,7 +1,6 @@
 # SPDX-FileCopyrightText: 2014-2025 Mikhail Rachinskiy
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-import bpy
 from bpy.types import Operator
 
 
@@ -96,11 +95,19 @@ class ANIM_OT_bake_remove(Operator):
         reset_sk = props.proxy_start_sk if props.proxy_use_sk else 0.0
         handled_data = set()
 
+        dpaths = {
+            "delta_location",
+            "delta_rotation_euler",
+            "delta_scale",
+        }
+
         for ob in props.proxy_coll_animated.objects:
-            try:
-                bpy.data.actions.remove(ob.animation_data.action)
-            except (AttributeError, TypeError):
-                pass
+
+            if ob.animation_data and ob.animation_data.action:
+                bag = ob.animation_data.action.layers[0].strips[0].channelbag(ob.animation_data.action_slot)
+                for fcu in bag.fcurves:
+                    if fcu.data_path in dpaths:
+                        bag.fcurves.remove(fcu)
 
             ob.delta_location = reset_loc
             ob.delta_rotation_euler = reset_rot
@@ -109,9 +116,14 @@ class ANIM_OT_bake_remove(Operator):
             if ob.data and ob.data not in handled_data:
                 try:
                     sk = ob.data.shape_keys
+
+                    if sk.animation_data and sk.animation_data.action:
+                        bag = sk.animation_data.action.layers[0].strips[0].channelbag(sk.animation_data.action_slot)
+                        for fcu in bag.fcurves:
+                            bag.fcurves.remove(fcu)
+
                     sk.eval_time = reset_sk
-                    bpy.data.actions.remove(sk.animation_data.action)
-                except (AttributeError, TypeError):
+                except AttributeError:
                     pass
 
                 handled_data.add(ob.data)

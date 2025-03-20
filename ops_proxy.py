@@ -73,7 +73,7 @@ class ANIM_OT_bake(Operator):
         if props.proxy_use_sca:
             self.dpaths.append("delta_scale")
 
-        self.use_sk = props.proxy_use_sca
+        self.use_sk = props.proxy_use_sk
 
         return self.execute(context)
 

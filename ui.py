@@ -151,6 +151,13 @@ class VIEW3D_PT_commotion_proxy_effector(SidebarSetup, Panel):
     bl_label = "Proximity Effector"
     bl_options = {"DEFAULT_CLOSED"}
 
+    sub_panels = (
+        ("loc", "Location"),
+        ("rot", "Rotation"),
+        ("sca", "Scale"),
+        ("sk", "Shape Keys"),
+    )
+
     def draw_header(self, context):
         layout = self.layout
         layout.prop(context.window_manager.commotion, "use_proxy", text="")
@@ -183,98 +190,22 @@ class VIEW3D_PT_commotion_proxy_effector(SidebarSetup, Panel):
         subrow.active = props.proxy_use_trail
         subrow.prop(props, "proxy_trail_fade", text="")
 
-        # Popover subpanels
+        # Subpanel headers
         layout.use_property_split = False
 
+        for sub_id, sub_header in self.sub_panels:
+            header, panel = layout.panel(sub_id, default_closed=True)
+            header.prop(props, f"proxy_use_{sub_id}", text="")
+            header.label(text=sub_header)
+            if panel:
+                panel.active = getattr(props, f"proxy_use_{sub_id}")
+                row = panel.row()
+                row.column().prop(props, f"proxy_start_{sub_id}", text="")
+                row.column().prop(props, f"proxy_final_{sub_id}", text="")
 
-class VIEW3D_PT_commotion_proxy_effector_loc(SidebarSetup, Panel):
-    bl_label = "Location"
-    bl_options = {"DEFAULT_CLOSED"}
-    bl_parent_id = "VIEW3D_PT_commotion_proxy_effector"
-
-    def draw_header(self, context):
-        layout = self.layout
-        layout.prop(context.scene.commotion, "proxy_use_loc", text="")
-
-    def draw(self, context):
-        props = context.scene.commotion
-
-        layout = self.layout
-        layout.active = props.proxy_use_loc
-
-        row = layout.row()
-        row.column().prop(props, "proxy_start_loc", text="")
-        row.column().prop(props, "proxy_final_loc", text="")
-
-
-class VIEW3D_PT_commotion_proxy_effector_rot(SidebarSetup, Panel):
-    bl_label = "Rotation"
-    bl_options = {"DEFAULT_CLOSED"}
-    bl_parent_id = "VIEW3D_PT_commotion_proxy_effector"
-
-    def draw_header(self, context):
-        layout = self.layout
-        layout.prop(context.scene.commotion, "proxy_use_rot", text="")
-
-    def draw(self, context):
-        props = context.scene.commotion
-
-        layout = self.layout
-        layout.active = props.proxy_use_rot
-
-        row = layout.row()
-        row.column().prop(props, "proxy_start_rot", text="")
-        row.column().prop(props, "proxy_final_rot", text="")
-
-
-class VIEW3D_PT_commotion_proxy_effector_sca(SidebarSetup, Panel):
-    bl_label = "Scale"
-    bl_options = {"DEFAULT_CLOSED"}
-    bl_parent_id = "VIEW3D_PT_commotion_proxy_effector"
-
-    def draw_header(self, context):
-        layout = self.layout
-        layout.prop(context.scene.commotion, "proxy_use_sca", text="")
-
-    def draw(self, context):
-        props = context.scene.commotion
-
-        layout = self.layout
-        layout.active = props.proxy_use_sca
-
-        row = layout.row()
-        row.column().prop(props, "proxy_start_sca", text="")
-        row.column().prop(props, "proxy_final_sca", text="")
-
-
-class VIEW3D_PT_commotion_proxy_effector_sk(SidebarSetup, Panel):
-    bl_label = "Shape Keys"
-    bl_options = {"DEFAULT_CLOSED"}
-    bl_parent_id = "VIEW3D_PT_commotion_proxy_effector"
-
-    def draw_header(self, context):
-        layout = self.layout
-        layout.prop(context.scene.commotion, "proxy_use_sk", text="")
-
-    def draw(self, context):
-        props = context.scene.commotion
-
-        layout = self.layout
-        layout.active = props.proxy_use_sk
-
-        row = layout.row()
-        row.column().prop(props, "proxy_start_sk", text="")
-        row.column().prop(props, "proxy_final_sk", text="")
-
-
-class VIEW3D_PT_commotion_proxy_effector_bake(SidebarSetup, Panel):
-    bl_label = "Bake"
-    bl_options = {"DEFAULT_CLOSED"}
-    bl_parent_id = "VIEW3D_PT_commotion_proxy_effector"
-
-    def draw(self, context):
-        layout = self.layout
-
-        row = layout.row(align=True)
-        row.operator("anim.commotion_bake", text="Bake")
-        row.operator("anim.commotion_bake_remove")
+        header, panel = layout.panel("bake", default_closed=True)
+        header.label(text="Bake")
+        if panel:
+            row = panel.row(align=True)
+            row.operator("anim.commotion_bake", text="Bake")
+            row.operator("anim.commotion_bake_remove")
